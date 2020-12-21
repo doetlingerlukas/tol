@@ -19,7 +19,7 @@ task :build do
 end
 
 task run: :build do
-  sh "#{BUILD_DIR}/bin/tol"
+  sh "#{BUILD_DIR}/tol"
 end
 
 task :clean do
