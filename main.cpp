@@ -1,4 +1,5 @@
 #include <iostream>
+#include "string.h"
 
 // GLAD
 #include <glad/glad.h>
@@ -22,19 +23,29 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 // The MAIN function, from here we start the application and run the game loop
-int main()
+int main(int argc, char** argv)
 {
-    std::cout << "Starting GLFW context, OpenGL 3.3" << std::endl;
+
+
+    std::cout << "Starting GLFW context, OpenGL 4.6" << std::endl;
     // Init GLFW
     glfwInit();
     // Set all the required options for GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
+    GLFWwindow* window;
+
+    if (argc > 1 && strcmp(argv[1], "--full") == 0) {
+      const GLFWvidmode* screen = glfwGetVideoMode(glfwGetPrimaryMonitor());
+      window = glfwCreateWindow(screen->width, screen->height, "tol", NULL, NULL);
+    } else {
+      window = glfwCreateWindow(WIDTH, HEIGHT, "tol", NULL, NULL);
+    }
+
     // Create a GLFWwindow object that we can use for GLFW's functions
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
     glfwMakeContextCurrent(window);
     if (window == NULL)
     {
