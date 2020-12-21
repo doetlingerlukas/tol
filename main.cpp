@@ -7,14 +7,12 @@
 // GLFW
 #include <GLFW/glfw3.h>
 
-
 // This example is taken from https://learnopengl.com/
 // https://learnopengl.com/code_viewer.php?code=getting-started/hellowindow2
 // The code originally used GLEW, I replaced it with Glad
 
 // Compile:
 // g++ example/c++/hellowindow2.cpp -Ibuild/include build/src/glad.c -lglfw -ldl
-
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -23,16 +21,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 // The MAIN function, from here we start the application and run the game loop
-int main(int argc, char** argv)
+int main(int argc, char **argv) {
 {
+    std::cout << "Starting GLFW context, OpenGL 4.1" << std::endl;
 
-
-    std::cout << "Starting GLFW context, OpenGL 4.6" << std::endl;
     // Init GLFW
     glfwInit();
+
     // Set all the required options for GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
