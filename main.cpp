@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 // GLFW
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 // This example is taken from https://learnopengl.com/
@@ -20,12 +21,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
 
+using namespace std;
+
 // The MAIN function, from here we start the application and run the game loop
 int main(int argc, char **argv) {
     std::cout << "Starting GLFW context, OpenGL 4.1" << std::endl;
 
     // Init GLFW
     glfwInit();
+
+    if(glfwVulkanSupported() == GLFW_TRUE) {
+      cout << "Vulkan supported." << endl;
+    } else {
+      cout << "Vulkan not supported" << endl;
+    }
 
     // Set all the required options for GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

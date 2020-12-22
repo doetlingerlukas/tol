@@ -7,6 +7,10 @@ def mac?
 end
 
 task :build do
+  vulkan_sdk = if mac?
+    '/usr/local'
+  end
+
   vcpkg_prefix = if mac?
     `brew --prefix vcpkg`.chomp
   else
@@ -14,7 +18,8 @@ task :build do
   end
   toolchain_file = "#{vcpkg_prefix}/libexec/scripts/buildsystems/vcpkg.cmake"
 
-  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '-DCMAKE_BUILD_TYPE=Debug', "-DCMAKE_TOOLCHAIN_FILE=#{toolchain_file}"
+  env = { "VULKAN_SDK" => vulkan_sdk }
+  sh env, 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '-DCMAKE_BUILD_TYPE=Debug', "-DCMAKE_TOOLCHAIN_FILE=#{toolchain_file}"
   sh 'cmake', '--build', BUILD_DIR, '-v'
 end
 

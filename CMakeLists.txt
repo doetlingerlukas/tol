@@ -17,3 +17,6 @@ target_link_libraries(tol PRIVATE glad::glad)
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE glfw)
 
+target_include_directories(tol PUBLIC "$ENV{VULKAN_SDK}/include")
+target_link_directories(tol PUBLIC "$ENV{VULKAN_SDK}/lib")
+target_link_libraries(tol PRIVATE vulkan)
