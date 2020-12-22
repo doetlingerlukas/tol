@@ -1,102 +1,129 @@
+// https://vulkan-tutorial.com/Drawing_a_triangle
+
+#include <cstdlib>
 #include <iostream>
-#include "string.h"
+#include <stdexcept>
+#include <vector>
 
-// GLAD
-#include <glad/glad.h>
-
-// GLFW
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-// This example is taken from https://learnopengl.com/
-// https://learnopengl.com/code_viewer.php?code=getting-started/hellowindow2
-// The code originally used GLEW, I replaced it with Glad
-
-// Compile:
-// g++ example/c++/hellowindow2.cpp -Ibuild/include build/src/glad.c -lglfw -ldl
-
-// Function prototypes
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-
-// Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
-
 using namespace std;
 
-// The MAIN function, from here we start the application and run the game loop
-int main(int argc, char **argv) {
-    std::cout << "Starting GLFW context, OpenGL 4.1" << std::endl;
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
 
-    // Init GLFW
-    glfwInit();
-
-    if(glfwVulkanSupported() == GLFW_TRUE) {
-      cout << "Vulkan supported." << endl;
-    } else {
-      cout << "Vulkan not supported" << endl;
-    }
-
-    // Set all the required options for GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    GLFWwindow* window;
-
-    if (argc > 1 && strcmp(argv[1], "--full") == 0) {
-      const GLFWvidmode* screen = glfwGetVideoMode(glfwGetPrimaryMonitor());
-      window = glfwCreateWindow(screen->width, screen->height, "tol", NULL, NULL);
-    } else {
-      window = glfwCreateWindow(WIDTH, HEIGHT, "tol", NULL, NULL);
-    }
-
-    // Create a GLFWwindow object that we can use for GLFW's functions
-    glfwMakeContextCurrent(window);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    // Set the required callback functions
-    glfwSetKeyCallback(window, key_callback);
-
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize OpenGL context" << std::endl;
-        return -1;
-    }
-
-    // Define the viewport dimensions
-    glViewport(0, 0, WIDTH, HEIGHT);
-
-    // Game loop
-    while (!glfwWindowShouldClose(window))
-    {
-        // Check if any events have been activated (key pressed, mouse moved etc.) and call corresponding response functions
-        glfwPollEvents();
-
-        // Render
-        // Clear the colorbuffer
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Swap the screen buffers
-        glfwSwapBuffers(window);
-    }
-
-    // Terminates GLFW, clearing any resources allocated by GLFW.
-    glfwTerminate();
-    return 0;
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mode) {
+  std::cout << key << std::endl;
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-// Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-    std::cout << key << std::endl;
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+class HelloTriangleApplication {
+public:
+  void run() {
+    initWindow();
+    mainLoop();
+    cleanup();
+  }
+
+private:
+  GLFWwindow *window;
+  VkInstance instance;
+
+  void initVulkan() { createInstance(); }
+
+  void createInstance() {
+    VkApplicationInfo appInfo{};
+    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo.pApplicationName = "Hello Triangle";
+    appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.pEngineName = "No Engine";
+    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.apiVersion = VK_API_VERSION_1_0;
+
+    VkInstanceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pApplicationInfo = &appInfo;
+
+    uint32_t glfwExtensionCount = 0;
+    const char **glfwExtensions;
+
+    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+    createInfo.enabledExtensionCount = glfwExtensionCount;
+    createInfo.ppEnabledExtensionNames = glfwExtensions;
+
+    createInfo.enabledLayerCount = 0;
+
+    VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
+
+    if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
+      throw std::runtime_error("failed to create instance!");
+    }
+
+    uint32_t extensionCount = 0;
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> extensions(extensionCount);
+
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
+                                           extensions.data());
+
+    std::cout << "available extensions:\n";
+
+    for (const auto &extension : extensions) {
+      std::cout << "  " << extension.extensionName << '\n';
+    }
+  }
+
+  void initWindow() {
+    glfwInit();
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+
+    glfwSetKeyCallback(window, key_callback);
+
+    initVulkan();
+  }
+
+  void mainLoop() {
+    while (!glfwWindowShouldClose(window)) {
+      // Check if any events have been activated (key pressed, mouse moved etc.)
+      // and call corresponding response functions
+      glfwPollEvents();
+
+      // Render
+      // Clear the colorbuffer
+      // glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+      // glClear(GL_COLOR_BUFFER_BIT);
+
+      // Swap the screen buffers
+      glfwSwapBuffers(window);
+    }
+  }
+
+  void cleanup() {
+    vkDestroyInstance(instance, nullptr);
+
+    glfwDestroyWindow(window);
+
+    glfwTerminate();
+  }
+};
+
+int main() {
+  HelloTriangleApplication app;
+
+  try {
+    app.run();
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
 }
