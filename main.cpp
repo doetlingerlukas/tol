@@ -31,8 +31,12 @@ public:
 private:
   GLFWwindow *window;
   VkInstance instance;
+  VkSurfaceKHR surface;
 
-  void initVulkan() { createInstance(); }
+  void initVulkan() {
+    createInstance();
+    createSurface();
+  }
 
   void createInstance() {
     VkApplicationInfo appInfo{};
@@ -78,6 +82,13 @@ private:
     }
   }
 
+  void createSurface() {
+    VkResult err = glfwCreateWindowSurface(instance, window, NULL, &surface);
+    if (err) {
+      throw std::runtime_error("failed to create window surface");
+    }
+  }
+
   void initWindow() {
     glfwInit();
 
@@ -107,6 +118,8 @@ private:
   }
 
   void cleanup() {
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+
     vkDestroyInstance(instance, nullptr);
 
     glfwDestroyWindow(window);
