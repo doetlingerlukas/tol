@@ -6,6 +6,13 @@ def mac?
   RUBY_PLATFORM.include?('darwin')
 end
 
+task :deps do
+  sh 'brew', 'install', 'vcpkg' if mac?
+  sh 'vcpkg', 'install', 'glad'
+  sh 'vcpkg', 'install', 'glfw3'
+  sh 'brew', 'install', 'reitermarkus/tap/vulkan-sdk' if mac?
+end
+
 task :build do
   vulkan_sdk = if mac?
     '/usr/local'
