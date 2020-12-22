@@ -41,11 +41,15 @@ private:
   GLFWwindow *window;
   VkInstance instance;
   VkSurfaceKHR surface;
+  VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+  VkDevice device;
+  VkQueue graphicsQueue;
 
   void initVulkan() {
     createInstance();
     createSurface();
     pickPhysicalDevice();
+    createLogicalDevice();
   }
 
   void createInstance() {
@@ -70,6 +74,7 @@ private:
     createInfo.ppEnabledExtensionNames = glfwExtensions;
 
     createInfo.enabledLayerCount = 0;
+    createInfo.pNext = nullptr;
 
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
       throw std::runtime_error("failed to create instance!");
@@ -91,15 +96,12 @@ private:
   }
 
   void createSurface() {
-    VkResult err = glfwCreateWindowSurface(instance, window, NULL, &surface);
-    if (err) {
-      throw std::runtime_error("failed to create window surface");
+    if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+      throw std::runtime_error("failed to create window surface!");
     }
   }
 
   void pickPhysicalDevice() {
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
@@ -128,6 +130,47 @@ private:
     return indices.isComplete();
   }
 
+  std::vector<const char*> getRequiredExtensions() {
+    uint32_t glfwExtensionCount = 0;
+    const char** glfwExtensions;
+    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+    return extensions;
+  }
+
+  void createLogicalDevice() {
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueCount = 1;
+
+    float queuePriority = 1.0f;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+
+    VkPhysicalDeviceFeatures deviceFeatures{};
+
+    VkDeviceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+    createInfo.pQueueCreateInfos = &queueCreateInfo;
+    createInfo.queueCreateInfoCount = 1;
+
+    createInfo.pEnabledFeatures = &deviceFeatures;
+
+    createInfo.enabledExtensionCount = 0;
+    createInfo.enabledLayerCount = 0;
+
+    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+      throw std::runtime_error("failed to create logical device!");
+    }
+
+    vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+  }
+
   QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
     QueueFamilyIndices indices;
 
@@ -151,16 +194,6 @@ private:
     }
 
     return indices;
-  }
-
-  std::vector<const char*> getRequiredExtensions() {
-    uint32_t glfwExtensionCount = 0;
-    const char** glfwExtensions;
-    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-
-    return extensions;
   }
 
   void initWindow() {
@@ -193,11 +226,8 @@ private:
 
   void cleanup() {
     vkDestroySurfaceKHR(instance, surface, nullptr);
-
     vkDestroyInstance(instance, nullptr);
-
     glfwDestroyWindow(window);
-
     glfwTerminate();
   }
 };
