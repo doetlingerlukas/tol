@@ -11,11 +11,14 @@
 #include <algorithm>
 #include <cstring>
 #include <cstdint>
+#include <filesystem>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 using namespace std;
+
+namespace fs = std::filesystem;
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -31,9 +34,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
     glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-std::vector<char> readFile(const std::string& filename) {
+std::vector<char> readFile(const fs::path& filepath) {
   std::ifstream file;
-  file.open(filename, std::ios::ate | std::ios::binary);
+  file.open(filepath, std::ios::binary | std::ios::ate);
 
   if (!file.is_open()) {
     throw std::runtime_error("failed to open file!");
@@ -417,8 +420,8 @@ private:
   }
 
   void createGraphicsPipeline() {
-    auto vertShaderCode = readFile("shaders/shader.vert.spv");
-    auto fragShaderCode = readFile("shaders/shader.frag.spv");
+    auto vertShaderCode = readFile(fs::absolute("./shaders/shader.vert.spv"));
+    auto fragShaderCode = readFile(fs::absolute("./shaders/shader.frag.spv"));
 
     VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
     VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
