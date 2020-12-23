@@ -1,6 +1,8 @@
 build
 bin
 
+*.spv
+
 # Visual Studio
 .vs
 out
