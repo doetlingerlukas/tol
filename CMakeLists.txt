@@ -13,6 +13,7 @@ foreach(shader ${shaders})
   set(input_glsl "${CMAKE_HOME_DIRECTORY}/${shader}")
   set(output_spv "${input_glsl}.spv")
   execute_process(COMMAND "glslc" "${input_glsl}" "-o" "${output_spv}")
+  configure_file(${output_spv} "${CMAKE_BINARY_DIR}/${shader}.spv" COPYONLY)
 endforeach()
 
 add_executable(tol)
