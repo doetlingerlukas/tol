@@ -20,6 +20,7 @@ add_executable(tol)
 target_sources(tol
   PRIVATE
     main.cpp
+    overlay.c
 )
 
 find_package(glad CONFIG REQUIRED)
@@ -28,7 +29,15 @@ target_link_libraries(tol PRIVATE glad::glad)
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE glfw)
 
+find_path(NUKLEAR_INCLUDE_DIRS "nuklear.h")
+target_include_directories(tol PRIVATE ${NUKLEAR_INCLUDE_DIRS})
+
 find_package(Vulkan REQUIRED)
-target_include_directories(tol PUBLIC "$ENV{VULKAN_SDK}/include")
+
+target_include_directories(tol PRIVATE
+  "$ENV{VULKAN_SDK}/include"
+  include
+)
+
 target_link_directories(tol PUBLIC "$ENV{VULKAN_SDK}/lib")
 target_link_libraries(tol PRIVATE Vulkan::Vulkan)

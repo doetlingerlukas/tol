@@ -16,6 +16,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include "include/overlay.h"
+
 namespace fs = std::filesystem;
 
 const uint32_t WIDTH = 800;
@@ -70,6 +72,14 @@ struct SwapChainSupportDetails {
 
 class HelloTriangleApplication {
 public:
+ HelloTriangleApplication() :
+    settings {
+      {0.0f, 0.0f, 0.0f, 0.0f},
+      WIDTH,
+      HEIGHT
+    } {
+  }
+
   void run() {
     initWindow();
     mainLoop();
@@ -102,6 +112,8 @@ private:
   std::vector<VkFence> imagesInFlight;
   size_t currentFrame = 0;
 
+  overlay_settings settings;
+
   void initVulkan() {
     createInstance();
     createSurface();
@@ -115,6 +127,12 @@ private:
     createCommandPool();
     createCommandBuffer();
     createSyncObjects();
+
+    QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
+
+    init_overlay(window, device, physicalDevice, graphicsQueue,
+      static_cast<uint32_t>(*queueFamilyIndices.graphicsFamily), swapChainFramebuffers.data(),
+      static_cast<uint32_t>(swapChainFramebuffers.size()), swapChainImageFormat, swapChainImageFormat);
   }
 
   void createInstance() {
@@ -716,11 +734,49 @@ private:
     }
   }
 
+  void cleanupSwapChain() {
+    for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+      vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
+    }
+
+    vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+
+    vkDestroyPipeline(device, graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+    vkDestroyRenderPass(device, renderPass, nullptr);
+
+    for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+      vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
+  }
+
+  void recreateSwapChain() {
+    vkDeviceWaitIdle(device);
+
+    cleanupSwapChain();
+
+    createSwapChain();
+    createImageViews();
+    createRenderPass();
+    createGraphicsPipeline();
+    createFramebuffers();
+    createCommandBuffer();
+  }
+
   void drawFrame() {
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+      recreateSwapChain();
+      return;
+    } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+      throw std::runtime_error("failed to acquire swap chain image!");
+    }
 
     // Check if a previous frame is using this image (i.e. there is its fence to wait on)
     if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
@@ -740,9 +796,8 @@ private:
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
 
-    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
     submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = signalSemaphores;
+    submitInfo.pSignalSemaphores = &renderFinishedSemaphores[currentFrame];
 
     vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
@@ -750,11 +805,27 @@ private:
       throw std::runtime_error("failed to submit draw command buffer!");
     }
 
+    float old_bg_color[4] {
+      settings.bg_color[0],
+      settings.bg_color[1],
+      settings.bg_color[2],
+      settings.bg_color[3]
+    };
+
+    VkSemaphore overlayFinished = submit_overlay(&settings, imageIndex, renderFinishedSemaphores[currentFrame]);
+    if (old_bg_color[0] != settings.bg_color[0]
+        || old_bg_color[1] != settings.bg_color[1]
+        || old_bg_color[2] != settings.bg_color[2]
+        || old_bg_color[3] != settings.bg_color[3]) {
+            // update clear color
+            createCommandBuffer();
+    }
+
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
     presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = signalSemaphores;
+    presentInfo.pWaitSemaphores = &overlayFinished;
 
     VkSwapchainKHR swapChains[] = { swapChain };
     presentInfo.swapchainCount = 1;
@@ -763,9 +834,16 @@ private:
 
     presentInfo.pResults = nullptr; // Optional
 
-    vkQueuePresentKHR(presentQueue, &presentInfo);
+    result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+      recreateSwapChain();
+    } else if (result != VK_SUCCESS) {
+      throw std::runtime_error("failed to present swap chain image!");
+    }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    vkQueueWaitIdle(presentQueue);
   }
 
   void initWindow() {
@@ -790,6 +868,7 @@ private:
   }
 
   void cleanup() {
+    shutdown_overlay();
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
       vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
       vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
