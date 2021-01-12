@@ -10,6 +10,7 @@ task :deps do
   sh 'brew', 'install', 'vcpkg' if mac?
   sh 'vcpkg', 'install', 'glad'
   sh 'vcpkg', 'install', 'glfw3'
+  sh 'vcpkg', 'install', 'nuklear'
   sh 'brew', 'install', 'reitermarkus/tap/vulkan-sdk' if mac?
 end
 
