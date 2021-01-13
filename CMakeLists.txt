@@ -29,8 +29,7 @@ set(NUKLEAR_SHADERS
 )
 
 foreach (SHADER ${NUKLEAR_SHADERS})
-  SET(SPV_FILENAME ${SHADER}.spv)
-  execute_process(COMMAND "xxd" "-i" shaders/${SHADER}.spv nuklear/${SHADER}.h)
+  execute_process(COMMAND "xxd" "-i" "shaders/${SHADER}.spv" "${CMAKE_HOME_DIRECTORY}/nuklear/${SHADER}.h")
 endforeach()
 
 add_executable(tol)
