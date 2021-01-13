@@ -91,7 +91,7 @@ public:
 private:
   GLFWwindow *window;
   vk::Instance instance;
-  VkSurfaceKHR surface;
+  vk::SurfaceKHR surface;
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
   VkDevice device;
   VkQueue graphicsQueue;
@@ -165,8 +165,8 @@ private:
   }
 
   void createSurface() {
-    if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
-      throw std::runtime_error("failed to create window surface!");
+    if (glfwCreateWindowSurface(instance, window, nullptr, reinterpret_cast<VkSurfaceKHR*>(&surface)) != VK_SUCCESS) {
+      throw std::runtime_error("failed to create window surface");
     }
   }
 
@@ -887,8 +887,8 @@ private:
     vkDestroySwapchainKHR(device, swapChain, nullptr);
     vkDestroyDevice(device, nullptr);
 
-    vkDestroySurfaceKHR(instance, surface, nullptr);
-    vkDestroyInstance(instance, nullptr);
+    instance.destroy(surface);
+    instance.destroy();
 
     glfwDestroyWindow(window);
     glfwTerminate();
