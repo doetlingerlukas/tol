@@ -11,9 +11,5 @@ target_sources(tol
     main.cpp
 )
 
-find_package(glad CONFIG REQUIRED)
-target_link_libraries(tol PRIVATE glad::glad)
-
-find_package(glfw3 CONFIG REQUIRED)
-target_link_libraries(tol PRIVATE glfw)
-
+find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)
