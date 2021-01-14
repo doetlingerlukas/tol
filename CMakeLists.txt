@@ -36,7 +36,7 @@ add_executable(tol)
 target_sources(tol
   PRIVATE
     main.cpp
-    overlay.c
+    overlay.cpp
 )
 
 find_package(glad CONFIG REQUIRED)

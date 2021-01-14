@@ -324,19 +324,19 @@ void prepare_pipeline(struct nk_vulkan_adapter* adapter) {
             .binding = 0,
             .location = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
-            .offset = NK_OFFSETOF(struct nk_glfw_vertex, position),
+            .offset = static_cast<uint32_t>(NK_OFFSETOF(struct nk_glfw_vertex, position)),
         },
         {
             .binding = 0,
             .location = 1,
             .format = VK_FORMAT_R32G32_SFLOAT,
-            .offset = NK_OFFSETOF(struct nk_glfw_vertex, uv),
+            .offset = static_cast<uint32_t>(NK_OFFSETOF(struct nk_glfw_vertex, uv)),
         },
         {
             .binding = 0,
             .location = 2,
             .format = VK_FORMAT_R8G8B8A8_UINT,
-            .offset = NK_OFFSETOF(struct nk_glfw_vertex, col),
+            .offset = static_cast<uint32_t>(NK_OFFSETOF(struct nk_glfw_vertex, col)),
         },
     };
 
@@ -506,7 +506,7 @@ nk_glfw3_device_create(VkDevice logical_device, VkPhysicalDevice physical_device
     adapter->framebuffers_len = framebuffers_len;
     adapter->color_format = color_format;
     adapter->depth_format = depth_format;
-    adapter->command_buffers = malloc(framebuffers_len * sizeof(VkCommandBuffer));
+    adapter->command_buffers = static_cast<VkCommandBuffer*>(malloc(framebuffers_len * sizeof(VkCommandBuffer)));
 
     prepare_semaphores(adapter);
     prepare_render_pass(adapter);
@@ -618,8 +618,8 @@ nk_glfw3_device_upload_atlas(const void *image, int width, int height)
         .imageType = VK_IMAGE_TYPE_2D,
         .format = VK_FORMAT_R8G8B8A8_UNORM,
         .extent = {
-            .width = width,
-            .height = height,
+            .width = static_cast<uint32_t>(width),
+            .height = static_cast<uint32_t>(height),
             .depth = 1,
         },
         .mipLevels = 1,
@@ -713,8 +713,8 @@ nk_glfw3_device_upload_atlas(const void *image, int width, int height)
             .layerCount = 1,
         },
         .imageExtent = {
-            .width = width,
-            .height = height,
+            .width = static_cast<uint32_t>(width),
+            .height = static_cast<uint32_t>(height),
             .depth = 1,
         },
     };
@@ -928,6 +928,11 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
     };
 
+    uint32_t display_width_u = glfw.display_width;
+    uint32_t display_height_u = glfw.display_height;
+    float display_width_f = glfw.display_width;
+    float display_height_f = glfw.display_height;
+
     VkRenderPassBeginInfo renderPassBeginInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .renderPass = adapter->render_pass,
@@ -937,8 +942,8 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
                 .y = 0,
             },
             .extent = {
-                .width = glfw.display_width,
-                .height = glfw.display_height,
+                .width = display_width_u,
+                .height = display_height_u,
             },
         },
         .clearValueCount = 0,
@@ -951,9 +956,10 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
     assert(vkBeginCommandBuffer(command_buffer, &begin_info) == VK_SUCCESS);
     vkCmdBeginRenderPass(command_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+
     VkViewport viewport = {
-        .width = (float) glfw.display_width,
-        .height = (float) glfw.display_height,
+        .width = display_width_f,
+        .height = display_height_f,
         .minDepth = 0.0f,
         .maxDepth = 1.0f,
     };
@@ -1011,12 +1017,12 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
 
             VkRect2D scissor = {
                 .extent = {
-                    .width = cmd->clip_rect.w * glfw.fb_scale.x,
-                    .height = cmd->clip_rect.h * glfw.fb_scale.y,
+                    .width = static_cast<uint32_t>(cmd->clip_rect.w * glfw.fb_scale.x),
+                    .height = static_cast<uint32_t>(cmd->clip_rect.h * glfw.fb_scale.y),
                 },
                 .offset = {
-                    .x = max(cmd->clip_rect.x * glfw.fb_scale.x, 0),
-                    .y = max(cmd->clip_rect.y * glfw.fb_scale.y, 0),
+                    .x = static_cast<int32_t>(max(cmd->clip_rect.x * glfw.fb_scale.x, 0)),
+                    .y = static_cast<int32_t>(max(cmd->clip_rect.y * glfw.fb_scale.y, 0)),
                 }
             };
             vkCmdSetScissor(command_buffer, 0, 1, &scissor);
