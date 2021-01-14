@@ -666,7 +666,7 @@ private:
     uint32_t imageIndex;
     try {
       imageIndex = device.acquireNextImageKHR(swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame]).value;
-    } catch (vk::OutOfDateKHRError) {
+    } catch (const vk::OutOfDateKHRError &) {
       recreateSwapChain();
       return;
     }
@@ -729,7 +729,7 @@ private:
       if (result == vk::Result::eSuboptimalKHR) {
         recreateSwapChain();
       }
-    } catch (vk::OutOfDateKHRError e) {
+    } catch (const vk::OutOfDateKHRError &e) {
       recreateSwapChain();
     }
 
