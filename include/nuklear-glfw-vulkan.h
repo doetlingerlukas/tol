@@ -905,7 +905,6 @@ nk_glfw3_new_frame()
 NK_API
 VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkSemaphore wait_semaphore) {
     struct nk_vulkan_adapter *adapter = &glfw.adapter;
-    struct GLFWwindow *win = glfw.win;
     struct nk_buffer vbuf, ebuf;
 
     struct Mat4f projection = {
