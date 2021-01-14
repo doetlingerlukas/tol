@@ -908,7 +908,7 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
     struct GLFWwindow *win = glfw.win;
     struct nk_buffer vbuf, ebuf;
 
-    struct Mat4f projection = (struct Mat4f) {
+    struct Mat4f projection = {
         .m = {
             2.0f, 0.0f, 0.0f, 0.0f,
             0.0f, -2.0f, 0.0f, 0.0f,
