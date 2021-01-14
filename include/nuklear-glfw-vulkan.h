@@ -153,9 +153,9 @@ void prepare_descriptor_pool(struct nk_vulkan_adapter* adapter) {
 
     VkDescriptorPoolCreateInfo pool_info = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .maxSets = 1,
         .poolSizeCount = 2,
         .pPoolSizes = pool_sizes,
-        .maxSets = 1,
     };
 
     assert(vkCreateDescriptorPool(adapter->logical_device, &pool_info, VK_NULL_HANDLE, &adapter->descriptor_pool) == VK_SUCCESS);
@@ -205,9 +205,9 @@ void update_write_descriptor_sets(struct nk_vulkan_adapter* adapter) {
     };
 
     VkDescriptorImageInfo image_info = {
-        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-        .imageView = adapter->font_image_view,
         .sampler = adapter->font_tex,
+        .imageView = adapter->font_image_view,
+        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
     };
 
     VkWriteDescriptorSet descriptor_writes[2];
@@ -302,8 +302,8 @@ void prepare_pipeline(struct nk_vulkan_adapter* adapter) {
 
     VkPipelineDynamicStateCreateInfo dynamic_state = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+        .dynamicStateCount = 2,
         .pDynamicStates = dynamic_states,
-        .dynamicStateCount = 2
     };
 
     VkPipelineShaderStageCreateInfo shader_stages[2] = {
@@ -321,20 +321,20 @@ void prepare_pipeline(struct nk_vulkan_adapter* adapter) {
 
     VkVertexInputAttributeDescription vertex_attribute_description[3] = {
         {
-            .binding = 0,
             .location = 0,
+            .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
             .offset = static_cast<uint32_t>(NK_OFFSETOF(struct nk_glfw_vertex, position)),
         },
         {
-            .binding = 0,
             .location = 1,
+            .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
             .offset = static_cast<uint32_t>(NK_OFFSETOF(struct nk_glfw_vertex, uv)),
         },
         {
-            .binding = 0,
             .location = 2,
+            .binding = 0,
             .format = VK_FORMAT_R8G8B8A8_UINT,
             .offset = static_cast<uint32_t>(NK_OFFSETOF(struct nk_glfw_vertex, col)),
         },
@@ -363,8 +363,8 @@ void prepare_pipeline(struct nk_vulkan_adapter* adapter) {
         .pDynamicState = &dynamic_state,
         .layout = adapter->pipeline_layout,
         .renderPass = adapter->render_pass,
-        .basePipelineIndex = -1,
         .basePipelineHandle = VK_NULL_HANDLE,
+        .basePipelineIndex = -1,
     };
 
     VkResult result = vkCreateGraphicsPipelines(adapter->logical_device, VK_NULL_HANDLE, 1, &pipeline_info, VK_NULL_HANDLE, &adapter->pipeline);
@@ -405,15 +405,15 @@ void prepare_render_pass(struct nk_vulkan_adapter* adapter) {
     };
 
     VkSubpassDescription subpass_description = {
-        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
         .flags = 0,
-		.inputAttachmentCount = 0,
-		.pInputAttachments = NULL,
-		.colorAttachmentCount = 1,
-		.pColorAttachments = &color_reference,
-		.pResolveAttachments = NULL,
-		.pDepthStencilAttachment = VK_NULL_HANDLE,
-		.preserveAttachmentCount = 0,
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .inputAttachmentCount = 0,
+        .pInputAttachments = NULL,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &color_reference,
+        .pResolveAttachments = NULL,
+        .pDepthStencilAttachment = VK_NULL_HANDLE,
+        .preserveAttachmentCount = 0,
         .pPreserveAttachments = NULL,
     };
 
@@ -434,8 +434,8 @@ void prepare_render_pass(struct nk_vulkan_adapter* adapter) {
 void prepare_command_buffers(struct nk_vulkan_adapter* adapter) {
     VkCommandPoolCreateInfo command_pool = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-        .queueFamilyIndex = adapter->graphics_queue_index,
         .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+        .queueFamilyIndex = adapter->graphics_queue_index,
     };
 
     assert(vkCreateCommandPool(adapter->logical_device, &command_pool, NULL, &adapter->command_pool) == VK_SUCCESS);
@@ -682,17 +682,17 @@ nk_glfw3_device_upload_atlas(const void *image, int width, int height)
 
     VkImageMemoryBarrier image_memory_barrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        .image = adapter->font_image,
-        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
         .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = adapter->font_image,
         .subresourceRange = {
             .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
             .levelCount = 1,
             .layerCount = 1,
         },
-        .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
     };
 
 	vkCmdPipelineBarrier(
@@ -730,18 +730,18 @@ nk_glfw3_device_upload_atlas(const void *image, int width, int height)
 
     VkImageMemoryBarrier image_shader_memory_barrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        .image = adapter->font_image,
-        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+        .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
         .oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
         .newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = adapter->font_image,
         .subresourceRange = {
             .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
             .levelCount = 1,
             .layerCount = 1,
         },
-        .srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
-        .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
     };
 
 	vkCmdPipelineBarrier(
@@ -781,7 +781,6 @@ nk_glfw3_device_upload_atlas(const void *image, int width, int height)
 
     VkSamplerCreateInfo sampler_info = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-        .maxAnisotropy = 1.0,
         .magFilter = VK_FILTER_LINEAR,
         .minFilter = VK_FILTER_LINEAR,
         .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
@@ -789,6 +788,7 @@ nk_glfw3_device_upload_atlas(const void *image, int width, int height)
         .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
         .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
         .mipLodBias = 0.0f,
+        .maxAnisotropy = 1.0,
         .compareEnable = VK_FALSE,
         .compareOp = VK_COMPARE_OP_ALWAYS,
         .minLod = 0.0f,
@@ -936,6 +936,7 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
     VkRenderPassBeginInfo renderPassBeginInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .renderPass = adapter->render_pass,
+        .framebuffer = adapter->framebuffers[buffer_index],
         .renderArea = {
             .offset = {
                 .x = 0,
@@ -948,7 +949,6 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
         },
         .clearValueCount = 0,
         .pClearValues = VK_NULL_HANDLE,
-        .framebuffer = adapter->framebuffers[buffer_index],
     };
 
     VkCommandBuffer command_buffer = adapter->command_buffers[0];
@@ -1016,14 +1016,14 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
             if (!cmd->elem_count) continue;
 
             VkRect2D scissor = {
+                .offset = {
+                  .x = static_cast<int32_t>(max(cmd->clip_rect.x * glfw.fb_scale.x, 0)),
+                  .y = static_cast<int32_t>(max(cmd->clip_rect.y * glfw.fb_scale.y, 0)),
+                },
                 .extent = {
                     .width = static_cast<uint32_t>(cmd->clip_rect.w * glfw.fb_scale.x),
                     .height = static_cast<uint32_t>(cmd->clip_rect.h * glfw.fb_scale.y),
                 },
-                .offset = {
-                    .x = static_cast<int32_t>(max(cmd->clip_rect.x * glfw.fb_scale.x, 0)),
-                    .y = static_cast<int32_t>(max(cmd->clip_rect.y * glfw.fb_scale.y, 0)),
-                }
             };
             vkCmdSetScissor(command_buffer, 0, 1, &scissor);
             vkCmdDrawIndexed(command_buffer, cmd->elem_count, 1, index_offset, 0, 0);
@@ -1038,11 +1038,11 @@ VkSemaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, VkS
     VkPipelineStageFlags wait_stages[1] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
     VkSubmitInfo submit_info = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .commandBufferCount = 1,
-        .pCommandBuffers = &command_buffer,
-        .pWaitDstStageMask = wait_stages,
         .waitSemaphoreCount = 1,
         .pWaitSemaphores = &wait_semaphore,
+        .pWaitDstStageMask = wait_stages,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &command_buffer,
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = &adapter->render_completed,
     };
