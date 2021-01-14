@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(tol)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+include(BuildType)
+include(CxxStandard)
+
+project(tol VERSION 1.0 LANGUAGES CXX)
 
 find_program(XXD xxd)
 
-
 find_program(GLSLC glslc)
-
 
 set(shader_path ${CMAKE_HOME_DIRECTORY}/shaders)
 
