@@ -66,7 +66,7 @@ NK_API void                 nk_glfw3_mouse_button_callback(GLFWwindow *win, int 
 #define MAX_INDEX_BUFFER 128 * 1024
 
 struct Mat4f {
-    float m[16];
+    std::array<float, 16> m;
 };
 
 struct nk_vulkan_adapter {
@@ -795,14 +795,14 @@ vk::Semaphore nk_glfw3_render(enum nk_anti_aliasing AA, uint32_t buffer_index, v
     auto device = adapter->logical_device;
     vk::Queue queue(adapter->graphics_queue);
 
-    struct Mat4f projection = {
-        .m = {
-            2.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -2.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, -1.0f, 0.0f,
-            -1.0f, 1.0f, 0.0f, 1.0f
-        },
+    struct Mat4f projection;
+    projection.m = {
+      2.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, -2.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, -1.0f, 0.0f,
+      -1.0f, 1.0f, 0.0f, 1.0f
     };
+
     projection.m[0] /= glfw.width;
     projection.m[5] /= glfw.height;
 
