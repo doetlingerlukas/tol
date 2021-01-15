@@ -5,6 +5,8 @@ project(tol)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+file(COPY textures DESTINATION textures)
+
 add_executable(tol)
 target_sources(tol
   PRIVATE
