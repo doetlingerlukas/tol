@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 
 #include <string.h>
-#include "nuklear-glfw-vulkan.h"
-#include "overlay.h"
+#include "nuklear-glfw-vulkan.hpp"
+#include "overlay.hpp"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -20,9 +20,9 @@ struct nk_context *ctx;
 struct nk_color background;
 struct nk_font_atlas *atlas;
 
-void init_overlay(GLFWwindow* _win, VkDevice logical_device, VkPhysicalDevice physical_device, VkQueue graphics_queue, uint32_t graphics_queue_index, VkFramebuffer* framebuffers, uint32_t framebuffers_len, VkFormat color_format, VkFormat depth_format) {
+void init_overlay(GLFWwindow* _win, vk::Device logical_device, vk::PhysicalDevice physical_device, vk::Queue graphics_queue, uint32_t graphics_queue_index, std::vector<vk::Framebuffer> framebuffers, vk::Format color_format, vk::Format depth_format) {
   win = _win;
-  ctx = nk_glfw3_init(win, logical_device, physical_device, graphics_queue, graphics_queue_index, framebuffers, framebuffers_len, color_format, depth_format, NK_GLFW3_INSTALL_CALLBACKS);
+  ctx = nk_glfw3_init(win, logical_device, physical_device, graphics_queue, graphics_queue_index, framebuffers, color_format, depth_format, NK_GLFW3_INSTALL_CALLBACKS);
   // /* Load Fonts: if none of these are loaded a default font will be used  */
   // /* Load Cursor: if you uncomment cursor loading please hide the cursor */
   {
@@ -46,13 +46,12 @@ void init_overlay(GLFWwindow* _win, VkDevice logical_device, VkPhysicalDevice ph
   }
 }
 
-VkSemaphore submit_overlay(
-  struct overlay_settings* settings, uint32_t buffer_index, VkSemaphore main_finished_semaphore) {
+vk::Semaphore submit_overlay(
+  struct overlay_settings* settings, uint32_t buffer_index, vk::Semaphore main_finished_semaphore) {
   const int r = (int) (settings->bg_color[0] * 255);
   const int g = (int) (settings->bg_color[1] * 255);
   const int b = (int) (settings->bg_color[2] * 255);
   const int a = (int) (settings->bg_color[3] * 255);
-
 
   struct nk_color background = nk_rgba(r, g, b, a);
 

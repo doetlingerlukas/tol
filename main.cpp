@@ -20,7 +20,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "include/overlay.h"
+#include "include/overlay.hpp"
 
 namespace fs = std::filesystem;
 
@@ -135,9 +135,8 @@ private:
 
     QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
-    init_overlay(window, static_cast<VkDevice>(device), static_cast<VkPhysicalDevice>(physicalDevice), static_cast<VkQueue>(graphicsQueue),
-      static_cast<uint32_t>(*queueFamilyIndices.graphicsFamily), reinterpret_cast<VkFramebuffer*>(swapChainFramebuffers.data()),
-      static_cast<uint32_t>(swapChainFramebuffers.size()), static_cast<VkFormat>(swapChainImageFormat), static_cast<VkFormat>(swapChainImageFormat));
+    init_overlay(window, device, physicalDevice, graphicsQueue,
+      static_cast<uint32_t>(*queueFamilyIndices.graphicsFamily), swapChainFramebuffers, swapChainImageFormat, swapChainImageFormat);
   }
 
   void createInstance() {
