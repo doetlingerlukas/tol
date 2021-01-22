@@ -5,13 +5,15 @@ project(tol)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-file(COPY textures DESTINATION textures)
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 add_executable(tol)
 target_sources(tol
   PRIVATE
     main.cpp
 )
+
+target_include_directories(tol PRIVATE include)
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)

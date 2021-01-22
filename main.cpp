@@ -2,19 +2,28 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <map.hpp>
+
 int main() {
 
-  sf::RenderWindow window(sf::VideoMode(840, 600), "SFML works!", sf::Style::Titlebar | sf::Style::Close);
+  sf::RenderWindow window(sf::VideoMode(840, 600), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
 
-  // https://opengameart.org/node/8122
-  sf::Texture floor_texture;
-  floor_texture.setSmooth(true);
-  if (!floor_texture.loadFromFile("textures/stonetiles.png")) {
-    std::cerr << "Failed to load texture!" << std::endl;
+  // define the level with an array of tile indices
+  const int level[] = {
+      0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0,
+      1, 1, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3,
+      0, 1, 0, 0, 2, 0, 3, 3, 3, 0, 1, 1, 1, 0, 0, 0,
+      0, 1, 1, 0, 3, 3, 3, 0, 0, 0, 1, 1, 1, 2, 0, 0,
+      0, 0, 1, 0, 3, 0, 2, 2, 0, 0, 1, 1, 1, 1, 2, 0,
+      2, 0, 1, 0, 3, 0, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1,
+      0, 0, 1, 0, 3, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1,
+  };
+
+  TiledMap map;
+  if (!map.load("assets/tileset.png", sf::Vector2u(32, 32), level, 16, 8)) {
+    return EXIT_FAILURE;
   }
-
-  sf::Sprite floor;
-  floor.setTexture(floor_texture);
 
   while (window.isOpen()) {
 
@@ -34,7 +43,7 @@ int main() {
     }
 
     window.clear(sf::Color::Black);
-    window.draw(floor);
+    window.draw(map);
     window.display();
   }
 
