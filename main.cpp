@@ -20,10 +20,7 @@ int main() {
       0, 0, 1, 0, 3, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1,
   };
 
-  TiledMap map;
-  if (!map.load("assets/tileset.png", sf::Vector2u(32, 32), level, 16, 8)) {
-    return EXIT_FAILURE;
-  }
+  TiledMap map(std::string("assets/map.json"));
 
   while (window.isOpen()) {
 
