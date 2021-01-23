@@ -5,3 +5,6 @@ bin
 .vs
 out
 CMakeSettings.json
+
+# Tiled
+*.tmx
