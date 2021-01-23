@@ -14,6 +14,7 @@ target_sources(tol
 )
 
 target_include_directories(tol PRIVATE include)
+target_include_directories(tol PRIVATE external)
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)
