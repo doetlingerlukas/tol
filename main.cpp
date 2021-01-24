@@ -8,7 +8,7 @@ int main() {
 
   sf::RenderWindow window(sf::VideoMode(840, 600), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
 
-  TiledMap map(std::string("assets/map.json"));
+  TiledMap map(std::string("assets/ultimate-map.json"));
 
   while (window.isOpen()) {
 
