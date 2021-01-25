@@ -16,5 +16,12 @@ target_sources(tol
 target_include_directories(tol PRIVATE include)
 target_include_directories(tol PRIVATE external)
 
+if(UNIX AND NOT APPLE)
+  set(OpenGL_GL_PREFERENCE GLVND)
+  find_package(OpenGL)
+  target_link_libraries(tol PRIVATE OpenGL::GL)
+endif()
+
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)
+
