@@ -6,6 +6,13 @@ def mac?
   RUBY_PLATFORM.include?('darwin')
 end
 
+task :deps do
+  sh 'brew', 'install', 'vcpkg' if mac?
+  sh 'vcpkg', 'install', 'glad'
+  sh 'vcpkg', 'install', 'glfw3'
+  sh 'vcpkg', 'install', 'sfml'
+end
+
 task :build do
   vcpkg_prefix = if mac?
     `brew --prefix vcpkg`.chomp
