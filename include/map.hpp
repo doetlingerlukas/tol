@@ -26,7 +26,7 @@ class TiledMap : public sf::Drawable {
       if (fs::exists(absolute_path) && fs::is_regular_file(absolute_path)) {
         std::unique_ptr<sf::Texture> texture = std::make_unique<sf::Texture>();
         std::cout << "Loading " << absolute_path << std::endl;
-        if (texture->loadFromFile(absolute_path)) {
+        if (texture->loadFromFile(absolute_path.string())) {
           std::unique_ptr<sf::Sprite> sprite = std::make_unique<sf::Sprite>();
           sprite->setTexture(*texture);
           sprite->setPosition(position);
