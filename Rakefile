@@ -17,7 +17,7 @@ task :map do
   sh 'tiled', '--minimize', '--embed-tilesets', '--export-map', 'map/map.tmx', 'map/map.json'
 end
 
-task :build do
+task :build => :map do
   vcpkg_prefix = if mac?
     `brew --prefix vcpkg`.chomp
   else
