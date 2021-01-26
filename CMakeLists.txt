@@ -18,10 +18,18 @@ target_include_directories(tol PRIVATE external)
 
 if(UNIX AND NOT APPLE)
   set(OpenGL_GL_PREFERENCE GLVND)
-  find_package(OpenGL)
+  find_package(OpenGL REQUIRED)
   target_link_libraries(tol PRIVATE OpenGL::GL)
 endif()
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)
+
+find_package(glad CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE glad::glad)
+
+find_path(NUKLEAR_INCLUDE_DIRS "nuklear.h")
+target_include_directories(tol PRIVATE ${NUKLEAR_INCLUDE_DIRS})
+
+target_link_libraries(tol PRIVATE ${CMAKE_DL_LIBS})
 
