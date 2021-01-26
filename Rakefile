@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 BUILD_DIR = 'build'
 
 def mac?
@@ -15,6 +17,18 @@ end
 
 task :map do
   sh 'tiled', '--minimize', '--embed-tilesets', '--export-map', 'map/map.tmx', 'map/map.json'
+
+  map = JSON.parse(File.read('map/map.json'))
+
+  map['tilesets'].each_with_index do |tileset, i|
+    first_gid = tileset['firstgid']
+
+    tileset['tiles']&.each_with_index do |tile, i|
+      tile['id'] = first_gid + i
+    end
+  end
+
+  File.write('map/map.json', JSON.pretty_generate(map))
 end
 
 task :build => :map do
