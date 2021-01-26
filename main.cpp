@@ -1,16 +1,19 @@
 #include <iostream>
 #include <algorithm>
 
-
 #include <SFML/Graphics.hpp>
 
 #include <map.hpp>
+#include <menu.hpp>
+
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
 
 int main() {
   try {
-
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
-    window.setKeyRepeatEnabled(false);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
+    window.setVerticalSyncEnabled(true);
+    window.setActive(true);
 
     TiledMap map("map/map.json");
 
@@ -18,6 +21,17 @@ int main() {
 
     float x_direction = 0;
     float y_direction = 0;
+
+    bool menu_open = true;
+
+    Menu menu;
+    menu.add_item("PLAY", [&]() {
+      window.setKeyRepeatEnabled(false);
+      menu_open = false;
+    });
+    menu.add_item("LOAD GAME", [&]() { });
+    menu.add_item("SAVE GAME", [&]() { });
+    menu.add_item("EXIT", [&]() { window.close(); });
 
     while (window.isOpen()) {
       sf::Event event;
@@ -29,40 +43,56 @@ int main() {
             break;
           case sf::Event::KeyPressed:
           case sf::Event::KeyReleased: {
-            switch (event.key.code) {
+             switch (event.key.code) {
               case sf::Keyboard::Escape:
-                window.close();
+                menu_open = true;
+                window.setKeyRepeatEnabled(true);
                 break;
               case sf::Keyboard::Right:
-                std::cout << "menuRight" << std::endl;
-                break;
-              case sf::Keyboard::D:
                 right = event.type == sf::Event::KeyPressed;
                 break;
-              case sf::Keyboard::Left:
-                std::cout << "menuLeft" << std::endl;
+              case sf::Keyboard::D:
                 break;
-              case sf::Keyboard::A:
+              case sf::Keyboard::Left:
                 left = event.type == sf::Event::KeyPressed;
                 break;
+              case sf::Keyboard::A:
+                break;
               case sf::Keyboard::Up:
-              std::cout << "menuUp" << std::endl;
+                if (menu_open) {
+                  if (event.type == sf::Event::KeyPressed) {
+                    menu.up();
+                  }
+                  up = false;
+                } else {
+                  up = event.type == sf::Event::KeyPressed;
+                }
                 break;
               case sf::Keyboard::W:
-                up = event.type == sf::Event::KeyPressed;
                 break;
               case sf::Keyboard::Down:
-                std::cout << "menuDown" << std::endl;
+                if (menu_open) {
+                  if (event.type == sf::Event::KeyPressed) {
+                    menu.down();
+                  }
+                  down = false;
+                } else {
+                  down = event.type == sf::Event::KeyPressed;
+                }
                 break;
               case sf::Keyboard::S:
-                down = event.type == sf::Event::KeyPressed;
+                break;
+              case sf::Keyboard::Enter:
+                if (menu_open) {
+                  menu.enter(event.type == sf::Event::KeyPressed);
+                }
                 break;
               default:
                 break;
             }
 
             break;
-          }
+           }
           default:
             break;
         }
@@ -101,6 +131,11 @@ int main() {
 
       window.clear();
       window.draw(map);
+
+      if (menu_open) {
+        window.draw(menu);
+      }
+
       window.display();
     }
 

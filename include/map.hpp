@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
 
-class TiledMap : public sf::Drawable {
+class TiledMap: public sf::Drawable {
   fs::path dir;
   fs::path filename;
 
