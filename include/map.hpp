@@ -106,43 +106,42 @@ class TiledMap : public sf::Drawable {
     auto* map = layer.getMap();
     for (auto& obj : layer.getObjects()) {
       switch (obj.getObjectType()) {
+        case tson::ObjectType::Object: {
+          auto* tileset = map->getTilesetByGid(obj.getGid());
+          const auto offset = getTileOffset(obj.getGid(), map, tileset);
 
-      case tson::ObjectType::Object: {
-        auto* tileset = map->getTilesetByGid(obj.getGid());
-        const auto offset = getTileOffset(obj.getGid(), map, tileset);
+          auto texture = loadImage(tileset->getImagePath());
+          sf::Sprite sprite;
+          sprite.setTexture(*texture);
+          std::string name = obj.getName();
+          sf::Vector2f position = { (float)obj.getPosition().x + positionOffset.x, (float)obj.getPosition().y + positionOffset.y };
 
-        auto texture = loadImage(tileset->getImagePath());
-        sf::Sprite sprite;
-        sprite.setTexture(*texture);
-        std::string name = obj.getName();
-        sf::Vector2f position = { (float)obj.getPosition().x + positionOffset.x, (float)obj.getPosition().y + positionOffset.y };
+          sf::Vector2f scale = sprite.getScale();
+          float rotation = sprite.getRotation();
+          sf::Vector2f origin{ ((float) map->getTileSize().x) / 2, ((float) map->getTileSize().y) / 2 };
 
-        sf::Vector2f scale = sprite.getScale();
-        float rotation = sprite.getRotation();
-        sf::Vector2f origin{ ((float) map->getTileSize().x) / 2, ((float) map->getTileSize().y) / 2 };
+          if (obj.hasFlipFlags(tson::TileFlipFlags::Horizontally))
+            scale.x = -scale.x;
+          if (obj.hasFlipFlags(tson::TileFlipFlags::Vertically))
+            scale.y = -scale.y;
+          if (obj.hasFlipFlags(tson::TileFlipFlags::Diagonally))
+            rotation += 90.f;
 
-        if (obj.hasFlipFlags(tson::TileFlipFlags::Horizontally))
-          scale.x = -scale.x;
-        if (obj.hasFlipFlags(tson::TileFlipFlags::Vertically))
-          scale.y = -scale.y;
-        if (obj.hasFlipFlags(tson::TileFlipFlags::Diagonally))
-          rotation += 90.f;
+          position = { position.x + origin.x, position.y + origin.y };
+          sprite.setOrigin(origin);
 
-        position = { position.x + origin.x, position.y + origin.y };
-        sprite.setOrigin(origin);
+          sprite.setTextureRect({ (int)offset.x, (int)offset.y, map->getTileSize().x, map->getTileSize().y });
+          sprite.setPosition({ position.x, position.y - map->getTileSize().y });
 
-        sprite.setTextureRect({ (int)offset.x, (int)offset.y, map->getTileSize().x, map->getTileSize().y });
-        sprite.setPosition({ position.x, position.y - map->getTileSize().y });
+          sprite.setScale(scale);
+          sprite.setRotation(rotation);
 
-        sprite.setScale(scale);
-        sprite.setRotation(rotation);
+          target.draw(sprite);
 
-        target.draw(sprite);
-      }
-      break;
-
-      default:
-        break;
+          break;
+        }
+        default:
+          break;
       }
     }
   }
