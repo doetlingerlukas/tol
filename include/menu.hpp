@@ -37,7 +37,7 @@ public:
     if (fonts.count(path.string()) == 0) {
       auto font = std::make_shared<sf::Font>();
 
-      if (fs::exists(path) && fs::is_regular_file(path) && font->loadFromFile(path)) {
+      if (fs::exists(path) && fs::is_regular_file(path) && font->loadFromFile(path.string())) {
         fonts[path.string()] = std::move(font);
         return fonts.at(path.string());
       }

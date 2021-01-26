@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY map DESTINATION ${CMAKE_BINARY_DIR})
 
 add_executable(tol)
 target_sources(tol

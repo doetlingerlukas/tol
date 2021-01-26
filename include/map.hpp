@@ -3,6 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
 
+#if defined(_MSC_VER)
+typedef long long ssize_t;
+#endif
+
 class TiledMap: public sf::Drawable {
   fs::path dir;
   fs::path filename;
@@ -25,7 +29,7 @@ class TiledMap: public sf::Drawable {
         std::cout << "Loading " << absolute_path << std::endl;
 
         auto texture = std::make_shared<sf::Texture>();
-        if (texture->loadFromFile(absolute_path)) {
+        if (texture->loadFromFile(absolute_path.string())) {
           textures[path.string()] = std::move(texture);
           return textures.at(path.string());
         }
