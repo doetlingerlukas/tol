@@ -17,10 +17,8 @@ int main() {
 
     TiledMap map("map/map.json");
 
+    sf::Vector2f position = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
-
-    float x_direction = 0;
-    float y_direction = 0;
 
     bool menu_open = true;
 
@@ -99,35 +97,42 @@ int main() {
       }
 
       if (up && !down) {
-        y_direction = std::clamp(y_direction + 1.0, 1.0, 10.0);
-      } else if (down && !up) {
-        y_direction = std::clamp(y_direction - 1.0, -10.0, -1.0);
-      } else {
-        if (y_direction > 0) {
-          y_direction -= 1;
-        } else if (y_direction < 0) {
-          y_direction += 1;
-        } else {
-          y_direction = 0;
+        position.y = std::clamp(position.y + 1.0, 1.0, 10.0);
+      }
+      else if (down && !up) {
+        position.y = std::clamp(position.y - 1.0, -10.0, -1.0);
+      }
+      else {
+        if (position.y > 0) {
+          position.y -= 1;
+        }
+        else if (position.y < 0) {
+          position.y += 1;
+        }
+        else {
+          position.y = 0;
         }
       }
 
       if (right && !left) {
-        x_direction = std::clamp(x_direction - 1.0, -10.0, -1.0);
-      } else if (left && !right) {
-        x_direction = std::clamp(x_direction + 1.0, 1.0, 10.0);
-      } else {
-        if (x_direction > 0) {
-          x_direction -= 1;
-        } else if (x_direction < 0) {
-          x_direction += 1;
-        } else {
-          x_direction = 0;
+        position.x = std::clamp(position.x - 1.0, -10.0, -1.0);
+      }
+      else if (left && !right) {
+        position.x = std::clamp(position.x + 1.0, 1.0, 10.0);
+      }
+      else {
+        if (position.x > 0) {
+          position.x -= 1;
+        }
+        else if (position.x < 0) {
+          position.x += 1;
+        }
+        else {
+          position.x = 0;
         }
       }
 
-      map.positionOffset.x += x_direction;
-      map.positionOffset.y += y_direction;
+      map.positionOffset += position;
 
       window.clear();
       window.draw(map);
