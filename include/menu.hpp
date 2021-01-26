@@ -12,6 +12,39 @@ class Menu: public sf::Drawable {
   std::vector<MenuItem> items;
   bool enter_pressed = false;
 
+  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+    sf::RectangleShape menu_background;
+    menu_background.setSize({ (float)target.getSize().x, (float)target.getSize().y });
+    menu_background.setFillColor(sf::Color(0, 0, 0, 200));
+    target.draw(menu_background);
+
+    for (size_t i = 0; i < items.size(); i++) {
+      sf::Text text;
+
+      text.setString(items[i].title);
+      text.setCharacterSize(64);
+
+      if (i == current_item) {
+        text.setFont(*load_font("assets/fonts/Gaegu-Bold.ttf"));
+
+        text.setStyle(sf::Text::Bold);
+        text.setFillColor(sf::Color::White);
+
+        if (enter_pressed) {
+          text.setFillColor(sf::Color(50, 200, 100, 255));
+        }
+      }
+      else {
+        text.setFont(*load_font("assets/fonts/Gaegu-Regular.ttf"));
+        text.setFillColor(sf::Color(200, 200, 200, 255));
+      }
+
+      text.setPosition({ 64, static_cast<float>(64 + i * 64) });
+
+      target.draw(text);
+    }
+  }
+
 public:
 
   void up() {
@@ -45,38 +78,6 @@ public:
       throw std::runtime_error("Failed to load font '" + path.string() + "'.");
     } else {
       return fonts.at(path.string());
-    }
-  }
-
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
-    sf::RectangleShape menu_background;
-    menu_background.setSize({(float)target.getSize().x, (float)target.getSize().y});
-    menu_background.setFillColor(sf::Color(0, 0, 0, 200));
-    target.draw(menu_background);
-
-    for (size_t i = 0; i < items.size(); i++) {
-      sf::Text text;
-
-      text.setString(items[i].title);
-      text.setCharacterSize(64);
-
-      if (i == current_item) {
-        text.setFont(*load_font("assets/fonts/Gaegu-Bold.ttf"));
-
-        text.setStyle(sf::Text::Bold);
-        text.setFillColor(sf::Color::White);
-
-        if (enter_pressed) {
-          text.setFillColor(sf::Color(50, 200, 100, 255));
-        }
-      } else {
-        text.setFont(*load_font("assets/fonts/Gaegu-Regular.ttf"));
-        text.setFillColor(sf::Color(200, 200, 200, 255));
-      }
-
-      text.setPosition({ 64, static_cast<float>(64 + i * 64) });
-
-      target.draw(text);
     }
   }
 
