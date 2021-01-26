@@ -3,11 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
 
-class TiledMap : public sf::Drawable {
+class TiledMap: public sf::Drawable {
+  fs::path dir;
+  fs::path filename;
+
   std::unique_ptr<tson::Map> map;
-  std::map<std::string, std::unique_ptr<sf::Texture>> textures;
-  std::map<std::string, std::unique_ptr<sf::Sprite>> sprites;
-  tson::Vector2i positionOffset{ 0,0 };
+
+  mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     for (auto& layer : map->getLayers()) {
@@ -15,54 +17,24 @@ class TiledMap : public sf::Drawable {
     }
   }
 
-  bool parseMap(const std::string& map_path) {
-    tson::Tileson parser;
-    map = parser.parse(fs::path(map_path));
+  std::shared_ptr<const sf::Texture> loadImage(const fs::path& path) const {
+    if (textures.count(path.string()) == 0) {
+      const auto absolute_path = dir / path;
 
-    if (map->getStatus() == tson::ParseStatus::OK) {
-      for (auto& tileset : map->getTilesets()) {
-        storeImage(tileset.getImage().filename().string(), { 0, 0 });
-      }
+      if (fs::exists(absolute_path) && fs::is_regular_file(absolute_path)) {
+        std::cout << "Loading " << absolute_path << std::endl;
 
-      for (auto& layer : map->getLayers()) {
-        if (!layer.getImage().empty()) {
-          storeImage(layer.getImage(), { layer.getOffset().x, layer.getOffset().y });
+        auto texture = std::make_shared<sf::Texture>();
+        if (texture->loadFromFile(absolute_path)) {
+          textures[path.string()] = std::move(texture);
+          return textures.at(path.string());
         }
       }
 
-      return true;
+      throw std::runtime_error("Failed to load '" + path.string() + "'.");
+    } else {
+      return textures.at(path.string());
     }
-
-    std::cerr << "Parse error: " << map->getStatusMessage() << std::endl;
-    return false;
-  }
-
-  void storeImage(const std::string& image, const sf::Vector2f& position) {
-    if (textures.count(image) == 0) {
-
-      fs::path path = fs::path("assets") / image;
-      if (fs::exists(path) && fs::is_regular_file(path)) {
-
-        std::unique_ptr<sf::Texture> texture = std::make_unique<sf::Texture>();
-        if (texture->loadFromFile(path.string())) {
-          std::unique_ptr<sf::Sprite> sprite = std::make_unique<sf::Sprite>();
-          sprite->setTexture(*texture);
-          sprite->setPosition(position);
-          textures[image] = std::move(texture);
-          sprites[image] = std::move(sprite);
-        }
-      } else {
-        std::cout << "Could not find: " << path.string() << std::endl;
-      }
-    }
-  }
-
-  sf::Sprite* loadImage(const std::string& image) const {
-    if (sprites.count(image) > 0) {
-      return sprites.at(image).get();
-    }
-
-    return nullptr;
   }
 
   void drawLayer(tson::Layer& layer, sf::RenderTarget& target) const {
@@ -92,67 +64,60 @@ class TiledMap : public sf::Drawable {
       tson::Tileset* tileset = tileObject.getTile()->getTileset();
       tson::Rect drawingRect = tileObject.getDrawingRect();
       tson::Vector2f position = tileObject.getPosition();
-      position = { position.x + (float) positionOffset.x, position.y + (float) positionOffset.y };
-      
-      const fs::path tilesetPath((*tileset).getImage().filename());
-      sf::Sprite* sprite = loadImage(tilesetPath.string());
+      position = { position.x + positionOffset.x, position.y + positionOffset.y };
 
-      if (sprite != nullptr) {
-        sf::Vector2f scale = sprite->getScale();
-        sf::Vector2f originalScale = scale;
-        float rotation = sprite->getRotation();
-        float originalRotation = rotation;
-        sf::Vector2f origin{ ((float)drawingRect.width) / 2, ((float)drawingRect.height) / 2 };
+      const fs::path tilesetPath(tileset->getImagePath());
+      auto texture = loadImage(tilesetPath);
+      sf::Sprite sprite;
+      sprite.setTexture(*texture);
 
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
-          scale.x = -scale.x;
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
-          scale.y = -scale.y;
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
-          rotation += 90.f;
+      sf::Vector2f scale = sprite.getScale();
+      float rotation = sprite.getRotation();
+      sf::Vector2f origin{ ((float)drawingRect.width) / 2.f, ((float)drawingRect.height) / 2.f };
 
-        position = { position.x + origin.x, position.y + origin.y };
-        sprite->setOrigin(origin);
-        sprite->setTextureRect({ drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height });
-        sprite->setPosition({ position.x, position.y });
+      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
+        scale.x = -scale.x;
+      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
+        scale.y = -scale.y;
+      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
+        rotation += 90.f;
 
-        sprite->setScale(scale);
-        sprite->setRotation(rotation);
+      position = { position.x + origin.x, position.y + origin.y };
+      sprite.setOrigin(origin);
+      sprite.setTextureRect({ drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height });
+      sprite.setPosition({ position.x, position.y });
 
-        target.draw(*sprite);
+      sprite.setScale(scale);
+      sprite.setRotation(rotation);
 
-        sprite->setScale(originalScale);
-        sprite->setRotation(originalRotation);
-      }
+      target.draw(sprite);
     }
   }
 
   void drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const {
-    sf::Sprite* sprite = loadImage(layer.getImage());
-    if (sprite != nullptr) {
-      target.draw(*sprite);
-    }
+    auto texture = loadImage(layer.getImage());
+    sf::Sprite sprite;
+    sprite.setTexture(*texture);
+    sprite.setPosition({layer.getOffset().x, layer.getOffset().y});
+    target.draw(sprite);
   }
 
   void drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target) const {
     auto* map = layer.getMap();
     for (auto& obj : layer.getObjects()) {
       switch (obj.getObjectType()) {
+        case tson::ObjectType::Object: {
+          auto* tileset = map->getTilesetByGid(obj.getGid());
+          const auto offset = getTileOffset(obj.getGid(), map, tileset);
 
-      case tson::ObjectType::Object: {
-        tson::Tileset* tileset = layer.getMap()->getTilesetByGid(obj.getGid());
-        sf::Vector2f offset = getTileOffset(obj.getGid(), map, tileset);
+          auto texture = loadImage(tileset->getImagePath());
+          sf::Sprite sprite;
+          sprite.setTexture(*texture);
+          std::string name = obj.getName();
+          sf::Vector2f position = { (float)obj.getPosition().x + positionOffset.x, (float)obj.getPosition().y + positionOffset.y };
 
-        const fs::path tilesetPath((*tileset).getImage().filename());
-        sf::Sprite* sprite = loadImage(tilesetPath.string());
-        std::string name = obj.getName();
-        sf::Vector2f position = { (float)obj.getPosition().x + (float) positionOffset.x, (float)obj.getPosition().y + (float) positionOffset.y };
-
-        if (sprite != nullptr) {
-          sf::Vector2f scale = sprite->getScale();
-          sf::Vector2f originalScale = scale;
-          float rotation = sprite->getRotation();
-          float originalRotation = rotation;
+          sf::Vector2f scale = sprite.getScale();
+          float rotation = sprite.getRotation();
           sf::Vector2f origin{ ((float) map->getTileSize().x) / 2, ((float) map->getTileSize().y) / 2 };
 
           if (obj.hasFlipFlags(tson::TileFlipFlags::Horizontally))
@@ -163,41 +128,37 @@ class TiledMap : public sf::Drawable {
             rotation += 90.f;
 
           position = { position.x + origin.x, position.y + origin.y };
-          sprite->setOrigin(origin);
+          sprite.setOrigin(origin);
 
-          sprite->setTextureRect({ (int)offset.x, (int)offset.y, map->getTileSize().x, map->getTileSize().y });
-          sprite->setPosition({ position.x, position.y - map->getTileSize().y });
+          sprite.setTextureRect({ (int)offset.x, (int)offset.y, map->getTileSize().x, map->getTileSize().y });
+          sprite.setPosition({ position.x, position.y - map->getTileSize().y });
 
-          sprite->setScale(scale);
-          sprite->setRotation(rotation);
+          sprite.setScale(scale);
+          sprite.setRotation(rotation);
 
-          target.draw(*sprite);
+          target.draw(sprite);
 
-          sprite->setScale(originalScale);
-          sprite->setRotation(originalRotation);
+          break;
         }
-      }
-      break;
-
-      default:
-        break;
+        default:
+          break;
       }
     }
   }
 
-  sf::Vector2f getTileOffset(int tileId, tson::Map* map, tson::Tileset* tileset) const {
+  sf::Vector2f getTileOffset(const int tileId, const tson::Map* map, const tson::Tileset* tileset) const {
     uint32_t firstId = tileset->getFirstgid();
     int columns = tileset->getColumns();
     int rows = tileset->getTileCount() / columns;
     uint32_t lastId = (tileset->getFirstgid() + tileset->getTileCount()) - 1;
 
     if (tileId >= firstId && tileId <= lastId) {
-      uint32_t baseTilePosition = (tileId - firstId);
+      const size_t baseTilePosition = tileId - firstId;
 
-      int tileModX = (baseTilePosition % columns);
-      int currentRow = (baseTilePosition / columns);
-      int offsetX = (tileModX != 0) ? ((tileModX) *map->getTileSize().x) : (0 * map->getTileSize().x);
-      int offsetY = (currentRow < rows - 1) ? (currentRow * map->getTileSize().y) : ((rows - 1) * map->getTileSize().y);
+      const ssize_t tileModX = (baseTilePosition % columns);
+      const ssize_t currentRow = (baseTilePosition / columns);
+      const ssize_t offsetX = (tileModX != 0) ? ((tileModX) * map->getTileSize().x) : (0 * map->getTileSize().x);
+      const ssize_t offsetY = (currentRow < rows - 1) ? (currentRow * map->getTileSize().y) : ((rows - 1) * map->getTileSize().y);
       return sf::Vector2f((float) offsetX, (float) offsetY);
     }
 
@@ -205,9 +166,18 @@ class TiledMap : public sf::Drawable {
   }
 
 public:
+  sf::Vector2f positionOffset{ 0.f, 0.f };
 
-  TiledMap(const std::string& map_path) {
-    parseMap(map_path);
+  TiledMap(const fs::path& map_path) {
+    dir = map_path.parent_path();
+    filename = map_path.filename();
+
+    tson::Tileson parser;
+    map = parser.parse(map_path);
+
+    if (map->getStatus() != tson::ParseStatus::OK) {
+      throw std::runtime_error("Failed parsing '" + map_path.string() + "'.\n" + map->getStatusMessage());
+    }
   }
 
 };
