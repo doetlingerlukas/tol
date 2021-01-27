@@ -24,7 +24,11 @@ task :map do
     first_gid = tileset['firstgid']
 
     tileset['tiles']&.each_with_index do |tile, i|
-      tile['id'] = first_gid + i
+      tile['id'] = first_gid - 1 + tile["id"]
+
+      tile["animation"]&.each do |animation|
+        animation["tileid"] = first_gid + animation["tileid"]
+      end
     end
   end
 

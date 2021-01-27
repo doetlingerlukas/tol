@@ -15607,24 +15607,96 @@
  <tile id="15638" terrain="32,32,32,32" probability="0.15"/>
  <tile id="15639" terrain="32,32,32,32" probability="0.15"/>
  <tile id="15640" terrain="32,32,32,32" probability="0.15"/>
- <tile id="15641" terrain="28,28,28,28" probability="0.15"/>
- <tile id="15642" terrain="28,28,28,28" probability="0.15"/>
- <tile id="15643" terrain="28,28,28,28" probability="0.15"/>
- <tile id="15644" terrain="29,29,29,29" probability="0.15"/>
- <tile id="15645" terrain="29,29,29,29" probability="0.15"/>
- <tile id="15646" terrain="29,29,29,29" probability="0.15"/>
- <tile id="15664" terrain="31,31,31,31"/>
- <tile id="15665" terrain="31,31,31,31"/>
- <tile id="15666" terrain="31,31,31,31"/>
+ <tile id="15641" terrain="28,28,28,28" probability="0.15">
+  <animation>
+   <frame tileid="15641" duration="1000"/>
+   <frame tileid="15642" duration="1000"/>
+   <frame tileid="15643" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15642" terrain="28,28,28,28" probability="0.15">
+  <animation>
+   <frame tileid="15642" duration="1000"/>
+   <frame tileid="15643" duration="1000"/>
+   <frame tileid="15641" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15643" terrain="28,28,28,28" probability="0.15">
+  <animation>
+   <frame tileid="15643" duration="1000"/>
+   <frame tileid="15641" duration="1000"/>
+   <frame tileid="15642" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15644" terrain="29,29,29,29" probability="0.15">
+  <animation>
+   <frame tileid="15644" duration="1000"/>
+   <frame tileid="15645" duration="1000"/>
+   <frame tileid="15646" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15645" terrain="29,29,29,29" probability="0.15">
+  <animation>
+   <frame tileid="15645" duration="1000"/>
+   <frame tileid="15646" duration="1000"/>
+   <frame tileid="15644" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15646" terrain="29,29,29,29" probability="0.15">
+  <animation>
+   <frame tileid="15646" duration="1000"/>
+   <frame tileid="15644" duration="1000"/>
+   <frame tileid="15645" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15664" terrain="31,31,31,31">
+  <animation>
+   <frame tileid="15664" duration="1000"/>
+   <frame tileid="15665" duration="1000"/>
+   <frame tileid="15666" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15665" terrain="31,31,31,31">
+  <animation>
+   <frame tileid="15665" duration="1000"/>
+   <frame tileid="15666" duration="1000"/>
+   <frame tileid="15664" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15666" terrain="31,31,31,31">
+  <animation>
+   <frame tileid="15666" duration="1000"/>
+   <frame tileid="15664" duration="1000"/>
+   <frame tileid="15665" duration="1000"/>
+  </animation>
+ </tile>
  <tile id="15667" terrain="30,30,30,30"/>
  <tile id="15668" terrain="30,30,30,30"/>
  <tile id="15669" terrain="30,30,30,30"/>
  <tile id="15670" terrain="14,14,14,14"/>
  <tile id="15671" terrain="14,14,14,14"/>
  <tile id="15672" terrain="14,14,14,14"/>
- <tile id="15673" terrain="33,33,33,33" probability="0.15"/>
- <tile id="15674" terrain="33,33,33,33" probability="0.15"/>
- <tile id="15675" terrain="33,33,33,33"/>
+ <tile id="15673" terrain="33,33,33,33" probability="0.15">
+  <animation>
+   <frame tileid="15673" duration="1000"/>
+   <frame tileid="15674" duration="1000"/>
+   <frame tileid="15675" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15674" terrain="33,33,33,33" probability="0.15">
+  <animation>
+   <frame tileid="15674" duration="1000"/>
+   <frame tileid="15675" duration="1000"/>
+   <frame tileid="15673" duration="1000"/>
+  </animation>
+ </tile>
+ <tile id="15675" terrain="33,33,33,33">
+  <animation>
+   <frame tileid="15675" duration="1000"/>
+   <frame tileid="15673" duration="1000"/>
+   <frame tileid="15674" duration="1000"/>
+  </animation>
+ </tile>
  <tile id="15676" terrain="12,12,12,12"/>
  <tile id="15677" terrain="12,12,12,12"/>
  <tile id="15678" terrain="12,12,12,12"/>

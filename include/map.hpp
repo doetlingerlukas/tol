@@ -1,9 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
 
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
+
+#include <animation.hpp>
 
 #if defined(_MSC_VER)
 typedef long long ssize_t;
@@ -66,23 +69,39 @@ class TiledMap: public sf::Drawable {
     }
   }
 
+  mutable std::map<int, Animation> running_animations;
+
   void drawTileLayer(const tson::Layer& layer, sf::RenderTarget& target) const {
-    for (const auto& [pos, tileObject] : layer.getTileObjects()) {
-      tson::Tileset* tileset = tileObject.getTile()->getTileset();
-      tson::Rect drawingRect = tileObject.getDrawingRect();
-      sf::Vector2f origin{ 0, 0 };
+    auto now = duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+    for (const auto [pos, tileObject] : layer.getTileObjects()) {
+      const auto* tile = tileObject.getTile();
+      auto* tileset = tile->getTileset();
+
+      tson::Rect rect = tileObject.getTile()->getDrawingRect();
+
+      const auto& animation = tile->getAnimation();
+
+      if (animation.size() > 0) {
+        const auto tile_id = tile->getId();
+
+        if (running_animations.count(tile_id) == 0) {
+          std::cout << "Adding animation for tile " << tile_id << std::endl;
+          running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, tileset));
+        } else {
+          rect = running_animations.at(tile_id).getDrawingRect(now);
+        }
+
+      }
 
       auto texture = loadImage(tileset->getImagePath());
       sf::Sprite sprite;
       sprite.setTexture(*texture);
-
-      sf::Vector2f scale = sprite.getScale();
-
-      auto tile_position = tileObject.getPosition();
-      sf::Vector2f position = { tile_position.x + positionOffset.x, tile_position.y + positionOffset.y };
+      sprite.setTextureRect({ rect.x, rect.y, rect.width, rect.height });
 
       float rotation = sprite.getRotation();
 
+      sf::Vector2f scale = sprite.getScale();
       if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
         scale.x = -scale.x;
       if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
@@ -90,10 +109,11 @@ class TiledMap: public sf::Drawable {
       if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
         rotation += 90.f;
 
-      sprite.setTextureRect({ drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height });
 
-      sprite.setOrigin({ origin.x * this->scale.x, origin.y * this->scale.y });
+      const auto& tile_position = tileObject.getPosition();
+      sf::Vector2f position = { tile_position.x + positionOffset.x, tile_position.y + positionOffset.y };
       sprite.setPosition({ position.x * this->scale.x, position.y * this->scale.y });
+
       sprite.setScale({ scale.x * this->scale.x, scale.y * this->scale.y });
 
       sprite.setRotation(rotation);
