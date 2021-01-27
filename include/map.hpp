@@ -72,7 +72,7 @@ class TiledMap: public sf::Drawable {
   mutable std::map<int, Animation> running_animations;
 
   void drawTileLayer(const tson::Layer& layer, sf::RenderTarget& target) const {
-    auto now = duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
     for (const auto [pos, tileObject] : layer.getTileObjects()) {
       const auto* tile = tileObject.getTile();
