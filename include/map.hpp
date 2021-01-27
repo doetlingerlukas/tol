@@ -174,7 +174,7 @@ class TiledMap: public sf::Drawable {
     }
   }
 
-  sf::Vector2f getTileOffset(const int tileId, const tson::Map* map, const tson::Tileset* tileset) const {
+  sf::Vector2f getTileOffset(const uint32_t tileId, const tson::Map* map, const tson::Tileset* tileset) const {
     uint32_t firstId = tileset->getFirstgid();
     int columns = tileset->getColumns();
     int rows = tileset->getTileCount() / columns;
