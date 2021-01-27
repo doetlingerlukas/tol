@@ -17,8 +17,20 @@ int main() {
 
     TiledMap map("assets/map.json");
 
-    sf::Vector2f position = { 0.0f, 0.0f };
+    std::cout << map.getSize().x << ","  << map.getSize().y << std::endl;
+
+
+    std::cout << map.positionOffset.x << ", " << map.positionOffset.y << std::endl;
+
+    map.setScale({ 2.0, 2.0 });
+
+    map.positionOffset = { 0, window.getSize().y - map.getSize().y };
+    std::cout << map.positionOffset.x << ", " << map.positionOffset.y << std::endl;
+
+    sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
+
+
 
     bool menu_open = true;
 
@@ -47,12 +59,20 @@ int main() {
                 window.setKeyRepeatEnabled(true);
                 break;
               case sf::Keyboard::Right:
-                right = event.type == sf::Event::KeyPressed;
+                if (menu_open) {
+                  right = false;
+                } else {
+                  right = event.type == sf::Event::KeyPressed;
+                }
                 break;
               case sf::Keyboard::D:
                 break;
               case sf::Keyboard::Left:
-                left = event.type == sf::Event::KeyPressed;
+                if (menu_open) {
+                  left = false;
+                } else {
+                  left = event.type == sf::Event::KeyPressed;
+                }
                 break;
               case sf::Keyboard::A:
                 break;
@@ -97,42 +117,42 @@ int main() {
       }
 
       if (up && !down) {
-        position.y = std::clamp(position.y + 1.0, 1.0, 10.0);
+        direction.y = std::clamp(direction.y + 1.0, 1.0, 10.0);
       }
       else if (down && !up) {
-        position.y = std::clamp(position.y - 1.0, -10.0, -1.0);
+        direction.y = std::clamp(direction.y - 1.0, -10.0, -1.0);
       }
       else {
-        if (position.y > 0) {
-          position.y -= 1;
+        if (direction.y > 0) {
+          direction.y -= 1;
         }
-        else if (position.y < 0) {
-          position.y += 1;
+        else if (direction.y < 0) {
+          direction.y += 1;
         }
         else {
-          position.y = 0;
+          direction.y = 0;
         }
       }
 
       if (right && !left) {
-        position.x = std::clamp(position.x - 1.0, -10.0, -1.0);
+        direction.x = std::clamp(direction.x - 1.0, -10.0, -1.0);
       }
       else if (left && !right) {
-        position.x = std::clamp(position.x + 1.0, 1.0, 10.0);
+        direction.x = std::clamp(direction.x + 1.0, 1.0, 10.0);
       }
       else {
-        if (position.x > 0) {
-          position.x -= 1;
+        if (direction.x > 0) {
+          direction.x -= 1;
         }
-        else if (position.x < 0) {
-          position.x += 1;
+        else if (direction.x < 0) {
+          direction.x += 1;
         }
         else {
-          position.x = 0;
+          direction.x = 0;
         }
       }
 
-      map.positionOffset += position;
+      map.set_position(map.positionOffset + direction, window);
 
       window.clear();
       window.draw(map);

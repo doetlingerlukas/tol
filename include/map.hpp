@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
 
@@ -12,6 +14,7 @@ class TiledMap: public sf::Drawable {
   fs::path filename;
 
   std::unique_ptr<tson::Map> map;
+  sf::Vector2f scale = { 1.f, 1.f };
 
   mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
 
@@ -67,17 +70,18 @@ class TiledMap: public sf::Drawable {
     for (const auto& [pos, tileObject] : layer.getTileObjects()) {
       tson::Tileset* tileset = tileObject.getTile()->getTileset();
       tson::Rect drawingRect = tileObject.getDrawingRect();
-      tson::Vector2f position = tileObject.getPosition();
-      position = { position.x + positionOffset.x, position.y + positionOffset.y };
+      sf::Vector2f origin{ 0, 0 };
 
-      const fs::path tilesetPath(tileset->getImagePath());
-      auto texture = loadImage(tilesetPath);
+      auto texture = loadImage(tileset->getImagePath());
       sf::Sprite sprite;
       sprite.setTexture(*texture);
 
       sf::Vector2f scale = sprite.getScale();
+
+      auto tile_position = tileObject.getPosition();
+      sf::Vector2f position = { tile_position.x + positionOffset.x, tile_position.y + positionOffset.y };
+
       float rotation = sprite.getRotation();
-      sf::Vector2f origin{ ((float)drawingRect.width) / 2.f, ((float)drawingRect.height) / 2.f };
 
       if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
         scale.x = -scale.x;
@@ -86,12 +90,12 @@ class TiledMap: public sf::Drawable {
       if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
         rotation += 90.f;
 
-      position = { position.x + origin.x, position.y + origin.y };
-      sprite.setOrigin(origin);
       sprite.setTextureRect({ drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height });
-      sprite.setPosition({ position.x, position.y });
 
-      sprite.setScale(scale);
+      sprite.setOrigin({ origin.x * this->scale.x, origin.y * this->scale.y });
+      sprite.setPosition({ position.x * this->scale.x, position.y * this->scale.y });
+      sprite.setScale({ scale.x * this->scale.x, scale.y * this->scale.y });
+
       sprite.setRotation(rotation);
 
       target.draw(sprite);
@@ -170,6 +174,12 @@ class TiledMap: public sf::Drawable {
   }
 
 public:
+  sf::Vector2f getSize() {
+    auto [x, y] = map->getSize();
+    auto [tile_size_x, tile_size_y] = map->getTileSize();
+    return { static_cast<float>(x * tile_size_x), static_cast<float>(y * tile_size_y) };
+  }
+
   sf::Vector2f positionOffset{ 0.f, 0.f };
 
   TiledMap(const fs::path& map_path) {
@@ -184,4 +194,14 @@ public:
     }
   }
 
+  void set_position(const sf::Vector2f position, const sf::RenderTarget& target) {
+    positionOffset = {
+      std::clamp(position.x, -(getSize().x - target.getSize().x / this->scale.x), 0.f),
+      std::clamp(position.y, -(getSize().y - target.getSize().y / this->scale.y), 0.f),
+    };
+  }
+
+  void setScale(const sf::Vector2f scale) {
+    this->scale = scale;
+  }
 };
