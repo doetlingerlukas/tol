@@ -15,7 +15,7 @@ int main() {
     window.setVerticalSyncEnabled(true);
     window.setActive(true);
 
-    TiledMap map("map/map.json");
+    TiledMap map("assets/map.json");
 
     sf::Vector2f position = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;

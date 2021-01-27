@@ -16,9 +16,9 @@ task :deps do
 end
 
 task :map do
-  sh 'tiled', '--minimize', '--embed-tilesets', '--export-map', 'map/map.tmx', 'map/map.json'
+  sh 'tiled', '--minimize', '--embed-tilesets', '--export-map', 'assets/map.tmx', 'assets/map.json'
 
-  map = JSON.parse(File.read('map/map.json'))
+  map = JSON.parse(File.read('assets/map.json'))
 
   map['tilesets'].each_with_index do |tileset, i|
     first_gid = tileset['firstgid']
@@ -28,7 +28,7 @@ task :map do
     end
   end
 
-  File.write('map/map.json', JSON.pretty_generate(map))
+  File.write('assets/map.json', JSON.pretty_generate(map))
 end
 
 task :build => :map do
