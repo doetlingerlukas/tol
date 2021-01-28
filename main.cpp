@@ -1,93 +1,152 @@
 #include <iostream>
-#include "string.h"
+#include <algorithm>
 
-// GLAD
-#include <glad/glad.h>
+#include <SFML/Graphics.hpp>
 
-// GLFW
-#include <GLFW/glfw3.h>
+#include <map.hpp>
+#include <menu.hpp>
 
-// This example is taken from https://learnopengl.com/
-// https://learnopengl.com/code_viewer.php?code=getting-started/hellowindow2
-// The code originally used GLEW, I replaced it with Glad
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
 
-// Compile:
-// g++ example/c++/hellowindow2.cpp -Ibuild/include build/src/glad.c -lglfw -ldl
+int main() {
+  try {
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
+    window.setVerticalSyncEnabled(true);
+    window.setActive(true);
 
-// Function prototypes
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+    TiledMap map("map/map.json");
 
-// Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
+    sf::Vector2f position = { 0.0f, 0.0f };
+    bool up = false, down = false, left = false, right = false;
 
-// The MAIN function, from here we start the application and run the game loop
-int main(int argc, char **argv) {
-    std::cout << "Starting GLFW context, OpenGL 4.1" << std::endl;
+    bool menu_open = true;
 
-    // Init GLFW
-    glfwInit();
+    Menu menu;
+    menu.add_item("PLAY", [&]() {
+      window.setKeyRepeatEnabled(false);
+      menu_open = false;
+    });
+    menu.add_item("LOAD GAME", [&]() { });
+    menu.add_item("SAVE GAME", [&]() { });
+    menu.add_item("EXIT", [&]() { window.close(); });
 
-    // Set all the required options for GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    while (window.isOpen()) {
+      sf::Event event;
 
-    GLFWwindow* window;
+      while (window.pollEvent(event)) {
+        switch (event.type) {
+          case sf::Event::Closed:
+            window.close();
+            break;
+          case sf::Event::KeyPressed:
+          case sf::Event::KeyReleased: {
+             switch (event.key.code) {
+              case sf::Keyboard::Escape:
+                menu_open = true;
+                window.setKeyRepeatEnabled(true);
+                break;
+              case sf::Keyboard::Right:
+                right = event.type == sf::Event::KeyPressed;
+                break;
+              case sf::Keyboard::D:
+                break;
+              case sf::Keyboard::Left:
+                left = event.type == sf::Event::KeyPressed;
+                break;
+              case sf::Keyboard::A:
+                break;
+              case sf::Keyboard::Up:
+                if (menu_open) {
+                  if (event.type == sf::Event::KeyPressed) {
+                    menu.up();
+                  }
+                  up = false;
+                } else {
+                  up = event.type == sf::Event::KeyPressed;
+                }
+                break;
+              case sf::Keyboard::W:
+                break;
+              case sf::Keyboard::Down:
+                if (menu_open) {
+                  if (event.type == sf::Event::KeyPressed) {
+                    menu.down();
+                  }
+                  down = false;
+                } else {
+                  down = event.type == sf::Event::KeyPressed;
+                }
+                break;
+              case sf::Keyboard::S:
+                break;
+              case sf::Keyboard::Enter:
+                if (menu_open) {
+                  menu.enter(event.type == sf::Event::KeyPressed);
+                }
+                break;
+              default:
+                break;
+            }
 
-    if (argc > 1 && strcmp(argv[1], "--full") == 0) {
-      const GLFWvidmode* screen = glfwGetVideoMode(glfwGetPrimaryMonitor());
-      window = glfwCreateWindow(screen->width, screen->height, "tol", NULL, NULL);
-    } else {
-      window = glfwCreateWindow(WIDTH, HEIGHT, "tol", NULL, NULL);
+            break;
+           }
+          default:
+            break;
+        }
+      }
+
+      if (up && !down) {
+        position.y = std::clamp(position.y + 1.0, 1.0, 10.0);
+      }
+      else if (down && !up) {
+        position.y = std::clamp(position.y - 1.0, -10.0, -1.0);
+      }
+      else {
+        if (position.y > 0) {
+          position.y -= 1;
+        }
+        else if (position.y < 0) {
+          position.y += 1;
+        }
+        else {
+          position.y = 0;
+        }
+      }
+
+      if (right && !left) {
+        position.x = std::clamp(position.x - 1.0, -10.0, -1.0);
+      }
+      else if (left && !right) {
+        position.x = std::clamp(position.x + 1.0, 1.0, 10.0);
+      }
+      else {
+        if (position.x > 0) {
+          position.x -= 1;
+        }
+        else if (position.x < 0) {
+          position.x += 1;
+        }
+        else {
+          position.x = 0;
+        }
+      }
+
+      map.positionOffset += position;
+
+      window.clear();
+      window.draw(map);
+
+      if (menu_open) {
+        window.draw(menu);
+      }
+
+      window.display();
     }
 
-    // Create a GLFWwindow object that we can use for GLFW's functions
-    glfwMakeContextCurrent(window);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    // Set the required callback functions
-    glfwSetKeyCallback(window, key_callback);
-
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize OpenGL context" << std::endl;
-        return -1;
-    }
-
-    // Define the viewport dimensions
-    glViewport(0, 0, WIDTH, HEIGHT);
-
-    // Game loop
-    while (!glfwWindowShouldClose(window))
-    {
-        // Check if any events have been activated (key pressed, mouse moved etc.) and call corresponding response functions
-        glfwPollEvents();
-
-        // Render
-        // Clear the colorbuffer
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Swap the screen buffers
-        glfwSwapBuffers(window);
-    }
-
-    // Terminates GLFW, clearing any resources allocated by GLFW.
-    glfwTerminate();
-    return 0;
-}
-
-// Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-    std::cout << key << std::endl;
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+    return EXIT_SUCCESS;
+  } catch (std::exception& e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
 }

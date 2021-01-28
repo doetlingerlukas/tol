@@ -4,3 +4,7 @@ bin
 # Visual Studio
 .vs
 out
+CMakeSettings.json
+
+# Tiled
+map.json
