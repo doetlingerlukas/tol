@@ -5,18 +5,22 @@
 class Animation {
   std::chrono::milliseconds start_time = std::chrono::milliseconds(0);
   size_t current = 0;
-  std::vector<std::tuple<std::chrono::milliseconds, tson::Rect>> frames;
+  std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
 
 public:
+  Animation(std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>>&& frames) {
+    this->frames = frames;
+  }
+
   Animation(const std::vector<tson::Frame>& frames, tson::Tileset* tileset) {
     for (const auto& frame: frames) {
       const auto tile_id = frame.getTileId();
       const auto rect = tileset->getTile(tile_id)->getDrawingRect();
-      this->frames.push_back(std::make_tuple(std::chrono::milliseconds(frame.getDuration()), rect));
+      this->frames.push_back(std::make_tuple(std::chrono::milliseconds(frame.getDuration()), sf::IntRect{ rect.x, rect.y, rect.width, rect.height }));
     }
   }
 
-  tson::Rect getDrawingRect(std::chrono::milliseconds ms) {
+  sf::IntRect getDrawingRect(std::chrono::milliseconds ms) {
     const auto& [duration, rect] = frames.at(current);
 
     if (start_time == std::chrono::milliseconds(0)) {

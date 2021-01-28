@@ -78,7 +78,8 @@ class TiledMap: public sf::Drawable {
       const auto* tile = tileObject.getTile();
       auto* tileset = tile->getTileset();
 
-      tson::Rect rect = tileObject.getTile()->getDrawingRect();
+      tson::Rect tsonRect = tileObject.getTile()->getDrawingRect();
+      sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
 
       const auto& animation = tile->getAnimation();
 
@@ -97,7 +98,7 @@ class TiledMap: public sf::Drawable {
       auto texture = loadImage(tileset->getImagePath());
       sf::Sprite sprite;
       sprite.setTexture(*texture);
-      sprite.setTextureRect({ rect.x, rect.y, rect.width, rect.height });
+      sprite.setTextureRect(rect);
 
       float rotation = sprite.getRotation();
 
@@ -219,8 +220,6 @@ public:
     const auto tile_size = map->getTileSize();
     const auto x_offset = tile_size.x / 2.f;
     const auto y_offset = tile_size.y / 2.f;
-
-    std::cout << "Tile size: " << tile_size.x << "," << tile_size.y << std::endl;
 
     positionOffset = {
       std::clamp(position.x, -(getSize().x - (target.getSize().x / this->scale.x) - x_offset), x_offset),

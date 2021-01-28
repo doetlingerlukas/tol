@@ -5,6 +5,7 @@
 
 #include <map.hpp>
 #include <menu.hpp>
+#include <character.hpp>
 
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
@@ -16,20 +17,22 @@ int main() {
     window.setActive(true);
 
     TiledMap map("assets/map.json");
+    Character character("assets/tilesets/character-whitebeard.png");
 
     std::cout << map.getSize().x << ","  << map.getSize().y << std::endl;
 
 
     std::cout << map.positionOffset.x << ", " << map.positionOffset.y << std::endl;
 
-    map.setScale({ 2.0, 2.0 });
+    sf::Vector2f scale = { 2.0, 2.0 };
+    map.setScale(scale);
+    character.setScale(scale);
 
     map.positionOffset = { 0, window.getSize().y - map.getSize().y };
     std::cout << map.positionOffset.x << ", " << map.positionOffset.y << std::endl;
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
-
 
 
     bool menu_open = true;
@@ -66,6 +69,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::D:
+                character.move(CharacterDirection::RIGHT);
                 break;
               case sf::Keyboard::Left:
                 if (menu_open) {
@@ -75,6 +79,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::A:
+                character.move(CharacterDirection::LEFT);
                 break;
               case sf::Keyboard::Up:
                 if (menu_open) {
@@ -87,6 +92,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::W:
+                character.move(CharacterDirection::UP);
                 break;
               case sf::Keyboard::Down:
                 if (menu_open) {
@@ -99,6 +105,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::S:
+                character.move(CharacterDirection::DOWN);
                 break;
               case sf::Keyboard::Enter:
                 if (menu_open) {
@@ -160,6 +167,8 @@ int main() {
       if (menu_open) {
         window.draw(menu);
       }
+
+      window.draw(character);
 
       window.display();
     }
