@@ -29,10 +29,8 @@ const int CHARACTER_ANIMATION_FRAMES[6] {
 
 const int TILE_SIZE = 64;
 
-class Character: public sf::Drawable {
+class Character: public sf::Drawable, public sf::Transformable {
   sf::Texture texture;
-  sf::Vector2f position;
-  sf::Vector2f scale;
   mutable sf::Sprite sprite;
   mutable std::optional<Animation> animation;
 
@@ -78,35 +76,35 @@ public:
       sprite.setTextureRect({ 0 * TILE_SIZE, last_direction * TILE_SIZE, TILE_SIZE, TILE_SIZE });
     }
 
-    sprite.setPosition({ position.x * scale.x, position.y * scale.y });
+    auto scale = getScale();
+    sprite.setPosition({ getPosition().x * scale.x, getPosition().y * scale.y });
     sprite.setScale(scale);
 
     target.draw(sprite);
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction) {
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed) {
     this->x_direction = x_direction;
     this->y_direction = y_direction;
 
+    auto position = getPosition();
+
     if (x_direction == RIGHT) {
-      position.x += 1;
+      position.x += 1.0 * speed;
     }
 
     if (x_direction == LEFT) {
-      position.x -= 1;
+      position.x -= 1.0 * speed;
     }
 
-
     if (y_direction == UP) {
-      position.y -= 1;
+      position.y -= 1.0 * speed;
     }
 
     if (y_direction == DOWN) {
-      position.y += 1;
+      position.y += 1.0 * speed;
     }
-  }
 
-  void setScale(sf::Vector2f scale) {
-    this->scale = scale;
+    setPosition(position);
   }
 };

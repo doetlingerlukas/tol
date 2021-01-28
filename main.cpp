@@ -1,3 +1,4 @@
+#include <sstream>
 #include <iostream>
 #include <algorithm>
 
@@ -10,26 +11,31 @@
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
 
+const float VIEW_MOVE_SPEED = 60.f;
+const float CHARACTER_MOVE_SPEED = 80.f;
+
 int main() {
   try {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     window.setActive(true);
 
+    sf::Font font;
+    font.loadFromFile("assets/fonts/Gaegu-Regular.ttf");
+
+    sf::View map_view;
+
     TiledMap map("assets/map.json");
     Character character("assets/tilesets/character-whitebeard.png");
 
     std::cout << map.getSize().x << ","  << map.getSize().y << std::endl;
-
-
-    std::cout << map.positionOffset.x << ", " << map.positionOffset.y << std::endl;
+    std::cout << map.getPosition().x << ", " << map.getPosition().y << std::endl;
 
     sf::Vector2f scale = { 2.0, 2.0 };
     map.setScale(scale);
     character.setScale(scale);
 
-    map.positionOffset = { 0, window.getSize().y - map.getSize().y };
-    std::cout << map.positionOffset.x << ", " << map.positionOffset.y << std::endl;
+    std::cout << map.getPosition().x << ", " << map.getPosition().y << std::endl;
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
@@ -47,8 +53,15 @@ int main() {
     menu.add_item("SAVE GAME", [&]() { });
     menu.add_item("EXIT", [&]() { window.close(); });
 
+    sf::Clock clock;
+    float dt = 0.0;
+
+    map_view.reset({ 0, (map.getSize().y - window.getSize().y) * scale.y, (float)window.getSize().x, (float)window.getSize().y });
+
     while (window.isOpen()) {
       sf::Event event;
+
+      dt = clock.restart().asSeconds();
 
       while (window.pollEvent(event)) {
         switch (event.type) {
@@ -126,7 +139,8 @@ int main() {
 
       character.move(
         (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
-          (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt)
+        (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt),
+        dt * CHARACTER_MOVE_SPEED
       );
 
       if (up && !down) {
@@ -165,16 +179,45 @@ int main() {
         }
       }
 
-      map.set_position(map.positionOffset + direction, window);
+      map_view.setCenter(map_view.getCenter() + -direction * dt * VIEW_MOVE_SPEED);
+      auto center = map_view.getCenter();
 
       window.clear();
-      window.draw(map);
 
+      window.setView(map_view);
+      window.draw(map);
       window.draw(character);
+
+      auto coords = window.mapPixelToCoords({0, 0});
+
+      window.setView(window.getDefaultView());
 
       if (menu_open) {
         window.draw(menu);
       }
+
+      sf::Vector2u top_left_tile = {
+        static_cast<unsigned>(std::max(0, (int)(coords.x / scale.x / map.getTileSize().x))),
+        static_cast<unsigned>(std::max(0, (int)(coords.y / scale.y / map.getTileSize().y))),
+      };
+
+      std::stringstream ss;
+      ss << "Map: " << map.getPosition().x << ", " << map.getPosition().y << "\n";
+      ss << "Top Left Coords: " << coords.x << ", " << coords.y << "\n";
+      ss << "Center Coords: " << center.x << ", " << center.y << "\n";
+      ss << "Top Left Tile: " << top_left_tile.x << ", " << top_left_tile.y << "\n";
+      ss << "Character: " << character.getPosition().x << ", " << character.getPosition().y << "\n";
+
+      sf::Text text;
+      text.setFont(font);
+      text.setCharacterSize(16);
+      text.setFillColor(sf::Color::White);
+      text.setOutlineColor(sf::Color::Black);
+      text.setOutlineThickness(1);
+      text.setString(ss.str());
+      text.setScale(scale);
+
+      window.draw(text);
 
       window.display();
     }
