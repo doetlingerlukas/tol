@@ -33,6 +33,7 @@ int main() {
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
+    bool w = false, a = false, s = false, d = false;
 
 
     bool menu_open = true;
@@ -69,7 +70,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::D:
-                character.move(CharacterDirection::RIGHT);
+                d = event.type == sf::Event::KeyPressed;
                 break;
               case sf::Keyboard::Left:
                 if (menu_open) {
@@ -79,7 +80,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::A:
-                character.move(CharacterDirection::LEFT);
+                a = event.type == sf::Event::KeyPressed;
                 break;
               case sf::Keyboard::Up:
                 if (menu_open) {
@@ -92,7 +93,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::W:
-                character.move(CharacterDirection::UP);
+                w = event.type == sf::Event::KeyPressed;
                 break;
               case sf::Keyboard::Down:
                 if (menu_open) {
@@ -105,7 +106,7 @@ int main() {
                 }
                 break;
               case sf::Keyboard::S:
-                character.move(CharacterDirection::DOWN);
+                s = event.type == sf::Event::KeyPressed;
                 break;
               case sf::Keyboard::Enter:
                 if (menu_open) {
@@ -122,6 +123,11 @@ int main() {
             break;
         }
       }
+
+      character.move(
+        (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
+          (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt)
+      );
 
       if (up && !down) {
         direction.y = std::clamp(direction.y + 1.0, 1.0, 10.0);
@@ -164,11 +170,11 @@ int main() {
       window.clear();
       window.draw(map);
 
+      window.draw(character);
+
       if (menu_open) {
         window.draw(menu);
       }
-
-      window.draw(character);
 
       window.display();
     }

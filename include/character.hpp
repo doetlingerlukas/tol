@@ -36,6 +36,8 @@ class Character: public sf::Drawable {
   mutable sf::Sprite sprite;
   mutable std::optional<Animation> animation;
 
+  std::optional<CharacterDirection> x_direction;
+  std::optional<CharacterDirection> y_direction;
 
 public:
   Character(const fs::path& path) {
@@ -43,36 +45,65 @@ public:
     sprite.setTexture(texture);
   }
 
-  int direction = 0;
+  mutable CharacterDirection last_direction = DOWN;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
+    const auto direction = x_direction ? x_direction : y_direction;
+
+    if (direction) {
+      if (direction != last_direction) {
+        animation = std::nullopt;
+        last_direction = *direction;
+      }
+
+      if (!animation) {
+        std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
+
+        auto animation_type = WALK;
+        for (int i = 1; i < CHARACTER_ANIMATION_FRAMES[animation_type]; i++) {
+          frames.push_back(std::make_tuple(std::chrono::milliseconds(125), sf::IntRect{ i * TILE_SIZE, (animation_type * 4 + *direction) * TILE_SIZE, TILE_SIZE, TILE_SIZE }));
+        }
+
+        animation = Animation(std::move(frames));
+      }
+    } else {
+      animation = std::nullopt;
+    }
+
     if (animation) {
       sprite.setTextureRect(animation->getDrawingRect(now));
     } else {
-      sprite.setTextureRect({ DOWN * TILE_SIZE, direction * TILE_SIZE, TILE_SIZE, TILE_SIZE });
+      sprite.setTextureRect({ 0 * TILE_SIZE, last_direction * TILE_SIZE, TILE_SIZE, TILE_SIZE });
     }
 
-    sprite.setPosition(position);
+    sprite.setPosition({ position.x * scale.x, position.y * scale.y });
     sprite.setScale(scale);
 
     target.draw(sprite);
   }
 
-  void move(CharacterDirection direction) {
-    if (this->direction != direction) {
-      std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction) {
+    this->x_direction = x_direction;
+    this->y_direction = y_direction;
 
-      auto animation_type = WALK;
-      for (int i = 1; i < CHARACTER_ANIMATION_FRAMES[animation_type]; i++) {
-        frames.push_back(std::make_tuple(std::chrono::milliseconds(125), sf::IntRect{ i * TILE_SIZE, (animation_type * 4 + direction) * TILE_SIZE, TILE_SIZE, TILE_SIZE }));
-      }
-
-      this->animation = Animation(std::move(frames));
+    if (x_direction == RIGHT) {
+      position.x += 1;
     }
 
-    this->direction = direction;
+    if (x_direction == LEFT) {
+      position.x -= 1;
+    }
+
+
+    if (y_direction == UP) {
+      position.y -= 1;
+    }
+
+    if (y_direction == DOWN) {
+      position.y += 1;
+    }
   }
 
   void setScale(sf::Vector2f scale) {
