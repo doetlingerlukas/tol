@@ -1,6 +1,7 @@
 #pragma once
 
 #include <animation.hpp>
+#include <optional>
 
 enum CharacterDirection {
   UP = 0,
