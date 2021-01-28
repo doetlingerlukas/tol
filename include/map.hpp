@@ -254,4 +254,16 @@ public:
 
     sf::Transformable::setPosition(position);
   }
+
+  std::optional<sf::Vector2f> getSpawn() {
+    const auto& objects = map->getLayer("objects")->getObjects();
+
+    const auto spawn = std::find_if(objects.begin(), objects.end(), [](const auto& object) {  return object.getType() == "spawn"; });
+
+    if (spawn == objects.end()) {
+      return std::nullopt;
+    }
+
+    return std::optional(sf::Vector2f({ (float)spawn->getPosition().x, (float)spawn->getPosition().y }));
+  }
 };

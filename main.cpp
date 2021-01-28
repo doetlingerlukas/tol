@@ -30,19 +30,21 @@ int main() {
     TiledMap map("assets/map.json");
     Character character("assets/tilesets/character-whitebeard.png");
 
-    std::cout << map.getSize().x << ","  << map.getSize().y << std::endl;
-    std::cout << map.getPosition().x << ", " << map.getPosition().y << std::endl;
-
     sf::Vector2f scale = { 2.0, 2.0 };
     map.setScale(scale);
     character.setScale(scale);
 
-    std::cout << map.getPosition().x << ", " << map.getPosition().y << std::endl;
+    map_view.reset({ 0, (map.getSize().y - window.getSize().y) * scale.y, (float)window.getSize().x, (float)window.getSize().y });
+
+    const auto spawn = map.getSpawn();
+    if (spawn) {
+      map_view.setCenter({ spawn->x * scale.x, spawn->y * scale.y });
+      character.setPosition(*spawn);
+    }
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
     bool w = false, a = false, s = false, d = false;
-
 
     bool menu_open = true;
 
@@ -57,8 +59,6 @@ int main() {
 
     sf::Clock clock;
     float dt = 0.0;
-
-    map_view.reset({ 0, (map.getSize().y - window.getSize().y) * scale.y, (float)window.getSize().x, (float)window.getSize().y });
 
     while (window.isOpen()) {
       sf::Event event;
@@ -211,6 +211,7 @@ int main() {
       ss << "Top Left Tile: " << top_left_tile.x << ", " << top_left_tile.y << "\n";
       ss << "Character: " << character.getPosition().x << ", " << character.getPosition().y << "\n";
       ss << "Visible Map: " << from_x << "," << from_y << " -> " << to_x << "," << to_y << "\n";
+      ss << "Spawn: " << spawn->x << "," << spawn->y << "\n";
 
       window.draw(map);
       window.draw(character);
