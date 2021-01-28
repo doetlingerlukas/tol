@@ -41,6 +41,7 @@ public:
   Character(const fs::path& path) {
     texture.loadFromFile(path.string());
     sprite.setTexture(texture);
+    sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE / 8.f * 7.f });
   }
 
   mutable CharacterDirection last_direction = DOWN;

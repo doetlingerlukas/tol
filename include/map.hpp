@@ -18,6 +18,11 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   std::unique_ptr<tson::Map> map;
 
+  size_t from_x = 0;
+  size_t to_x = 0;
+  size_t from_y = 0;
+  size_t to_y = 0;
+
   mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -70,57 +75,70 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawTileLayer(const tson::Layer& layer, sf::RenderTarget& target) const {
+  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-    for (const auto [pos, tileObject] : layer.getTileObjects()) {
-      const auto* tile = tileObject.getTile();
-      auto* tileset = tile->getTileset();
+    for (size_t x = from_x; x < to_x; x++) {
+      for (size_t y = from_y; y < to_y; y++) {
+        const auto* tileObjectP = layer.getTileObject(x, y);
 
-      tson::Rect tsonRect = tileObject.getTile()->getDrawingRect();
-      sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
-
-      const auto& animation = tile->getAnimation();
-
-      if (animation.size() > 0) {
-        const auto tile_id = tile->getId();
-
-        if (running_animations.count(tile_id) == 0) {
-          std::cout << "Adding animation for tile " << tile_id << std::endl;
-          running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, tileset));
-        } else {
-          rect = running_animations.at(tile_id).getDrawingRect(now);
+        if (!tileObjectP) {
+          continue;
         }
 
+        const auto& tileObject = *tileObjectP;
+
+        const auto& tile = *tileObject.getTile();
+        auto* tileset = tile.getTileset();
+
+        tson::Rect tsonRect = tile.getDrawingRect();
+        sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
+
+        const auto& animation = tile.getAnimation();
+
+        if (animation.size() > 0) {
+          const auto tile_id = tile.getId();
+
+          if (running_animations.count(tile_id) == 0) {
+            std::cout << "Adding animation for tile " << tile_id << std::endl;
+            running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, tileset));
+          } else {
+            rect = running_animations.at(tile_id).getDrawingRect(now);
+          }
+
+        }
+
+        auto texture = loadImage(tileset->getImagePath());
+        sf::Sprite sprite;
+        sprite.setTexture(*texture);
+        sprite.setTextureRect(rect);
+
+        float rotation = sprite.getRotation();
+
+        sf::Vector2f scale = sprite.getScale();
+        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
+          scale.x = -scale.x;
+        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
+          scale.y = -scale.y;
+        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
+          rotation += 90.f;
+
+
+        const auto& tile_position = tileObject.getPosition();
+        sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
+        sprite.setOrigin(origin);
+        sf::Vector2f position = { tile_position.x + getPosition().x, tile_position.y + getPosition().y };
+        sprite.setPosition({ (origin.x + position.x) * getScale().x, (origin.y + position.y) * getScale().y });
+
+        sprite.setScale({ scale.x * getScale().x, scale.y * getScale().y });
+
+        sprite.setRotation(rotation);
+
+        target.draw(sprite);
       }
+    }
 
-      auto texture = loadImage(tileset->getImagePath());
-      sf::Sprite sprite;
-      sprite.setTexture(*texture);
-      sprite.setTextureRect(rect);
-
-      float rotation = sprite.getRotation();
-
-      sf::Vector2f scale = sprite.getScale();
-      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
-        scale.x = -scale.x;
-      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
-        scale.y = -scale.y;
-      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
-        rotation += 90.f;
-
-
-      const auto& tile_position = tileObject.getPosition();
-      sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
-      sprite.setOrigin(origin);
-      sf::Vector2f position = { tile_position.x + getPosition().x, tile_position.y + getPosition().y };
-      sprite.setPosition({ (origin.x + position.x) * getScale().x, (origin.y + position.y) * getScale().y });
-
-      sprite.setScale({ scale.x * getScale().x, scale.y * getScale().y });
-
-      sprite.setRotation(rotation);
-
-      target.draw(sprite);
+    for (const auto [pos, tileObject] : layer.getTileObjects()) {
     }
   }
 
@@ -217,6 +235,17 @@ public:
     if (map->getStatus() != tson::ParseStatus::OK) {
       throw std::runtime_error("Failed parsing '" + map_path.string() + "'.\n" + map->getStatusMessage());
     }
+
+    for (const auto& tileset: map->getTilesets()) {
+      loadImage(tileset.getImagePath());
+    }
+  }
+
+  void update(size_t from_x_, size_t to_x_, size_t from_y_, size_t to_y_) {
+    from_x = from_x_ / getScale().x / getTileSize().x;
+    to_x = to_x_ / getScale().x / getTileSize().x + 1;
+    from_y = from_y_ / getScale().y / getTileSize().y;
+    to_y = to_y_ / getScale().y / getTileSize().y + 1;
   }
 
   void setPosition(sf::Vector2f position, const sf::RenderTarget& target) {

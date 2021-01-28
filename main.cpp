@@ -11,7 +11,9 @@
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
 
-const float VIEW_MOVE_SPEED = 60.f;
+const float VIEW_MOVE_SPEED = 40.f;
+const float VIEW_MOVE_ACCEL = 20.f;
+const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;
 const float CHARACTER_MOVE_SPEED = 80.f;
 
 int main() {
@@ -144,17 +146,17 @@ int main() {
       );
 
       if (up && !down) {
-        direction.y = std::clamp(direction.y + 1.0, 1.0, 10.0);
+        direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
       }
       else if (down && !up) {
-        direction.y = std::clamp(direction.y - 1.0, -10.0, -1.0);
+        direction.y = std::clamp(direction.y - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
       }
       else {
-        if (direction.y > 0) {
-          direction.y -= 1;
+        if (direction.y >= 0.5) {
+          direction.y -= 1.0 * dt * VIEW_MOVE_DECEL;
         }
-        else if (direction.y < 0) {
-          direction.y += 1;
+        else if (direction.y <= -0.5) {
+          direction.y += 1.0 * dt * VIEW_MOVE_DECEL;
         }
         else {
           direction.y = 0;
@@ -162,17 +164,17 @@ int main() {
       }
 
       if (right && !left) {
-        direction.x = std::clamp(direction.x - 1.0, -10.0, -1.0);
+        direction.x = std::clamp(direction.x - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
       }
       else if (left && !right) {
-        direction.x = std::clamp(direction.x + 1.0, 1.0, 10.0);
+        direction.x = std::clamp(direction.x + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
       }
       else {
-        if (direction.x > 0) {
-          direction.x -= 1;
+        if (direction.x >= 0.5) {
+          direction.x -= 1.0 * dt * VIEW_MOVE_DECEL;
         }
-        else if (direction.x < 0) {
-          direction.x += 1;
+        else if (direction.x <= -0.5) {
+          direction.x += 1.0 * dt * VIEW_MOVE_DECEL;
         }
         else {
           direction.x = 0;
@@ -185,28 +187,39 @@ int main() {
       window.clear();
 
       window.setView(map_view);
-      window.draw(map);
-      window.draw(character);
 
       auto coords = window.mapPixelToCoords({0, 0});
-
-      window.setView(window.getDefaultView());
-
-      if (menu_open) {
-        window.draw(menu);
-      }
 
       sf::Vector2u top_left_tile = {
         static_cast<unsigned>(std::max(0, (int)(coords.x / scale.x / map.getTileSize().x))),
         static_cast<unsigned>(std::max(0, (int)(coords.y / scale.y / map.getTileSize().y))),
       };
 
+      size_t from_x = std::max(0, (int)coords.x);
+      size_t to_x = std::max(0, (int)coords.x + (int)window.getSize().x);
+      size_t from_y = std::max(0, (int)coords.y);
+      size_t to_y = std::max(0, (int)coords.y + (int)window.getSize().y);
+
+      map.update(
+        from_x, to_x,
+        from_y, to_y
+      );
+
       std::stringstream ss;
-      ss << "Map: " << map.getPosition().x << ", " << map.getPosition().y << "\n";
       ss << "Top Left Coords: " << coords.x << ", " << coords.y << "\n";
       ss << "Center Coords: " << center.x << ", " << center.y << "\n";
       ss << "Top Left Tile: " << top_left_tile.x << ", " << top_left_tile.y << "\n";
       ss << "Character: " << character.getPosition().x << ", " << character.getPosition().y << "\n";
+      ss << "Visible Map: " << from_x << "," << from_y << " -> " << to_x << "," << to_y << "\n";
+
+      window.draw(map);
+      window.draw(character);
+
+      window.setView(window.getDefaultView());
+
+      if (menu_open) {
+        window.draw(menu);
+      }
 
       sf::Text text;
       text.setFont(font);
