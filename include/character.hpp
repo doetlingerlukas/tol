@@ -82,6 +82,14 @@ public:
     sprite.setPosition({ getPosition().x * scale.x, getPosition().y * scale.y });
     sprite.setScale(scale);
 
+    sf::CircleShape shadow;
+    shadow.setRadius(TILE_SIZE / 4.f);
+    shadow.setFillColor(sf::Color(0, 0, 0, 80));
+    shadow.setPosition(sprite.getPosition());
+    shadow.setOrigin({ shadow.getRadius(), shadow.getRadius() });
+    shadow.setScale({ scale.x, scale.y / 2.f });
+
+    target.draw(shadow);
     target.draw(sprite);
   }
 
