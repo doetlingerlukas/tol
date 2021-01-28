@@ -111,6 +111,7 @@ class TiledMap: public sf::Drawable {
 
 
       const auto& tile_position = tileObject.getPosition();
+      sprite.setOrigin({ rect.width / 2.f, rect.height / 2.f });
       sf::Vector2f position = { tile_position.x + positionOffset.x, tile_position.y + positionOffset.y };
       sprite.setPosition({ position.x * this->scale.x, position.y * this->scale.y });
 
@@ -215,9 +216,15 @@ public:
   }
 
   void set_position(const sf::Vector2f position, const sf::RenderTarget& target) {
+    const auto tile_size = map->getTileSize();
+    const auto x_offset = tile_size.x / 2.f;
+    const auto y_offset = tile_size.y / 2.f;
+
+    std::cout << "Tile size: " << tile_size.x << "," << tile_size.y << std::endl;
+
     positionOffset = {
-      std::clamp(position.x, -(getSize().x - target.getSize().x / this->scale.x), 0.f),
-      std::clamp(position.y, -(getSize().y - target.getSize().y / this->scale.y), 0.f),
+      std::clamp(position.x, -(getSize().x - (target.getSize().x / this->scale.x) - x_offset), x_offset),
+      std::clamp(position.y, -(getSize().y - (target.getSize().y / this->scale.y) - y_offset), y_offset),
     };
   }
 
