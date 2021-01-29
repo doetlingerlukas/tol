@@ -187,33 +187,14 @@ int main() {
 
       window.clear();
 
-      window.setView(map_view);
-
-      auto coords = window.mapPixelToCoords({0, 0});
-
-      sf::Vector2u top_left_tile = {
-        static_cast<unsigned>(std::max(0, (int)(coords.x / scale.x / map.getTileSize().x))),
-        static_cast<unsigned>(std::max(0, (int)(coords.y / scale.y / map.getTileSize().y))),
-      };
-
-      size_t from_x = std::max(0, (int)coords.x);
-      size_t to_x = std::max(0, (int)coords.x + (int)window.getSize().x);
-      size_t from_y = std::max(0, (int)coords.y);
-      size_t to_y = std::max(0, (int)coords.y + (int)window.getSize().y);
-
-      map.update(
-        from_x, to_x,
-        from_y, to_y
-      );
-
       std::stringstream ss;
-      ss << "Top Left Coords: " << coords.x << ", " << coords.y << "\n";
       ss << "Center Coords: " << center.x << ", " << center.y << "\n";
-      ss << "Top Left Tile: " << top_left_tile.x << ", " << top_left_tile.y << "\n";
       ss << "Player: " << player.getPosition().x << ", " << player.getPosition().y << "\n";
-      ss << "Visible Map: " << from_x << "," << from_y << " -> " << to_x << "," << to_y << "\n";
       ss << "Spawn: " << spawn->x << "," << spawn->y << "\n";
 
+      map.update(map_view, window);
+
+      window.setView(map_view);
       window.draw(map);
 
       window.setView(window.getDefaultView());

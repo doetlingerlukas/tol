@@ -19,10 +19,10 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   std::unique_ptr<tson::Map> map;
 
-  size_t from_x = 0;
-  size_t to_x = 0;
-  size_t from_y = 0;
-  size_t to_y = 0;
+  size_t from_x;
+  size_t to_x;
+  size_t from_y;
+  size_t to_y;
 
   mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
   const Character* character;
@@ -245,13 +245,26 @@ public:
     for (const auto& tileset: map->getTilesets()) {
       loadImage(tileset.getImagePath());
     }
+
+    from_x = 0;
+    to_x = map->getSize().x;
+    from_y = 0;
+    to_y = map->getSize().y;
   }
 
-  void update(size_t from_x_, size_t to_x_, size_t from_y_, size_t to_y_) {
-    from_x = from_x_ / getScale().x / getTileSize().x;
-    to_x = to_x_ / getScale().x / getTileSize().x + 1;
-    from_y = from_y_ / getScale().y / getTileSize().y;
-    to_y = to_y_ / getScale().y / getTileSize().y + 1;
+  void update(const sf::View& view, const sf::RenderWindow& window) {
+    const auto window_size = window.getSize();
+
+    auto from = window.mapPixelToCoords({0, 0}, view);
+    auto to = window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view);
+
+    // Update culling range.
+    const auto factor_x = getScale().x * getTileSize().x;
+    const auto factor_y = getScale().y * getTileSize().y;
+    from_x = std::max(0, static_cast<int>(from.x / factor_x));
+    to_x = std::max(0, static_cast<int>(from.x + window_size.x)) / factor_x + 1;
+    from_y = std::max(0, static_cast<int>(from.y)) / factor_y;
+    to_y = std::max(0, static_cast<int>(from.y + window.getSize().y)) / factor_y + 1;
   }
 
   void setPosition(sf::Vector2f position, const sf::RenderTarget& target) {
