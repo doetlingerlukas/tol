@@ -82,15 +82,27 @@ public:
     sprite.setPosition({ getPosition().x * scale.x, getPosition().y * scale.y });
     sprite.setScale(scale);
 
+    const auto shadow_ratio = 2.f;
+
     sf::CircleShape shadow;
     shadow.setRadius(TILE_SIZE / 4.f);
     shadow.setFillColor(sf::Color(0, 0, 0, 80));
     shadow.setPosition(sprite.getPosition());
     shadow.setOrigin({ shadow.getRadius(), shadow.getRadius() });
-    shadow.setScale({ scale.x, scale.y / 2.f });
+    shadow.setScale({ scale.x, scale.y / shadow_ratio });
+
+    sf::RectangleShape bounding_box;
+    bounding_box.setSize({shadow.getRadius() * 2.f, shadow.getRadius() * 2.f / shadow_ratio});
+    bounding_box.setScale(scale);
+    bounding_box.setOrigin({bounding_box.getSize().x / 2.f, bounding_box.getSize().y / 2.f});
+    bounding_box.setOutlineThickness(1.f);
+    bounding_box.setOutlineColor(sf::Color::Red);
+    bounding_box.setFillColor(sf::Color::Transparent);
+    bounding_box.setPosition(sprite.getPosition());
 
     target.draw(shadow);
     target.draw(sprite);
+    target.draw(bounding_box);
   }
 
   void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed) {

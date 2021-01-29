@@ -7,6 +7,7 @@
 #include <tileson.hpp>
 
 #include <animation.hpp>
+#include <character.hpp>
 
 #if defined(_MSC_VER)
 typedef long long ssize_t;
@@ -24,6 +25,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   size_t to_y = 0;
 
   mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
+  const Character* character;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     for (auto& layer : map->getLayers()) {
@@ -70,6 +72,10 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       break;
     default:
       break;
+    }
+
+    if (layer.getName() == "characters") {
+      target.draw(*character);
     }
   }
 
@@ -265,5 +271,9 @@ public:
     }
 
     return std::optional(sf::Vector2f({ (float)spawn->getPosition().x, (float)spawn->getPosition().y }));
+  }
+
+  void addCharacter(const Character* character) {
+    this->character = character;
   }
 };
