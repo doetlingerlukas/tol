@@ -7,7 +7,7 @@ struct MenuItem {
   MenuItem(std::string title_, std::function<void()> callback_): title(title_), callback(callback_) {}
 };
 
-class Menu: public sf::Drawable {
+class Menu: public sf::Drawable, public sf::Transformable {
   size_t current_item = 0;
   std::vector<MenuItem> items;
   bool enter_pressed = false;
@@ -21,8 +21,10 @@ class Menu: public sf::Drawable {
     for (size_t i = 0; i < items.size(); i++) {
       sf::Text text;
 
+      const auto character_size = 32 * getScale().y;
+
       text.setString(items[i].title);
-      text.setCharacterSize(64);
+      text.setCharacterSize(character_size);
 
       if (i == current_item) {
         text.setFont(*load_font("assets/fonts/Gaegu-Bold.ttf"));
@@ -39,7 +41,7 @@ class Menu: public sf::Drawable {
         text.setFillColor(sf::Color(200, 200, 200, 255));
       }
 
-      text.setPosition({ 64, static_cast<float>(64 + i * 64) });
+      text.setPosition({ character_size, static_cast<float>(character_size + i * character_size) });
 
       target.draw(text);
     }

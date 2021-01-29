@@ -16,9 +16,33 @@ const float VIEW_MOVE_ACCEL = 20.f;
 const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;
 const float CHARACTER_MOVE_SPEED = 80.f;
 
+#if __APPLE__
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
 int main() {
   try {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
+    sf::Vector2f scale = { 2.0, 2.0 };
+    sf::Vector2f resolution_scale = { 1.0, 1.0 };
+
+    auto video_mode = sf::VideoMode::getDesktopMode();
+    std::cout << "Full Resolution: " << video_mode.width << "," << video_mode.height << std::endl;
+
+    #if __APPLE__
+    auto display_id = CGMainDisplayID();
+    auto width = CGDisplayPixelsWide(display_id);
+    auto height = CGDisplayPixelsHigh(display_id);
+
+    std::cout << "Scaled Resolution: " << width << "," << height << std::endl;
+
+    resolution_scale.x *= static_cast<float>(video_mode.width) / static_cast<float>(width);
+    resolution_scale.y *= static_cast<float>(video_mode.height) / static_cast<float>(height);
+    #endif
+
+    scale.x *= resolution_scale.x;
+    scale.y *= resolution_scale.y;
+
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH * resolution_scale.x, WINDOW_HEIGHT * resolution_scale.y), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     window.setActive(true);
 
@@ -29,8 +53,6 @@ int main() {
 
     TiledMap map("assets/map.json");
     Character player("assets/tilesets/character-whitebeard.png");
-
-    sf::Vector2f scale = { 2.0, 2.0 };
     map.setScale(scale);
     player.setScale(scale);
 
@@ -57,6 +79,7 @@ int main() {
     menu.add_item("LOAD GAME", [&]() { });
     menu.add_item("SAVE GAME", [&]() { });
     menu.add_item("EXIT", [&]() { window.close(); });
+    menu.setScale(scale);
 
     sf::Clock clock;
     float dt = 0.0;
@@ -205,12 +228,11 @@ int main() {
 
       sf::Text text;
       text.setFont(font);
-      text.setCharacterSize(16);
+      text.setCharacterSize(16 * scale.y);
       text.setFillColor(sf::Color::White);
       text.setOutlineColor(sf::Color::Black);
       text.setOutlineThickness(1);
       text.setString(ss.str());
-      text.setScale(scale);
 
       window.draw(text);
 
