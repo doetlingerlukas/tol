@@ -84,6 +84,8 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
+    bool collision_layer = layer.getName() == "collision";
+
     for (size_t x = from_x; x < to_x; x++) {
       for (size_t y = from_y; y < to_y; y++) {
         const auto* tileObjectP = layer.getTileObject(x, y);
@@ -111,36 +113,64 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           } else {
             rect = running_animations.at(tile_id).getDrawingRect(now);
           }
+        }
 
+        sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
+        const auto& tile_position = tileObject.getPosition();
+        sf::Vector2f position = {
+          (origin.x + tile_position.x + getPosition().x) * getScale().x,
+          (origin.y + tile_position.y + getPosition().y) * getScale().y,
+        };
+
+        sf::Vector2f scale = getScale();
+
+        float rotation = 0.f;
+        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
+          rotation += 90.f;
+
+        sf::Color collision_color(255, 0, 0, 100);
+
+        // Draw collision tiles.
+        if (collision_layer) {
+          sf::RectangleShape tile({ static_cast<float>(getTileSize().x), static_cast<float>(getTileSize().y) });
+          tile.setFillColor(collision_color);
+          tile.setOrigin(origin);
+          tile.setPosition(position);
+          tile.setScale(scale);
+          tile.setRotation(rotation);
+          target.draw(tile);
+          continue;
         }
 
         auto texture = loadImage(tileset->getImagePath());
-        sf::Sprite sprite;
-        sprite.setTexture(*texture);
-        sprite.setTextureRect(rect);
+        sf::Sprite sprite(*texture, rect);
 
-        float rotation = sprite.getRotation();
-
-        sf::Vector2f scale = sprite.getScale();
         if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
           scale.x = -scale.x;
         if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
           scale.y = -scale.y;
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
-          rotation += 90.f;
 
-
-        const auto& tile_position = tileObject.getPosition();
-        sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
         sprite.setOrigin(origin);
-        sf::Vector2f position = { tile_position.x + getPosition().x, tile_position.y + getPosition().y };
-        sprite.setPosition({ (origin.x + position.x) * getScale().x, (origin.y + position.y) * getScale().y });
-
-        sprite.setScale({ scale.x * getScale().x, scale.y * getScale().y });
-
+        sprite.setPosition(position);
+        sprite.setScale(scale);
         sprite.setRotation(rotation);
 
         target.draw(sprite);
+
+        // Draw collision boxes.
+        auto object_group = tile.getObjectgroup();
+        for (auto& object: object_group.getObjects()) {
+          sf::RectangleShape collision_box({ static_cast<float>(object.getSize().x), static_cast<float>(object.getSize().y) });
+          collision_box.setFillColor(collision_color);
+          collision_box.setPosition({
+            (tile_position.x + getPosition().x + object.getPosition().x) * getScale().x,
+            (tile_position.y + getPosition().y + object.getPosition().y) * getScale().y,
+          });
+          collision_box.setScale(scale);
+          collision_box.setRotation(object.getRotation());
+
+          target.draw(collision_box);
+        }
       }
     }
 
