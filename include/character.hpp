@@ -118,7 +118,7 @@ public:
     };
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, const std::vector<sf::RectangleShape>& collisio_rects) {
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, const std::vector<sf::RectangleShape>& collision_rects) {
     this->x_direction = x_direction;
     this->y_direction = y_direction;
 
@@ -144,8 +144,8 @@ public:
     setPosition(position);
 
     auto player_bounds = getBoundingRect();
-    for (auto& rect : collisio_rects) {
-      
+    for (auto& rect : collision_rects) {
+
       auto obstacle_bounds = rect.getGlobalBounds();
       if (player_bounds.intersects(obstacle_bounds)) {
         std::cout << "Collision" << std::endl;
