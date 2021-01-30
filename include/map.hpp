@@ -182,9 +182,6 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         }
       }
     }
-
-    for (const auto [pos, tileObject] : layer.getTileObjects()) {
-    }
   }
 
   void drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const {
