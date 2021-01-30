@@ -220,6 +220,10 @@ int main() {
       window.setView(map_view);
       window.draw(map);
 
+      for (auto shape : map.collisionTiles(player)) {
+        window.draw(shape);
+      }
+
       window.setView(window.getDefaultView());
 
       if (menu_open) {
@@ -235,10 +239,6 @@ int main() {
       text.setString(ss.str());
 
       window.draw(text);
-
-      for (auto shape : map.collisionTiles(player.getPosition())) {
-        window.draw(shape);
-      }
 
       window.display();
     }

@@ -45,6 +45,8 @@ public:
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE / 8.f * 7.f });
   }
 
+  sf::FloatRect bounding_box_rect;
+
   mutable CharacterDirection last_direction = DOWN;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -91,18 +93,29 @@ public:
     shadow.setOrigin({ shadow.getRadius(), shadow.getRadius() });
     shadow.setScale({ scale.x, scale.y / shadow_ratio });
 
+    auto bounding_box_rect = getBoundingRect();
     sf::RectangleShape bounding_box;
-    bounding_box.setSize({shadow.getRadius() * 2.f, shadow.getRadius() * 2.f / shadow_ratio});
-    bounding_box.setScale(scale);
-    bounding_box.setOrigin({bounding_box.getSize().x / 2.f, bounding_box.getSize().y / 2.f});
+    bounding_box.setSize({bounding_box_rect.width, bounding_box_rect.height});
     bounding_box.setOutlineThickness(1.f);
     bounding_box.setOutlineColor(sf::Color::Red);
     bounding_box.setFillColor(sf::Color::Transparent);
-    bounding_box.setPosition(sprite.getPosition());
+    bounding_box.setPosition({bounding_box_rect.left, bounding_box_rect.top});
 
     target.draw(shadow);
     target.draw(sprite);
     target.draw(bounding_box);
+  }
+
+  sf::FloatRect getBoundingRect() const {
+    const auto width = (TILE_SIZE / 8.f * 3.f);
+    const auto height = (TILE_SIZE / 8.f * 2.f);
+
+    return {
+      (getPosition().x - width / 2.f) * getScale().x,
+      (getPosition().y - height / 2.f) * getScale().y,
+      width * getScale().x,
+      height * getScale().y,
+    };
   }
 
   void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed) {
