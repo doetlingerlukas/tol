@@ -395,10 +395,10 @@ public:
         const auto& tile_position = tileObject.getPosition();
         tson::Rect tsonRect = tile.getDrawingRect();
         sf::FloatRect tile_rect = {
-          (tile_position.x + getPosition().x) * getScale().x,
-          (tile_position.y + getPosition().y) * getScale().y,
-          static_cast<float>(getTileSize().x) * getScale().x,
-          static_cast<float>(getTileSize().y) * getScale().y,
+          tile_position.x + getPosition().x,
+          tile_position.y + getPosition().y,
+          static_cast<float>(getTileSize().x),
+          static_cast<float>(getTileSize().y),
         };
 
         sf::RectangleShape shape({tile_rect.width, tile_rect.height});
@@ -409,7 +409,7 @@ public:
         if (collision) {
           shape.setOutlineColor(sf::Color::Red);
         }
-        shape.setOutlineThickness(1.f);
+        shape.setOutlineThickness(0.5f);
         shape.setPosition({ tile_rect.left, tile_rect.top });
 
         shapes.push_back(shape);

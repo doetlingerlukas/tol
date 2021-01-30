@@ -232,6 +232,9 @@ int main(int argc, char **argv) {
       window.draw(map);
 
       for (auto shape : collision_rects) {
+        shape.setScale(scale);
+        auto position = shape.getPosition();
+        shape.setPosition({ position.x * scale.x, position.y * scale.y });
         window.draw(shape);
       }
 

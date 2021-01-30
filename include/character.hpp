@@ -96,10 +96,11 @@ public:
     auto bounding_box_rect = getBoundingRect();
     sf::RectangleShape bounding_box;
     bounding_box.setSize({bounding_box_rect.width, bounding_box_rect.height});
-    bounding_box.setOutlineThickness(1.f);
+    bounding_box.setOutlineThickness(0.5f);
     bounding_box.setOutlineColor(sf::Color::Red);
     bounding_box.setFillColor(sf::Color::Transparent);
-    bounding_box.setPosition({bounding_box_rect.left, bounding_box_rect.top});
+    bounding_box.setPosition({bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y});
+    bounding_box.setScale(scale);
 
     target.draw(shadow);
     target.draw(sprite);
@@ -111,10 +112,10 @@ public:
     const auto height = (TILE_SIZE / 8.f * 2.f);
 
     return {
-      (getPosition().x - width / 2.f) * getScale().x,
-      (getPosition().y - height / 2.f) * getScale().y,
-      width * getScale().x,
-      height * getScale().y,
+      (getPosition().x - width / 2.f),
+      (getPosition().y - height / 2.f),
+      width,
+      height,
     };
   }
 
