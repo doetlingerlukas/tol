@@ -236,6 +236,10 @@ int main() {
 
       window.draw(text);
 
+      for (auto shape : map.collisionTiles(player.getPosition())) {
+        window.draw(shape);
+      }
+
       window.display();
     }
 

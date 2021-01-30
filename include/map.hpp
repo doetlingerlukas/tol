@@ -242,7 +242,6 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
             },
             target
           );
-          std::cout << "RECT: " << obj.getName() << " - " << obj.getType() << std::endl;
           break;
         default:
           break;
@@ -344,5 +343,60 @@ public:
 
   void addCharacter(const Character* character) {
     this->character = character;
+  }
+
+  std::vector<sf::RectangleShape> collisionTiles(const sf::Vector2f& player_pos) const {
+    std::vector<sf::RectangleShape> shapes;
+
+    auto* layer = map->getLayer("collision");
+
+    const auto player_tile_x = static_cast<int>(player_pos.x / getTileSize().x);
+    const auto player_tile_y = static_cast<int>(player_pos.y / getTileSize().y);
+
+    for (size_t x = (player_tile_x - 1); x <= (player_tile_x + 1); x++) {
+      for (size_t y = (player_tile_y - 3); y <= (player_tile_y + 1); y++) {
+        const auto* tileObjectP = layer->getTileObject(x, y);
+
+        if (!tileObjectP) {
+          continue;
+        }
+
+        std::cout << "Found collision: " << x << ", " << y << std::endl;
+
+        const auto& tileObject = *tileObjectP;
+
+        const auto& tile = *tileObject.getTile();
+        auto* tileset = tile.getTileset();
+
+        tson::Rect tsonRect = tile.getDrawingRect();
+        sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
+
+        sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
+        const auto& tile_position = tileObject.getPosition();
+        sf::Vector2f position = {
+          (origin.x + tile_position.x + getPosition().x) * getScale().x,
+          (origin.y + tile_position.y + getPosition().y) * getScale().y,
+        };
+
+        sf::Vector2f scale = getScale();
+
+        float rotation = 0.f;
+        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
+          rotation += 90.f;
+
+        sf::RectangleShape shape({ static_cast<float>(getTileSize().x), static_cast<float>(getTileSize().y) });
+        shape.setFillColor(sf::Color::Transparent);
+        shape.setOutlineColor(sf::Color::Blue);
+        shape.setOutlineThickness(1.f);
+        shape.setOrigin(origin);
+        shape.setPosition(position);
+        shape.setScale(scale);
+        shape.setRotation(rotation);
+
+        shapes.push_back(shape);
+      }
+    }
+
+    return shapes;
   }
 };
