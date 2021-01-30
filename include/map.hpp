@@ -81,6 +81,17 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   mutable std::map<int, Animation> running_animations;
 
+  void drawCollisionRect(const sf::Vector2f& position, const sf::Vector2f size, sf::RenderTarget& target) const {
+    sf::Color collision_color(255, 0, 0, 100);
+
+    sf::RectangleShape collision_box(size);
+    collision_box.setFillColor(collision_color);
+    collision_box.setPosition(position);
+    collision_box.setScale(getScale());
+
+    target.draw(collision_box);
+  }
+
   void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
@@ -128,17 +139,17 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
           rotation += 90.f;
 
-        sf::Color collision_color(255, 0, 0, 100);
 
         // Draw collision tiles.
         if (collision_layer) {
-          sf::RectangleShape tile({ static_cast<float>(getTileSize().x), static_cast<float>(getTileSize().y) });
-          tile.setFillColor(collision_color);
-          tile.setOrigin(origin);
-          tile.setPosition(position);
-          tile.setScale(scale);
-          tile.setRotation(rotation);
-          target.draw(tile);
+          drawCollisionRect(
+            {
+              (tile_position.x + getPosition().x) * getScale().x,
+              (tile_position.y + getPosition().y) * getScale().y,
+            },
+            { static_cast<float>(getTileSize().x), static_cast<float>(getTileSize().y) },
+            target
+          );
           continue;
         }
 
@@ -160,16 +171,14 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         // Draw collision boxes.
         auto object_group = tile.getObjectgroup();
         for (auto& object: object_group.getObjects()) {
-          sf::RectangleShape collision_box({ static_cast<float>(object.getSize().x), static_cast<float>(object.getSize().y) });
-          collision_box.setFillColor(collision_color);
-          collision_box.setPosition({
-            (tile_position.x + getPosition().x + object.getPosition().x) * getScale().x,
-            (tile_position.y + getPosition().y + object.getPosition().y) * getScale().y,
-          });
-          collision_box.setScale(scale);
-          collision_box.setRotation(object.getRotation());
-
-          target.draw(collision_box);
+          drawCollisionRect(
+          {
+              (tile_position.x + getPosition().x + object.getPosition().x) * getScale().x,
+              (tile_position.y + getPosition().y + object.getPosition().y) * getScale().y,
+            },
+            { static_cast<float>(object.getSize().x), static_cast<float>(object.getSize().y) },
+            target
+          );
         }
       }
     }
@@ -224,6 +233,14 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
           break;
         }
+        case tson::ObjectType::Rectangle:
+          drawCollisionRect(
+            { static_cast<float>(obj.getPosition().x * getScale().x), static_cast<float>(obj.getPosition().y * getScale().y) },
+            { static_cast<float>(obj.getSize().x), static_cast<float>(obj.getSize().y) },
+            target
+          );
+          std::cout << "RECT: " << obj.getName() << " - " << obj.getType() << std::endl;
+          break;
         default:
           break;
       }
