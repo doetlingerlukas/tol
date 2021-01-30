@@ -118,11 +118,12 @@ public:
     };
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed) {
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, const std::vector<sf::RectangleShape>& collisio_rects) {
     this->x_direction = x_direction;
     this->y_direction = y_direction;
 
     auto position = getPosition();
+    auto prev_position = position;
 
     if (x_direction == RIGHT) {
       position.x += 1.0 * speed;
@@ -138,6 +139,61 @@ public:
 
     if (y_direction == DOWN) {
       position.y += 1.0 * speed;
+    }
+
+    setPosition(position);
+
+    auto player_bounds = getBoundingRect();
+    for (auto& rect : collisio_rects) {
+      
+      auto obstacle_bounds = rect.getGlobalBounds();
+      if (player_bounds.intersects(obstacle_bounds)) {
+        std::cout << "Collision" << std::endl;
+
+        // Right collision
+        if (player_bounds.left < obstacle_bounds.left
+          && player_bounds.left + player_bounds.width < obstacle_bounds.left + obstacle_bounds.width
+          && player_bounds.top  < obstacle_bounds.top + obstacle_bounds.height
+          && player_bounds.top + player_bounds.height > obstacle_bounds.top) {
+
+          position.x = prev_position.x;
+          //position.x = obstacle_bounds.left - player_bounds.width;
+          //position.y = player_bounds.top;
+        }
+
+        // Left collision
+        if (player_bounds.left > obstacle_bounds.left
+          && player_bounds.left + player_bounds.width > obstacle_bounds.left + obstacle_bounds.width
+          && player_bounds.top < obstacle_bounds.top + obstacle_bounds.height
+          && player_bounds.top + player_bounds.height > obstacle_bounds.top) {
+
+          position.x = prev_position.x;
+          //position.x = obstacle_bounds.left + player_bounds.width;
+          //position.y = player_bounds.top;
+        }
+
+        // Bottom collision
+        if (player_bounds.top < obstacle_bounds.top
+          && player_bounds.top + player_bounds.height < obstacle_bounds.top + obstacle_bounds.height
+          && player_bounds.left  < obstacle_bounds.left + obstacle_bounds.width
+          && player_bounds.left + player_bounds.width > obstacle_bounds.left) {
+
+          position.y = prev_position.y;
+          //position.x = play_bounds.left;
+          //position.y = obstacle_bounds.top - player_bounds.height;
+        }
+
+        // Top collision
+        if (player_bounds.top > obstacle_bounds.top
+          && player_bounds.top + player_bounds.height > obstacle_bounds.top + obstacle_bounds.height
+          && player_bounds.left  < obstacle_bounds.left + obstacle_bounds.width
+          && player_bounds.left + player_bounds.width > obstacle_bounds.left) {
+
+          position.y = prev_position.y;
+          //position.x = play_bounds.left;
+          //position.y = obstacle_bounds.top + player_bounds.height;
+        }
+      }
     }
 
     setPosition(position);

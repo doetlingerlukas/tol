@@ -81,6 +81,8 @@ int main() {
     menu.add_item("EXIT", [&]() { window.close(); });
     menu.setScale(scale);
 
+    std::vector<sf::RectangleShape> collision_rects;
+
     sf::Clock clock;
     float dt = 0.0;
 
@@ -163,10 +165,12 @@ int main() {
         }
       }
 
+      collision_rects = map.collisionTiles(player);
+
       player.move(
         (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
         (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt),
-        dt * CHARACTER_MOVE_SPEED
+        dt * CHARACTER_MOVE_SPEED, collision_rects
       );
 
       if (up && !down) {
@@ -220,7 +224,7 @@ int main() {
       window.setView(map_view);
       window.draw(map);
 
-      for (auto shape : map.collisionTiles(player)) {
+      for (auto shape : collision_rects) {
         window.draw(shape);
       }
 
