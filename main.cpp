@@ -43,7 +43,13 @@ int main(int argc, char **argv) {
     scale.x *= resolution_scale.x;
     scale.y *= resolution_scale.y;
 
-    sf::RenderWindow window(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
+    sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close;
+
+    if (settings.fullscreen()) {
+      style = sf::Style::Fullscreen;
+    }
+
+    sf::RenderWindow window(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), "Tales of Lostness", style);
     window.setVerticalSyncEnabled(true);
     window.setActive(true);
 
