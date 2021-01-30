@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <chrono>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
@@ -299,6 +301,27 @@ public:
     to_x = map->getSize().x;
     from_y = 0;
     to_y = map->getSize().y;
+
+    fixIndices();
+  }
+
+  void fixIndices() const {
+    using json = nlohmann::json;
+    const auto absolute_path = dir / filename;
+    std::ifstream ifs(absolute_path);
+    json jf = json::parse(ifs);
+
+    for (const auto& sets : jf["tilesets"].items()) {
+      const auto first_gid = sets.value()["firstgid"].get<int>();
+
+      for (const auto& tile : sets.value()["tiles"].items()) {
+        const auto id = first_gid - 1 + tile.value()["id"].get<int>();
+
+        for (const auto& animation : tile.value()["animation"].items()) {
+          const auto& tile_id = first_gid + animation.value()["tileid"].get<int>();
+        }
+      }
+    }
   }
 
   sf::Vector2i mapCoordsToTile(const sf::Vector2f& coords) {

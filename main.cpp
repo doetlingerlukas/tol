@@ -7,9 +7,7 @@
 #include <map.hpp>
 #include <menu.hpp>
 #include <character.hpp>
-
-const int WINDOW_WIDTH = 1200;
-const int WINDOW_HEIGHT = 800;
+#include <settings.hpp>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
@@ -20,13 +18,16 @@ const float CHARACTER_MOVE_SPEED = 80.f;
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #endif
 
-int main() {
+int main(int argc, char **argv) {
   try {
     sf::Vector2f scale = { 2.0, 2.0 };
     sf::Vector2f resolution_scale = { 1.0, 1.0 };
 
     auto video_mode = sf::VideoMode::getDesktopMode();
     std::cout << "Full Resolution: " << video_mode.width << "," << video_mode.height << std::endl;
+
+    const auto& settings = Settings(argv[0]);
+    const auto[window_width, window_height] = settings.resolution();
 
     #if __APPLE__
     auto display_id = CGMainDisplayID();
@@ -42,7 +43,7 @@ int main() {
     scale.x *= resolution_scale.x;
     scale.y *= resolution_scale.y;
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH * resolution_scale.x, WINDOW_HEIGHT * resolution_scale.y), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     window.setActive(true);
 

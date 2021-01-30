@@ -22,6 +22,10 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(tol PRIVATE OpenGL::GL)
 endif()
 
+
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
+
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)
 
