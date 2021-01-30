@@ -9,6 +9,7 @@ private:
   int resolution_height;
   int resolution_width;
   bool is_fullscreen;
+  bool vsync_enabled;
   fs::path settings_path;
 
   void initSettings() const {
@@ -24,6 +25,7 @@ private:
     resolution["width"] = 1200;
     resolution["height"] = 800;
     settings_field["fullscreen"] = false;
+    settings_field["vsync"] = false;
     std::cout << std::setw(2) << settings << std::endl;
 
     std::ofstream out(settings_path);
@@ -42,6 +44,7 @@ private:
     resolution_height = resolution["height"].get<int>();
     resolution_width = resolution["width"].get<int>();
     is_fullscreen = settings_field["fullscreen"].get<bool>();
+    vsync_enabled = settings_field["vsync"].get<bool>();
     std::cout << std::setw(2) << settings << std::endl;
   }
 
@@ -56,5 +59,9 @@ public:
 
   bool fullscreen() const {
     return is_fullscreen;
+  }
+
+  bool vsync() const {
+    return vsync_enabled;
   }
 };
