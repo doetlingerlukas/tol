@@ -35,8 +35,8 @@ int main() {
 
     std::cout << "Scaled Resolution: " << width << "," << height << std::endl;
 
-    resolution_scale.x *= static_cast<float>(video_mode.width) / static_cast<float>(width);
-    resolution_scale.y *= static_cast<float>(video_mode.height) / static_cast<float>(height);
+    resolution_scale.x = static_cast<float>(video_mode.width) / static_cast<float>(width);
+    resolution_scale.y = static_cast<float>(video_mode.height) / static_cast<float>(height);
     #endif
 
     scale.x *= resolution_scale.x;

@@ -282,19 +282,25 @@ public:
     to_y = map->getSize().y;
   }
 
+
+  sf::Vector2i mapCoordsToTile(const sf::Vector2f& coords) {
+    const auto factor_x = getScale().x * getTileSize().x;
+    const auto factor_y = getScale().y * getTileSize().y;
+
+    return { static_cast<int>(coords.x / factor_x), static_cast<int>(coords.y / factor_y) };
+  }
+
   void update(const sf::View& view, const sf::RenderWindow& window) {
     const auto window_size = window.getSize();
 
-    auto from = window.mapPixelToCoords({0, 0}, view);
-    auto to = window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view);
+    auto from = mapCoordsToTile(window.mapPixelToCoords({0, 0}, view));
+    auto to = mapCoordsToTile(window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view));
 
     // Update culling range.
-    const auto factor_x = getScale().x * getTileSize().x;
-    const auto factor_y = getScale().y * getTileSize().y;
-    from_x = std::max(0, static_cast<int>(from.x / factor_x));
-    to_x = std::max(0, static_cast<int>(from.x + window_size.x)) / factor_x + 1;
-    from_y = std::max(0, static_cast<int>(from.y)) / factor_y;
-    to_y = std::max(0, static_cast<int>(from.y + window.getSize().y)) / factor_y + 1;
+    from_x = std::max(0, from.x);
+    to_x = std::max(0, to.x) + 1;
+    from_y = std::max(0, from.y);
+    to_y = std::max(0, to.y) + 1;
   }
 
   void setPosition(sf::Vector2f position, const sf::RenderTarget& target) {
