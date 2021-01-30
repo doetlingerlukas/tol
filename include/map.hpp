@@ -81,12 +81,12 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawCollisionRect(const sf::Vector2f& position, const sf::Vector2f size, sf::RenderTarget& target) const {
+  void drawCollisionRect(const sf::Rect<float>& rect, sf::RenderTarget& target) const {
     sf::Color collision_color(255, 0, 0, 100);
 
-    sf::RectangleShape collision_box(size);
+    sf::RectangleShape collision_box({ rect.width, rect.height });
     collision_box.setFillColor(collision_color);
-    collision_box.setPosition(position);
+    collision_box.setPosition({ rect.left, rect.top });
     collision_box.setScale(getScale());
 
     target.draw(collision_box);
@@ -146,8 +146,9 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
             {
               (tile_position.x + getPosition().x) * getScale().x,
               (tile_position.y + getPosition().y) * getScale().y,
+              static_cast<float>(getTileSize().x),
+              static_cast<float>(getTileSize().y),
             },
-            { static_cast<float>(getTileSize().x), static_cast<float>(getTileSize().y) },
             target
           );
           continue;
@@ -172,11 +173,12 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         auto object_group = tile.getObjectgroup();
         for (auto& object: object_group.getObjects()) {
           drawCollisionRect(
-          {
+            {
               (tile_position.x + getPosition().x + object.getPosition().x) * getScale().x,
               (tile_position.y + getPosition().y + object.getPosition().y) * getScale().y,
+              static_cast<float>(object.getSize().x),
+              static_cast<float>(object.getSize().y),
             },
-            { static_cast<float>(object.getSize().x), static_cast<float>(object.getSize().y) },
             target
           );
         }
@@ -232,8 +234,12 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         }
         case tson::ObjectType::Rectangle:
           drawCollisionRect(
-            { static_cast<float>(obj.getPosition().x * getScale().x), static_cast<float>(obj.getPosition().y * getScale().y) },
-            { static_cast<float>(obj.getSize().x), static_cast<float>(obj.getSize().y) },
+            {
+              static_cast<float>(obj.getPosition().x * getScale().x),
+              static_cast<float>(obj.getPosition().y * getScale().y),
+              static_cast<float>(obj.getSize().x),
+              static_cast<float>(obj.getSize().y),
+            },
             target
           );
           std::cout << "RECT: " << obj.getName() << " - " << obj.getType() << std::endl;
