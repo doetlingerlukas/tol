@@ -2,15 +2,29 @@
 #include <iostream>
 #include <algorithm>
 
+#if __APPLE__
+#include <CoreGraphics/CGDisplayConfiguration.h>
+
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include <SFML/Graphics.hpp>
 
 #include <map.hpp>
 #include <menu.hpp>
 #include <character.hpp>
+#define NK_IMPLEMENTATION
+#define NK_SFML_GL2_IMPLEMENTATION
 #include <nuklear.hpp>
 #include <settings.hpp>
+
+const float VIEW_MOVE_SPEED = 40.f;
+const float VIEW_MOVE_ACCEL = 20.f;
+const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;
+const float CHARACTER_MOVE_SPEED = 80.f;
 
 int main(int argc, char **argv) {
   try {
@@ -89,8 +103,8 @@ int main(int argc, char **argv) {
       const auto millis = clock.restart().asMilliseconds();
       const auto dt = millis / 1000.f;
       now += std::chrono::milliseconds(millis);
-      sf::Event event;
 
+      sf::Event event;
       nk_input_begin(ctx);
       while (window.pollEvent(event)) {
         switch (event.type) {
@@ -164,7 +178,10 @@ int main(int argc, char **argv) {
           default:
             break;
         }
+
+        nk_sfml_handle_event(&event);
       }
+      nk_input_end(ctx);
 
       collision_rects = map.collisionTiles(player);
 
@@ -238,10 +255,6 @@ int main(int argc, char **argv) {
         window.draw(menu);
       }
 
-      nk_input_end(ctx);
-
-      nuklear.render_menu(ctx);
-
       sf::Text text;
       text.setFont(font);
       text.setCharacterSize(16 * scale.y);
@@ -252,11 +265,15 @@ int main(int argc, char **argv) {
 
       window.draw(text);
 
+      window.pushGLStates();
+      nuklear.render_menu(ctx);
       nk_sfml_render(NK_ANTI_ALIASING_ON);
+      window.popGLStates();
 
       window.display();
     }
 
+    nk_sfml_shutdown();
     return EXIT_SUCCESS;
   } catch (std::exception& e) {
     std::cerr << "Error: " << e.what() << std::endl;
