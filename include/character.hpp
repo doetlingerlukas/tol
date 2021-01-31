@@ -120,9 +120,6 @@ public:
   }
 
   void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, const std::vector<sf::RectangleShape>& collision_rects) {
-    this->x_direction = x_direction;
-    this->y_direction = y_direction;
-
     auto position = getPosition();
 
     sf::Vector2f velocity = { 0.f, 0.f };
@@ -145,15 +142,14 @@ public:
 
     auto player_bounds = getBoundingRect();
 
-    auto next_position = player_bounds;
-    next_position.left += velocity.x;
-    next_position.top += velocity.y;
+    auto next_bounds = player_bounds;
+    next_bounds.left += velocity.x;
+    next_bounds.top += velocity.y;
 
     for (auto& rect : collision_rects) {
 
       auto obstacle_bounds = rect.getGlobalBounds();
-      if (obstacle_bounds.intersects(next_position)) {
-
+      if (obstacle_bounds.intersects(next_bounds)) {
         // Right collision
         if (player_bounds.left < obstacle_bounds.left
           && player_bounds.left + player_bounds.width < obstacle_bounds.left + obstacle_bounds.width
@@ -162,6 +158,14 @@ public:
 
           velocity.x = 0.f;
           position.x = obstacle_bounds.left - player_bounds.width / 2.f;
+
+          if (x_direction == RIGHT) {
+            x_direction = std::nullopt;
+
+            if (!y_direction) {
+              last_direction = RIGHT;
+            }
+          }
         }
 
         // Left collision
@@ -172,9 +176,18 @@ public:
 
           velocity.x = 0.f;
           position.x = obstacle_bounds.left + obstacle_bounds.width + player_bounds.width / 2.f;
+
+
+          if (x_direction == LEFT) {
+            x_direction = std::nullopt;
+
+            if (!y_direction) {
+              last_direction = LEFT;
+            }
+          }
         }
 
-        // Bottom collision
+        // Top collision
         if (player_bounds.top < obstacle_bounds.top
           && player_bounds.top + player_bounds.height < obstacle_bounds.top + obstacle_bounds.height
           && player_bounds.left  < obstacle_bounds.left + obstacle_bounds.width
@@ -182,20 +195,40 @@ public:
 
           velocity.y = 0.f;
           position.y = obstacle_bounds.top - player_bounds.height / 2.f;
+
+
+          if (y_direction == DOWN) {
+            y_direction = std::nullopt;
+
+            if (!x_direction) {
+              last_direction = DOWN;
+            }
+          }
         }
 
-        // Top collision
+        // Bottom collision
         if (player_bounds.top > obstacle_bounds.top
           && player_bounds.top + player_bounds.height > obstacle_bounds.top + obstacle_bounds.height
           && player_bounds.left  < obstacle_bounds.left + obstacle_bounds.width
           && player_bounds.left + player_bounds.width > obstacle_bounds.left) {
-          
+
           velocity.y = 0.f;
           position.y = obstacle_bounds.top + obstacle_bounds.height + player_bounds.height / 2.f;
+
+
+          if (y_direction == UP) {
+            y_direction = std::nullopt;
+
+            if (!x_direction) {
+              last_direction = UP;
+            }
+          }
         }
       }
     }
 
+    this->x_direction = x_direction;
+    this->y_direction = y_direction;
     setPosition(position + velocity);
   }
 };
