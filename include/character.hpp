@@ -140,43 +140,35 @@ public:
       velocity.y += 1.0 * speed;
     }
 
-    auto player_bounds = getBoundingRect();
+    const auto player_bounds = getBoundingRect();
 
     auto next_bounds = player_bounds;
     next_bounds.left += velocity.x;
     next_bounds.top += velocity.y;
 
-    for (auto& rect : collision_rects) {
+    const auto player_width = player_bounds.width;
+    const auto player_height = player_bounds.height;
+    const auto player_left = player_bounds.left;
+    const auto player_right = player_left + player_width;
+    const auto player_top = player_bounds.top;
+    const auto player_bottom = player_top + player_bounds.height;
 
+    for (auto& rect : collision_rects) {
       auto obstacle_bounds = rect.getGlobalBounds();
       if (obstacle_bounds.intersects(next_bounds)) {
-        // Right collision
-        if (player_bounds.left < obstacle_bounds.left
-          && player_bounds.left + player_bounds.width < obstacle_bounds.left + obstacle_bounds.width
-          && player_bounds.top  < obstacle_bounds.top + obstacle_bounds.height
-          && player_bounds.top + player_bounds.height > obstacle_bounds.top) {
-
-          velocity.x = 0.f;
-          position.x = obstacle_bounds.left - player_bounds.width / 2.f;
-
-          if (x_direction == RIGHT) {
-            x_direction = std::nullopt;
-
-            if (!y_direction) {
-              last_direction = RIGHT;
-            }
-          }
-        }
+        const auto obstacle_left = obstacle_bounds.left;
+        const auto obstacle_right = obstacle_left + obstacle_bounds.width;
+        const auto obstacle_top = obstacle_bounds.top;
+        const auto obstacle_bottom = obstacle_top + obstacle_bounds.height;
 
         // Left collision
-        if (player_bounds.left > obstacle_bounds.left
-          && player_bounds.left + player_bounds.width > obstacle_bounds.left + obstacle_bounds.width
-          && player_bounds.top < obstacle_bounds.top + obstacle_bounds.height
-          && player_bounds.top + player_bounds.height > obstacle_bounds.top) {
-
-          velocity.x = 0.f;
-          position.x = obstacle_bounds.left + obstacle_bounds.width + player_bounds.width / 2.f;
-
+        if (
+          player_left    > obstacle_left  &&
+          player_right  > obstacle_right  &&
+          player_top    < obstacle_bottom &&
+          player_bottom > obstacle_top
+        ) {
+          next_bounds.left = obstacle_right;
 
           if (x_direction == LEFT) {
             x_direction = std::nullopt;
@@ -187,34 +179,32 @@ public:
           }
         }
 
-        // Top collision
-        if (player_bounds.top < obstacle_bounds.top
-          && player_bounds.top + player_bounds.height < obstacle_bounds.top + obstacle_bounds.height
-          && player_bounds.left  < obstacle_bounds.left + obstacle_bounds.width
-          && player_bounds.left + player_bounds.width > obstacle_bounds.left) {
+        // Right collision
+        if (
+          player_left   < obstacle_left   &&
+          player_right  < obstacle_right  &&
+          player_top    < obstacle_bottom &&
+          player_bottom > obstacle_top
+        ) {
+          next_bounds.left = obstacle_left - player_width;
 
-          velocity.y = 0.f;
-          position.y = obstacle_bounds.top - player_bounds.height / 2.f;
+          if (x_direction == RIGHT) {
+            x_direction = std::nullopt;
 
-
-          if (y_direction == DOWN) {
-            y_direction = std::nullopt;
-
-            if (!x_direction) {
-              last_direction = DOWN;
+            if (!y_direction) {
+              last_direction = RIGHT;
             }
           }
         }
 
-        // Bottom collision
-        if (player_bounds.top > obstacle_bounds.top
-          && player_bounds.top + player_bounds.height > obstacle_bounds.top + obstacle_bounds.height
-          && player_bounds.left  < obstacle_bounds.left + obstacle_bounds.width
-          && player_bounds.left + player_bounds.width > obstacle_bounds.left) {
-
-          velocity.y = 0.f;
-          position.y = obstacle_bounds.top + obstacle_bounds.height + player_bounds.height / 2.f;
-
+        // Top collision
+        if (
+          player_top    > obstacle_top    &&
+          player_bottom > obstacle_bottom &&
+          player_left   < obstacle_right  &&
+          player_right  > obstacle_left
+        ) {
+          next_bounds.top = obstacle_bottom;
 
           if (y_direction == UP) {
             y_direction = std::nullopt;
@@ -224,11 +214,29 @@ public:
             }
           }
         }
+
+        // Bottom collision
+        if (
+          player_top    < obstacle_top    &&
+          player_bottom < obstacle_bottom &&
+          player_left   < obstacle_right  &&
+          player_right  > obstacle_left
+        ) {
+          next_bounds.top = obstacle_top - player_height;
+
+          if (y_direction == DOWN) {
+            y_direction = std::nullopt;
+
+            if (!x_direction) {
+              last_direction = DOWN;
+            }
+          }
+        }
       }
     }
 
     this->x_direction = x_direction;
     this->y_direction = y_direction;
-    setPosition(position + velocity);
+    setPosition({ next_bounds.left + player_width / 2.f, next_bounds.top + player_height / 2.f });
   }
 };
