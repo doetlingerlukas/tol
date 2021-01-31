@@ -86,10 +86,11 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   void drawCollisionRect(const sf::Rect<float>& rect, sf::RenderTarget& target) const {
     sf::Color collision_color(255, 0, 0, 100);
 
+    const auto scale = getScale();
     sf::RectangleShape collision_box({ rect.width, rect.height });
     collision_box.setFillColor(collision_color);
-    collision_box.setPosition({ rect.left, rect.top });
-    collision_box.setScale(getScale());
+    collision_box.setPosition({ rect.left * scale.x, rect.top * scale.y });
+    collision_box.setScale(scale);
 
     target.draw(collision_box);
   }
@@ -146,8 +147,8 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         if (collision_layer) {
           drawCollisionRect(
             {
-              (tile_position.x + getPosition().x) * getScale().x,
-              (tile_position.y + getPosition().y) * getScale().y,
+              (tile_position.x + getPosition().x),
+              (tile_position.y + getPosition().y),
               static_cast<float>(getTileSize().x),
               static_cast<float>(getTileSize().y),
             },
@@ -176,8 +177,8 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         for (auto& object: object_group.getObjects()) {
           drawCollisionRect(
             {
-              (tile_position.x + getPosition().x + object.getPosition().x) * getScale().x,
-              (tile_position.y + getPosition().y + object.getPosition().y) * getScale().y,
+              (tile_position.x + getPosition().x + object.getPosition().x),
+              (tile_position.y + getPosition().y + object.getPosition().y),
               static_cast<float>(object.getSize().x),
               static_cast<float>(object.getSize().y),
             },
@@ -237,8 +238,8 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         case tson::ObjectType::Rectangle:
           drawCollisionRect(
             {
-              static_cast<float>(obj.getPosition().x * getScale().x),
-              static_cast<float>(obj.getPosition().y * getScale().y),
+              static_cast<float>(obj.getPosition().x),
+              static_cast<float>(obj.getPosition().y),
               static_cast<float>(obj.getSize().x),
               static_cast<float>(obj.getSize().y),
             },
@@ -372,49 +373,106 @@ public:
 
     const auto player_pos = player.getPosition();
 
-    auto* layer = map->getLayer("collision");
-
     const auto player_tile_x = static_cast<int>(player_pos.x / getTileSize().x);
     const auto player_tile_y = static_cast<int>(player_pos.y / getTileSize().y);
 
     const auto [max_x, max_y] = map->getSize();
 
-    for (size_t x = std::max(0, player_tile_x - 1); x < std::min(max_x, player_tile_x + 2); x++) {
-      for (size_t y = std::max(0, player_tile_y - 1); y < std::min(max_y, player_tile_y + 2); y++) {
-        const auto* tileObjectP = layer->getTileObject(x, y);
+    for (auto& layer: map->getLayers()) {
+      for (size_t x = std::max(0, player_tile_x - 1); x < std::min(max_x, player_tile_x + 2); x++) {
+        for (size_t y = std::max(0, player_tile_y - 1); y < std::min(max_y, player_tile_y + 2); y++) {
+          const auto* tileObjectP = layer.getTileObject(x, y);
 
-        if (!tileObjectP) {
-          continue;
+          if (!tileObjectP) {
+            continue;
+          }
+
+
+
+          const auto& tileObject = *tileObjectP;
+
+          const auto& tile = *tileObject.getTile();
+          auto* tileset = tile.getTileset();
+
+          const auto& tile_position = tileObject.getPosition();
+          sf::FloatRect tile_rect = {
+            tile_position.x + getPosition().x,
+            tile_position.y + getPosition().y,
+            static_cast<float>(getTileSize().x),
+            static_cast<float>(getTileSize().y),
+          };
+
+
+          if (layer.getName() == "collision") {
+            sf::RectangleShape shape({tile_rect.width, tile_rect.height});
+            shape.setFillColor(sf::Color::Transparent);
+            shape.setOutlineColor(sf::Color::Blue);
+
+            auto collision = player.getBoundingRect().intersects(tile_rect);
+            if (collision) {
+              shape.setOutlineColor(sf::Color::Red);
+            }
+
+            shape.setOutlineThickness(0.5f);
+            shape.setPosition({ tile_rect.left, tile_rect.top });
+
+
+            shapes.push_back(shape);
+          } else {
+            auto object_group = tile.getObjectgroup();
+            for (auto& object: object_group.getObjects()) {
+              const auto [object_x, object_y] = object.getPosition();
+              sf::FloatRect object_rect = {
+                tile_rect.left + object_x,
+                tile_rect.top + object_y,
+                static_cast<float>(object.getSize().x),
+                static_cast<float>(object.getSize().y),
+              };
+
+              sf::RectangleShape shape({object_rect.width, object_rect.height});
+              shape.setFillColor(sf::Color::Transparent);
+              shape.setOutlineColor(sf::Color::Blue);
+
+              auto collision = player.getBoundingRect().intersects(object_rect);
+              if (collision) {
+                shape.setOutlineColor(sf::Color::Red);
+              }
+
+              shape.setOutlineThickness(0.5f);
+              shape.setPosition({ object_rect.left, object_rect.top });
+
+              shapes.push_back(shape);
+            }
+          }
         }
+      }
 
-        const auto& tileObject = *tileObjectP;
+      for (auto& obj : layer.getObjects()) {
+        if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
+          sf::FloatRect object_rect = {
+           static_cast<float>(obj.getPosition().x),
+           static_cast<float>(obj.getPosition().y),
+           static_cast<float>(obj.getSize().x),
+           static_cast<float>(obj.getSize().y),
+          };
 
-        const auto& tile = *tileObject.getTile();
-        auto* tileset = tile.getTileset();
+          sf::RectangleShape shape({object_rect.width, object_rect.height});
+          shape.setFillColor(sf::Color::Transparent);
+          shape.setOutlineColor(sf::Color::Blue);
 
-        const auto& tile_position = tileObject.getPosition();
-        tson::Rect tsonRect = tile.getDrawingRect();
-        sf::FloatRect tile_rect = {
-          tile_position.x + getPosition().x,
-          tile_position.y + getPosition().y,
-          static_cast<float>(getTileSize().x),
-          static_cast<float>(getTileSize().y),
-        };
+          auto collision = player.getBoundingRect().intersects(object_rect);
+          if (collision) {
+            shape.setOutlineColor(sf::Color::Red);
+          }
 
-        sf::RectangleShape shape({tile_rect.width, tile_rect.height});
-        shape.setFillColor(sf::Color::Transparent);
-        shape.setOutlineColor(sf::Color::Blue);
+          shape.setOutlineThickness(0.5f);
+          shape.setPosition({ object_rect.left, object_rect.top });
 
-        auto collision = player.getBoundingRect().intersects(tile_rect);
-        if (collision) {
-          shape.setOutlineColor(sf::Color::Red);
+          shapes.push_back(shape);
         }
-        shape.setOutlineThickness(0.5f);
-        shape.setPosition({ tile_rect.left, tile_rect.top });
-
-        shapes.push_back(shape);
       }
     }
+
 
     return shapes;
   }

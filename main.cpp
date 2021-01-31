@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
     sf::RenderWindow window(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), "Tales of Lostness", style);
     window.setVerticalSyncEnabled(settings.vsync());
-    window.setActive(true);
+    window.requestFocus();
 
     sf::Font font;
     font.loadFromFile("assets/fonts/Gaegu-Regular.ttf");
