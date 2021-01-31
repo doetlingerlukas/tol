@@ -144,10 +144,15 @@ public:
     }
 
     auto player_bounds = getBoundingRect();
+
+    auto next_position = player_bounds;
+    next_position.left += velocity.x;
+    next_position.top += velocity.y;
+
     for (auto& rect : collision_rects) {
 
       auto obstacle_bounds = rect.getGlobalBounds();
-      if (player_bounds.intersects(obstacle_bounds)) {
+      if (obstacle_bounds.intersects(next_position)) {
 
         // Right collision
         if (player_bounds.left < obstacle_bounds.left
@@ -157,7 +162,6 @@ public:
 
           velocity.x = 0.f;
           position.x = obstacle_bounds.left - player_bounds.width / 2.f;
-          //std::cout << "pos: " << position.x << ", " << position.y << std::endl;
         }
 
         // Left collision
