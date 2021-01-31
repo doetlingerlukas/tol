@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <OpenGL/gl.h>
+
 #include <SFML/Graphics.hpp>
 
 #include <map.hpp>
@@ -12,12 +14,9 @@
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_IMPLEMENTATION
-#define NK_SFML_GL3_IMPLEMENTATION
+#define NK_SFML_GL2_IMPLEMENTATION
 #include "nuklear.h"
-#include "nuklear_sfml_gl3.h"
-
-#define MAX_VERTEX_BUFFER 512 * 1024
-#define MAX_ELEMENT_BUFFER 128 * 1024
+#include "nuklear_sfml_gl2.h"
 
 const int window_width = 840;
 const int window_height = 600;
@@ -79,14 +78,10 @@ void render_nuklear_menu(struct nk_context* ctx) {
 }
 
 int main() {
-  sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close);
+  sf::ContextSettings settings(24, 8, 4, 2, 1, sf::ContextSettings::Attribute::Default);
+  sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Tales of Lostness", sf::Style::Titlebar | sf::Style::Close, settings);
   window.setVerticalSyncEnabled(true);
   window.setActive(true);
-
-  if(!gladLoadGL()) { /* Load OpenGL extensions */
-    printf("Failed to load OpenGL extensions!\n");
-    return -1;
-  }
 
   glViewport(0, 0, window.getSize().x, window.getSize().y);
   TiledMap map(std::string("assets/ultimate-map.json"));
@@ -99,12 +94,10 @@ int main() {
     while (window.pollEvent(event)) {
       switch (event.type) {
         case sf::Event::Closed:
-          nk_sfml_shutdown();
           window.close();
           break;
         case sf::Event::KeyPressed:
           if (event.key.code == sf::Keyboard::Escape) {
-            nk_sfml_shutdown();
             window.close();
           }
           break;
@@ -123,7 +116,7 @@ int main() {
     * with blending, scissor, face culling and depth test and defaults everything
     * back into a default state. Make sure to either save and restore or
     * reset your own state after drawing rendering the UI. */
-    nk_sfml_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
+    nk_sfml_render(NK_ANTI_ALIASING_ON);
 
     window.display();
   }
