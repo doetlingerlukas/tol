@@ -106,20 +106,83 @@
  <tile id="63" terrain="17,27,17,2"/>
  <tile id="64" terrain="32,32,32,32"/>
  <tile id="65" terrain="33,33,33,33"/>
- <tile id="66" terrain="28,28,28,5"/>
- <tile id="67" terrain="28,28,28,6"/>
- <tile id="68" terrain="28,28,28,3"/>
- <tile id="69" terrain="28,28,28,0"/>
- <tile id="70" terrain="28,28,28,22"/>
- <tile id="71" terrain="28,28,5,28"/>
- <tile id="72" terrain="28,28,5,5"/>
- <tile id="73" terrain="28,28,5,6"/>
- <tile id="74" terrain="28,28,5,3"/>
- <tile id="75" terrain="28,28,5,0"/>
- <tile id="76" terrain="28,28,5,22"/>
- <tile id="77" terrain="28,28,6,28"/>
- <tile id="78" terrain="28,28,6,5"/>
- <tile id="79" terrain="28,28,6,6"/>
+ <tile id="66" terrain="28,28,28,5">
+  <objectgroup draworder="index" id="5">
+   <object id="4" x="0.124187" y="0.124187" width="31.75" height="12.5"/>
+   <object id="7" x="0.25" y="13" width="15" height="19"/>
+  </objectgroup>
+ </tile>
+ <tile id="67" terrain="28,28,28,6">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.125" width="31.5" height="12.625"/>
+   <object id="2" x="0.25" y="13.125" width="15.125" height="18.625"/>
+  </objectgroup>
+ </tile>
+ <tile id="68" terrain="28,28,28,3">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.125" width="31.75" height="16.375"/>
+   <object id="2" x="0.125" y="16.625" width="16.25" height="15.25"/>
+  </objectgroup>
+ </tile>
+ <tile id="69" terrain="28,28,28,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.25" width="31.75" height="16.25"/>
+   <object id="2" x="0.25" y="16.875" width="16" height="15"/>
+  </objectgroup>
+ </tile>
+ <tile id="70" terrain="28,28,28,22">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.125" width="31.5" height="17.5"/>
+   <object id="2" x="0.125" y="18" width="17.375" height="13.875"/>
+  </objectgroup>
+ </tile>
+ <tile id="71" terrain="28,28,5,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.255" y="0.25" width="31.5" height="13.25"/>
+   <object id="3" x="18.875" y="13.75" width="13" height="18"/>
+  </objectgroup>
+ </tile>
+ <tile id="72" terrain="28,28,5,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.125" width="31.75" height="8.625"/>
+  </objectgroup>
+ </tile>
+ <tile id="73" terrain="28,28,5,6">
+  <objectgroup draworder="index" id="3">
+   <object id="2" x="0" y="0.125" width="31.875" height="11.875"/>
+  </objectgroup>
+ </tile>
+ <tile id="74" terrain="28,28,5,3">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.125" width="31.625" height="12.625"/>
+  </objectgroup>
+ </tile>
+ <tile id="75" terrain="28,28,5,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.25" width="31.5" height="12.75"/>
+  </objectgroup>
+ </tile>
+ <tile id="76" terrain="28,28,5,22">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.25" width="31.5" height="12.125"/>
+  </objectgroup>
+ </tile>
+ <tile id="77" terrain="28,28,6,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0.25" width="31.75" height="12.5"/>
+   <object id="2" x="18.75" y="13" width="12.875" height="18.875"/>
+  </objectgroup>
+ </tile>
+ <tile id="78" terrain="28,28,6,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.25" width="31.5" height="12.125"/>
+  </objectgroup>
+ </tile>
+ <tile id="79" terrain="28,28,6,6">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.125" y="0.25" width="31.875" height="8.875"/>
+  </objectgroup>
+ </tile>
  <tile id="80" terrain="17,27,17,15"/>
  <tile id="81" terrain="17,27,17,16"/>
  <tile id="82" terrain="17,27,17,17"/>
@@ -168,19 +231,44 @@
  <tile id="125" terrain="17,2,3,17"/>
  <tile id="126" terrain="17,2,26,5"/>
  <tile id="127" terrain="17,2,26,6"/>
- <tile id="128" terrain="28,28,22,5"/>
- <tile id="129" terrain="28,28,22,6"/>
+ <tile id="128" terrain="28,28,22,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.25" width="31.625" height="12.25"/>
+  </objectgroup>
+ </tile>
+ <tile id="129" terrain="28,28,22,6">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.25" width="31.75" height="12.125"/>
+  </objectgroup>
+ </tile>
  <tile id="130" terrain="28,28,22,3"/>
  <tile id="131" terrain="28,28,22,0"/>
- <tile id="132" terrain="28,28,22,22"/>
- <tile id="133" terrain="28,5,28,28"/>
- <tile id="134" terrain="28,5,28,5"/>
+ <tile id="132" terrain="28,28,22,22">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.125" width="31.5" height="13.75"/>
+  </objectgroup>
+ </tile>
+ <tile id="133" terrain="28,5,28,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.25" width="14.5" height="31.625"/>
+   <object id="2" x="15" y="17.625" width="16.75" height="14.125"/>
+  </objectgroup>
+ </tile>
+ <tile id="134" terrain="28,5,28,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.25" width="10.875" height="31.75"/>
+  </objectgroup>
+ </tile>
  <tile id="135" terrain="28,5,28,6"/>
  <tile id="136" terrain="28,5,28,3"/>
  <tile id="137" terrain="28,5,28,0"/>
  <tile id="138" terrain="28,5,28,22"/>
  <tile id="139" terrain="28,5,5,28"/>
- <tile id="140" terrain="28,5,5,5"/>
+ <tile id="140" terrain="28,5,5,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.25" width="7.125" height="7"/>
+  </objectgroup>
+ </tile>
  <tile id="141" terrain="28,5,5,6"/>
  <tile id="142" terrain="28,5,5,3"/>
  <tile id="143" terrain="28,5,5,0"/>
@@ -243,7 +331,11 @@
  <tile id="200" terrain="28,5,22,22"/>
  <tile id="201" terrain="28,6,28,28"/>
  <tile id="202" terrain="28,6,28,5"/>
- <tile id="203" terrain="28,6,28,6"/>
+ <tile id="203" terrain="28,6,28,6">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.125" width="11.25" height="31.75"/>
+  </objectgroup>
+ </tile>
  <tile id="204" terrain="28,6,28,3"/>
  <tile id="205" terrain="28,6,28,0"/>
  <tile id="206" terrain="28,6,28,22"/>
@@ -528,14 +620,27 @@
  <tile id="485" terrain="28,22,22,6"/>
  <tile id="486" terrain="28,22,22,3"/>
  <tile id="487" terrain="28,22,22,0"/>
- <tile id="488" terrain="28,22,22,22"/>
- <tile id="489" terrain="5,28,28,28"/>
+ <tile id="488" terrain="28,22,22,22">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.125" width="8.375" height="8.5"/>
+  </objectgroup>
+ </tile>
+ <tile id="489" terrain="5,28,28,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="18.25" width="31.375" height="13.5"/>
+   <object id="2" x="18.625" y="0.25" width="13.125" height="17.5"/>
+  </objectgroup>
+ </tile>
  <tile id="490" terrain="5,28,28,5"/>
  <tile id="491" terrain="5,28,28,6"/>
  <tile id="492" terrain="5,28,28,3"/>
  <tile id="493" terrain="5,28,28,0"/>
  <tile id="494" terrain="5,28,28,22"/>
- <tile id="495" terrain="5,28,5,28"/>
+ <tile id="495" terrain="5,28,5,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="22.75" y="0.25" width="9.125" height="31.625"/>
+  </objectgroup>
+ </tile>
  <tile id="496" terrain="17,16,27,16"/>
  <tile id="497" terrain="17,16,27,17"/>
  <tile id="498" terrain="17,16,2,5"/>
@@ -552,7 +657,11 @@
  <tile id="509" terrain="17,16,15,3"/>
  <tile id="510" terrain="17,16,15,26"/>
  <tile id="511" terrain="17,16,15,27"/>
- <tile id="512" terrain="5,28,5,5"/>
+ <tile id="512" terrain="5,28,5,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="23.375" y="0.25" width="8.5" height="7"/>
+  </objectgroup>
+ </tile>
  <tile id="513" terrain="5,28,5,6"/>
  <tile id="514" terrain="5,28,5,3"/>
  <tile id="515" terrain="5,28,5,0"/>
@@ -591,14 +700,26 @@
  <tile id="548" terrain="5,28,0,3"/>
  <tile id="549" terrain="5,28,0,0"/>
  <tile id="550" terrain="5,28,0,22"/>
- <tile id="551" terrain="5,28,22,28"/>
+ <tile id="551" terrain="5,28,22,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="20.125" y="0.25" width="11.625" height="31.625"/>
+  </objectgroup>
+ </tile>
  <tile id="552" terrain="5,28,22,5"/>
  <tile id="553" terrain="5,28,22,6"/>
  <tile id="554" terrain="5,28,22,3"/>
  <tile id="555" terrain="5,28,22,0"/>
  <tile id="556" terrain="5,28,22,22"/>
- <tile id="557" terrain="5,5,28,28"/>
- <tile id="558" terrain="5,5,28,5"/>
+ <tile id="557" terrain="5,5,28,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="20.75" width="31.625" height="11.125"/>
+  </objectgroup>
+ </tile>
+ <tile id="558" terrain="5,5,28,5">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="24.625" width="8.25" height="7.25"/>
+  </objectgroup>
+ </tile>
  <tile id="559" terrain="5,5,28,6"/>
  <tile id="560" terrain="17,16,17,26"/>
  <tile id="561" terrain="17,16,17,27"/>
@@ -1768,7 +1889,11 @@
  <tile id="1725" terrain="20,2,19,20"/>
  <tile id="1726" terrain="20,2,19,19"/>
  <tile id="1727" terrain="20,2,19,2"/>
- <tile id="1728" terrain="3,22,5,28"/>
+ <tile id="1728" terrain="3,22,5,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="23.625" y="22.25" width="8.125" height="9.5"/>
+  </objectgroup>
+ </tile>
  <tile id="1729" terrain="3,22,5,5"/>
  <tile id="1730" terrain="3,22,5,6"/>
  <tile id="1731" terrain="3,22,5,3"/>
@@ -2321,7 +2446,11 @@
  <tile id="2278" terrain="22,28,22,3"/>
  <tile id="2279" terrain="22,28,22,0"/>
  <tile id="2280" terrain="22,28,22,22"/>
- <tile id="2281" terrain="22,5,28,28"/>
+ <tile id="2281" terrain="22,5,28,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="19.5" width="31.625" height="12.375"/>
+  </objectgroup>
+ </tile>
  <tile id="2282" terrain="22,5,28,5"/>
  <tile id="2283" terrain="22,5,28,6"/>
  <tile id="2284" terrain="22,5,28,3"/>
@@ -2609,13 +2738,21 @@
  <tile id="2566" terrain="22,0,22,3"/>
  <tile id="2567" terrain="22,0,22,0"/>
  <tile id="2568" terrain="22,0,22,22"/>
- <tile id="2569" terrain="22,22,28,28"/>
+ <tile id="2569" terrain="22,22,28,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="21.5" width="31.75" height="10.25"/>
+  </objectgroup>
+ </tile>
  <tile id="2570" terrain="22,22,28,5"/>
  <tile id="2571" terrain="22,22,28,6"/>
  <tile id="2572" terrain="22,22,28,3"/>
  <tile id="2573" terrain="22,22,28,0"/>
  <tile id="2574" terrain="22,22,28,22"/>
- <tile id="2575" terrain="22,22,5,28"/>
+ <tile id="2575" terrain="22,22,5,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="23.25" y="22.25" width="8.625" height="9.625"/>
+  </objectgroup>
+ </tile>
  <tile id="2576" terrain="19,15,17,20"/>
  <tile id="2577" terrain="19,15,17,19"/>
  <tile id="2578" terrain="19,15,17,2"/>
@@ -12134,7 +12271,12 @@
  <tile id="12091" terrain="28,33,33,33"/>
  <tile id="12092" terrain="28,33,33,22"/>
  <tile id="12093" terrain="28,33,22,28"/>
- <tile id="12094" terrain="28,33,22,33"/>
+ <tile id="12094" terrain="28,33,22,33">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.25" width="31.5" height="17.125"/>
+   <object id="2" x="14.25" y="17.75" width="17.5" height="14"/>
+  </objectgroup>
+ </tile>
  <tile id="12095" terrain="28,33,22,22"/>
  <tile id="12096" terrain="15,5,5,3"/>
  <tile id="12097" terrain="15,5,5,26"/>
@@ -12193,8 +12335,18 @@
  <tile id="12150" terrain="33,22,28,28"/>
  <tile id="12151" terrain="33,22,28,33"/>
  <tile id="12152" terrain="33,22,28,22"/>
- <tile id="12153" terrain="33,22,33,28"/>
- <tile id="12154" terrain="33,22,33,33"/>
+ <tile id="12153" terrain="33,22,33,28">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="0.125" width="18.5" height="31.625"/>
+   <object id="2" x="19.25" y="16.125" width="12.375" height="15.625"/>
+  </objectgroup>
+ </tile>
+ <tile id="12154" terrain="33,22,33,33">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0.125" width="16.25" height="31.75"/>
+   <object id="2" x="16.75" y="16.75" width="14.875" height="15"/>
+  </objectgroup>
+ </tile>
  <tile id="12155" terrain="33,22,33,22"/>
  <tile id="12156" terrain="33,22,22,28"/>
  <tile id="12157" terrain="33,22,22,33"/>
@@ -12221,17 +12373,39 @@
  <tile id="12178" terrain="22,28,33,22"/>
  <tile id="12179" terrain="22,28,22,33"/>
  <tile id="12180" terrain="22,33,28,28"/>
- <tile id="12181" terrain="22,33,28,33"/>
+ <tile id="12181" terrain="22,33,28,33">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="14" y="0.25" width="17.75" height="31.5"/>
+   <object id="2" x="0.125" y="16.875" width="13.5" height="14.875"/>
+  </objectgroup>
+ </tile>
  <tile id="12182" terrain="22,33,28,22"/>
  <tile id="12183" terrain="22,33,33,28"/>
- <tile id="12184" terrain="22,33,33,33"/>
+ <tile id="12184" terrain="22,33,33,33">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="13.625" y="0.125" width="18.125" height="31.625"/>
+   <object id="2" x="0.25" y="15.5" width="13.125" height="16.375"/>
+  </objectgroup>
+ </tile>
  <tile id="12185" terrain="22,33,33,22"/>
  <tile id="12186" terrain="22,33,22,28"/>
- <tile id="12187" terrain="22,33,22,33"/>
- <tile id="12188" terrain="22,33,22,22"/>
+ <tile id="12187" terrain="22,33,22,33">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="20.375" y="0.25" width="11.375" height="31.5"/>
+  </objectgroup>
+ </tile>
+ <tile id="12188" terrain="22,33,22,22">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="23.5" y="0.125" width="8.125" height="8.5"/>
+  </objectgroup>
+ </tile>
  <tile id="12189" terrain="22,22,28,33"/>
  <tile id="12190" terrain="22,22,33,28"/>
- <tile id="12191" terrain="22,22,33,33"/>
+ <tile id="12191" terrain="22,22,33,33">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.25" y="22.75" width="31.5" height="9"/>
+  </objectgroup>
+ </tile>
  <tile id="12192" terrain="15,5,2,2"/>
  <tile id="12193" terrain="15,5,2,15"/>
  <tile id="12194" terrain="15,5,2,16"/>
@@ -12248,7 +12422,11 @@
  <tile id="12205" terrain="15,5,16,5"/>
  <tile id="12206" terrain="15,5,16,6"/>
  <tile id="12207" terrain="15,5,16,3"/>
- <tile id="12208" terrain="22,22,33,22"/>
+ <tile id="12208" terrain="22,22,33,22">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.375" y="26.75" width="9" height="5"/>
+  </objectgroup>
+ </tile>
  <tile id="12209" terrain="22,22,22,33"/>
  <tile id="12210" terrain="28,28,28,32"/>
  <tile id="12211" terrain="28,28,32,28"/>
