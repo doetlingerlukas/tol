@@ -102,9 +102,19 @@ public:
     bounding_box.setPosition({bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y});
     bounding_box.setScale(scale);
 
+    auto texture_bounding_box_rect = getTextureBoundingRect();
+    sf::RectangleShape texture_bounding_box;
+    texture_bounding_box.setSize({texture_bounding_box_rect.width, texture_bounding_box_rect.height});
+    texture_bounding_box.setOutlineThickness(0.5f);
+    texture_bounding_box.setOutlineColor(sf::Color::Green);
+    texture_bounding_box.setFillColor(sf::Color::Transparent);
+    texture_bounding_box.setPosition({texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y});
+    texture_bounding_box.setScale(scale);
+
     target.draw(shadow);
     target.draw(sprite);
     target.draw(bounding_box);
+    target.draw(texture_bounding_box);
   }
 
   sf::FloatRect getBoundingRect() const {
@@ -116,6 +126,15 @@ public:
       (getPosition().y - height / 2.f),
       width,
       height,
+    };
+  }
+
+  sf::FloatRect getTextureBoundingRect() const {
+    return {
+      static_cast<float>(getPosition().x - sprite.getOrigin().x),
+      static_cast<float>(getPosition().y - sprite.getOrigin().y),
+      static_cast<float>(sprite.getTextureRect().width),
+      static_cast<float>(sprite.getTextureRect().height),
     };
   }
 
