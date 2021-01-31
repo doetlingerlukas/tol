@@ -270,10 +270,12 @@ int main(int argc, char **argv) {
 
       window.draw(text);
 
-      window.pushGLStates();
-      nuklear.render_menu(ctx);
-      nk_sfml_render(NK_ANTI_ALIASING_ON);
-      window.popGLStates();
+      if (menu_open) {
+        window.pushGLStates();
+        nuklear.render_menu(ctx);
+        nk_sfml_render(NK_ANTI_ALIASING_ON);
+        window.popGLStates();
+      }
 
       window.display();
     }
