@@ -387,8 +387,6 @@ public:
             continue;
           }
 
-
-
           const auto& tileObject = *tileObjectP;
 
           const auto& tile = *tileObject.getTile();
@@ -402,7 +400,6 @@ public:
             static_cast<float>(getTileSize().y),
           };
 
-
           if (layer.getName() == "collision") {
             sf::RectangleShape shape({tile_rect.width, tile_rect.height});
             shape.setFillColor(sf::Color::Transparent);
@@ -415,7 +412,6 @@ public:
 
             shape.setOutlineThickness(0.5f);
             shape.setPosition({ tile_rect.left, tile_rect.top });
-
 
             shapes.push_back(shape);
           } else {
@@ -450,10 +446,10 @@ public:
       for (auto& obj : layer.getObjects()) {
         if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
           sf::FloatRect object_rect = {
-           static_cast<float>(obj.getPosition().x),
-           static_cast<float>(obj.getPosition().y),
-           static_cast<float>(obj.getSize().x),
-           static_cast<float>(obj.getSize().y),
+            static_cast<float>(obj.getPosition().x),
+            static_cast<float>(obj.getPosition().y),
+            static_cast<float>(obj.getSize().x),
+            static_cast<float>(obj.getSize().y),
           };
 
           sf::RectangleShape shape({object_rect.width, object_rect.height});
