@@ -11,10 +11,6 @@
 #include <animation.hpp>
 #include <character.hpp>
 
-#if defined(_MSC_VER)
-typedef long long ssize_t;
-#endif
-
 class TiledMap: public sf::Drawable, public sf::Transformable {
   fs::path dir;
   fs::path filename;
@@ -119,7 +115,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         const auto& animation = tile.getAnimation();
 
         if (animation.size() > 0) {
-          const auto tile_id = tile.getId();
+          const auto tile_id = tile.getGid();
 
           if (running_animations.count(tile_id) == 0) {
             std::cout << "Adding animation for tile " << tile_id << std::endl;
@@ -261,11 +257,11 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     if (tileId >= firstId && tileId <= lastId) {
       const size_t baseTilePosition = tileId - firstId;
 
-      const ssize_t tileModX = (baseTilePosition % columns);
-      const ssize_t currentRow = (baseTilePosition / columns);
-      const ssize_t offsetX = (tileModX != 0) ? ((tileModX) * map->getTileSize().x) : (0 * map->getTileSize().x);
-      const ssize_t offsetY = (currentRow < rows - 1) ? (currentRow * map->getTileSize().y) : ((rows - 1) * map->getTileSize().y);
-      return sf::Vector2f((float) offsetX, (float) offsetY);
+      const size_t tileModX = (baseTilePosition % columns);
+      const size_t currentRow = (baseTilePosition / columns);
+      const float offsetX = (tileModX != 0) ? ((tileModX) * map->getTileSize().x) : (0 * map->getTileSize().x);
+      const float offsetY = (currentRow < rows - 1) ? (currentRow * map->getTileSize().y) : ((rows - 1) * map->getTileSize().y);
+      return sf::Vector2f(offsetX, offsetY);
     }
 
     return { 0.f, 0.f };
