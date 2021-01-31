@@ -20,6 +20,12 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(tol PRIVATE OpenGL::GL)
 endif()
 
+if(WIN32)
+  target_link_libraries(tol PRIVATE opengl32)
+endif()
+
+find_path(NUKLEAR_INCLUDE_DIRS "nuklear.h")
+target_include_directories(tol PRIVATE ${NUKLEAR_INCLUDE_DIRS})
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
