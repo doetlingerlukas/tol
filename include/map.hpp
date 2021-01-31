@@ -138,35 +138,22 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
           rotation += 90.f;
 
+        if (!collision_layer) {
+          auto texture = loadImage(tileset->getImagePath());
+          sf::Sprite sprite(*texture, rect);
 
-        // Draw collision tiles.
-        if (collision_layer) {
-          drawCollisionRect(
-            {
-              (tile_position.x + getPosition().x),
-              (tile_position.y + getPosition().y),
-              static_cast<float>(getTileSize().x),
-              static_cast<float>(getTileSize().y),
-            },
-            target
-          );
-          continue;
+          if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
+            scale.x = -scale.x;
+          if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
+            scale.y = -scale.y;
+
+          sprite.setOrigin(origin);
+          sprite.setPosition(position);
+          sprite.setScale(scale);
+          sprite.setRotation(rotation);
+
+          target.draw(sprite);
         }
-
-        auto texture = loadImage(tileset->getImagePath());
-        sf::Sprite sprite(*texture, rect);
-
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
-          scale.x = -scale.x;
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
-          scale.y = -scale.y;
-
-        sprite.setOrigin(origin);
-        sprite.setPosition(position);
-        sprite.setScale(scale);
-        sprite.setRotation(rotation);
-
-        target.draw(sprite);
 
         // Draw collision boxes.
         auto object_group = tile.getObjectgroup();
@@ -407,20 +394,16 @@ public:
             static_cast<float>(getTileSize().y),
           };
 
-          if (layer.getName() == "collision") {
-            create_collision_shape(tile_rect);
-          } else {
-            auto object_group = (*tileObject.getTile()).getObjectgroup();
-            for (auto& object: object_group.getObjects()) {
-              const auto [object_x, object_y] = object.getPosition();
-              sf::FloatRect object_rect = {
-                tile_rect.left + object_x,
-                tile_rect.top + object_y,
-                static_cast<float>(object.getSize().x),
-                static_cast<float>(object.getSize().y),
-              };
-              create_collision_shape(object_rect);
-            }
+          auto object_group = (*tileObject.getTile()).getObjectgroup();
+          for (auto& object: object_group.getObjects()) {
+            const auto [object_x, object_y] = object.getPosition();
+            sf::FloatRect object_rect = {
+              tile_rect.left + object_x,
+              tile_rect.top + object_y,
+              static_cast<float>(object.getSize().x),
+              static_cast<float>(object.getSize().y),
+            };
+            create_collision_shape(object_rect);
           }
         }
       }
