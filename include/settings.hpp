@@ -4,6 +4,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
+
 class Settings {
 private:
   int resolution_height;
@@ -12,40 +14,46 @@ private:
   bool vsync_enabled;
   fs::path settings_path;
 
-  void initSettings() const {
-    using json = nlohmann::json;
+  template <typename T>
+  T get_or_else(json structure, std::string field, T default_value) {
+    if(structure.contains(field)) {
+      return structure[field].get<T>();
+    } else {
+      return default_value;
+    }
+  }
+
+  void loadSettings() {
+    json settings;
 
     if (fs::exists(settings_path)) {
-      return;
+      std::ifstream ifs(settings_path);
+      settings = json::parse(ifs);
     }
 
-    json settings;
     auto& settings_field = settings["settings"];
     auto& resolution = settings_field["resolution"];
-    resolution["width"] = 1200;
-    resolution["height"] = 800;
-    settings_field["fullscreen"] = false;
-    settings_field["vsync"] = false;
+
+    const int width = get_or_else<int>(resolution, "width", 1200);
+    resolution["width"] = width;
+    resolution_width = width;
+
+    const int height = get_or_else<int>(resolution, "height", 800);
+    resolution["height"] = height;
+    resolution_height = height;
+
+    const bool fullscreen = get_or_else<bool>(settings_field, "fullscreen", false);
+    settings_field["fullscreen"] = fullscreen;
+    is_fullscreen = fullscreen;
+
+    const bool vsync = get_or_else<bool>(settings_field, "vsync", false);
+    settings_field["vsync"] = vsync;
+    vsync_enabled = vsync;
+
     std::cout << std::setw(2) << settings << std::endl;
 
     std::ofstream out(settings_path);
     out << std::setw(2) << settings << std::endl;
-  }
-
-  void loadSettings() {
-    using json = nlohmann::json;
-
-    initSettings();
-    std::ifstream ifs(settings_path);
-    json settings = json::parse(ifs);
-
-    const auto& settings_field = settings["settings"];
-    const auto& resolution = settings_field["resolution"];
-    resolution_height = resolution["height"].get<int>();
-    resolution_width = resolution["width"].get<int>();
-    is_fullscreen = settings_field["fullscreen"].get<bool>();
-    vsync_enabled = settings_field["vsync"].get<bool>();
-    std::cout << std::setw(2) << settings << std::endl;
   }
 
 public:
