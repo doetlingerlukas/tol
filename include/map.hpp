@@ -374,6 +374,20 @@ public:
 
     const auto [max_x, max_y] = map->getSize();
 
+    auto create_collision_shape = [&player, &shapes] (const sf::FloatRect& rect) {
+      sf::RectangleShape shape({ rect.width, rect.height });
+      shape.setFillColor(sf::Color::Transparent);
+      shape.setOutlineColor(sf::Color::Blue);
+
+      if (player.getBoundingRect().intersects(rect)) {
+        shape.setOutlineColor(sf::Color::Red);
+      }
+
+      shape.setOutlineThickness(0.5f);
+      shape.setPosition({ rect.left, rect.top });
+      shapes.push_back(shape);
+    };
+
     for (auto& layer: map->getLayers()) {
       for (size_t x = std::max(0, player_tile_x - 1); x < std::min(max_x, player_tile_x + 2); x++) {
         for (size_t y = std::max(0, player_tile_y - 1); y < std::min(max_y, player_tile_y + 2); y++) {
@@ -385,9 +399,6 @@ public:
 
           const auto& tileObject = *tileObjectP;
 
-          const auto& tile = *tileObject.getTile();
-          auto* tileset = tile.getTileset();
-
           const auto& tile_position = tileObject.getPosition();
           sf::FloatRect tile_rect = {
             tile_position.x + getPosition().x,
@@ -397,21 +408,9 @@ public:
           };
 
           if (layer.getName() == "collision") {
-            sf::RectangleShape shape({tile_rect.width, tile_rect.height});
-            shape.setFillColor(sf::Color::Transparent);
-            shape.setOutlineColor(sf::Color::Blue);
-
-            auto collision = player.getBoundingRect().intersects(tile_rect);
-            if (collision) {
-              shape.setOutlineColor(sf::Color::Red);
-            }
-
-            shape.setOutlineThickness(0.5f);
-            shape.setPosition({ tile_rect.left, tile_rect.top });
-
-            shapes.push_back(shape);
+            create_collision_shape(tile_rect);
           } else {
-            auto object_group = tile.getObjectgroup();
+            auto object_group = (*tileObject.getTile()).getObjectgroup();
             for (auto& object: object_group.getObjects()) {
               const auto [object_x, object_y] = object.getPosition();
               sf::FloatRect object_rect = {
@@ -420,20 +419,7 @@ public:
                 static_cast<float>(object.getSize().x),
                 static_cast<float>(object.getSize().y),
               };
-
-              sf::RectangleShape shape({object_rect.width, object_rect.height});
-              shape.setFillColor(sf::Color::Transparent);
-              shape.setOutlineColor(sf::Color::Blue);
-
-              auto collision = player.getBoundingRect().intersects(object_rect);
-              if (collision) {
-                shape.setOutlineColor(sf::Color::Red);
-              }
-
-              shape.setOutlineThickness(0.5f);
-              shape.setPosition({ object_rect.left, object_rect.top });
-
-              shapes.push_back(shape);
+              create_collision_shape(object_rect);
             }
           }
         }
@@ -447,20 +433,7 @@ public:
             static_cast<float>(obj.getSize().x),
             static_cast<float>(obj.getSize().y),
           };
-
-          sf::RectangleShape shape({object_rect.width, object_rect.height});
-          shape.setFillColor(sf::Color::Transparent);
-          shape.setOutlineColor(sf::Color::Blue);
-
-          auto collision = player.getBoundingRect().intersects(object_rect);
-          if (collision) {
-            shape.setOutlineColor(sf::Color::Red);
-          }
-
-          shape.setOutlineThickness(0.5f);
-          shape.setPosition({ object_rect.left, object_rect.top });
-
-          shapes.push_back(shape);
+          create_collision_shape(object_rect);
         }
       }
     }
