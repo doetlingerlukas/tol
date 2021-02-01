@@ -75,6 +75,42 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
+  void render_hud(struct nk_context* ctx) const {
+    const float hud_height = 60;
+    const float progressbar_height = hud_height / 2;
+
+    struct nk_style *s = &ctx->style;
+    nk_style_push_style_item(ctx, &s->window.fixed_background, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
+
+    if (nk_begin(ctx, "hud", nk_rect(0, window_height - hud_height, window_width, hud_height), NK_WINDOW_BACKGROUND)) {
+      static const float ratio[] = {0.75f, 0.25f, 0.05f};
+
+      nk_size currentValue = 80;
+
+      nk_layout_row_static(ctx, (hud_height - progressbar_height) / 4, 15, 1);
+      nk_layout_row(ctx, NK_DYNAMIC, progressbar_height, 2, ratio);
+      nk_spacing(ctx, 1);
+
+      ctx->style.progress.normal = nk_style_item_color(nk_rgba(225, 232, 225, 100));
+
+      if (currentValue > 40 && currentValue < 70) {
+        ctx->style.progress.cursor_normal = nk_style_item_color(nk_rgb(255, 165, 0));
+      } else if (currentValue >= 70) {
+        ctx->style.progress.cursor_normal = nk_style_item_color(nk_rgb(36, 109, 36));
+      } else {
+        ctx->style.progress.cursor_normal = nk_style_item_color(nk_rgb(255, 0, 0));
+      }
+
+      ctx->style.progress.padding = nk_vec2(0,0);
+      ctx->style.progress.border = 1;
+
+      nk_progress(ctx, &currentValue, 100, NK_FIXED);
+    }
+
+    nk_end(ctx);
+    nk_style_pop_style_item(ctx);
+  }
+
   Nuklear(int _width, int _height) : window_width(_width), window_height(_height) { }
 };
 

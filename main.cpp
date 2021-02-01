@@ -276,6 +276,11 @@ int main(int argc, char **argv) {
         nuklear.render_menu(ctx);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
+      } else {
+        window.pushGLStates();
+        nuklear.render_hud(ctx);
+        nk_sfml_render(NK_ANTI_ALIASING_ON);
+        window.popGLStates();
       }
 
       window.display();
