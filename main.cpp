@@ -216,7 +216,7 @@ int main(int argc, char **argv) {
         }
       }
 
-      map_view.setCenter({ player.getPosition().x * scale.x, player.getPosition().y * scale.y });
+      map_view.setCenter(map.getView(window.getSize().x, window.getSize().y));
       auto center = map_view.getCenter();
 
       window.clear();

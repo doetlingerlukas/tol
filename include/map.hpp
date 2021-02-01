@@ -347,6 +347,31 @@ public:
     return std::optional(sf::Vector2f({ (float)spawn->getPosition().x, (float)spawn->getPosition().y }));
   }
 
+  sf::Vector2f getView(const float window_width, const float window_height) {
+    auto scale = getScale();
+    auto character_position = character->getPosition();
+
+    sf::Vector2f view({ character_position.x * scale.x, character_position.y * scale.y });
+
+    if (view.x - window_width / 2.f < 0) {
+      view.x = window_width / 2.f;
+    }
+    
+    if (view.x + window_width / 2.f > getSize().x * scale.x) {
+      view.x = getSize().x * scale.x - window_width / 2.f;
+    }
+
+    if (view.y - window_height / 2.f < 0) {
+      view.y = window_height / 2.f;
+    }
+    
+    if (view.y + window_height / 2.f > getSize().y * scale.y) {
+      view.y = getSize().y * scale.y - window_height / 2.f;
+    }
+
+    return view;
+  }
+
   void addCharacter(const Character* character) {
     this->character = character;
   }
