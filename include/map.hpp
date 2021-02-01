@@ -26,8 +26,66 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   const Character* character;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+    std::vector<std::pair<tson::Layer*, const tson::TileObject*>> conflicting_tiles;
+
     for (auto& layer : map->getLayers()) {
-      drawLayer(layer, target);
+      if (layer.getName() == "characters") {
+        break;
+      }
+
+      drawLayer(layer, target, now, conflicting_tiles);
+    }
+
+    auto get_y = [this](auto pair) {
+      const auto [_, tileObjectP] = pair;
+      const auto& tileObject = *tileObjectP;
+      auto& tile = *tileObject.getTile();
+
+      const auto& tile_position = tileObject.getPosition();
+
+      const auto y = tile.getProp("y")->template getValue<int>();
+      const auto y_pos = tile_position.y + (y + 1) * this->getTileSize().y;
+
+      return y_pos;
+    };
+
+    std::stable_sort(conflicting_tiles.begin(), conflicting_tiles.end(), [get_y](auto a, auto b) {
+      return get_y(a) < get_y(b);
+    });
+
+    const float char_y = character->getTextureBoundingRect().top + character->getTextureBoundingRect().height;
+
+    // TODO:
+    //   - Sort character together with tiles.
+    bool character_drawn = false;
+    for (const auto pair: conflicting_tiles) {
+      const auto y = get_y(pair);
+
+      if (char_y <= y && !character_drawn) {
+        target.draw(*character);
+        character_drawn = true;
+      }
+
+      const auto [layer, tileObjectP] = pair;
+      drawTile(*layer, target, now, *tileObjectP);
+    }
+
+    if (!character_drawn) {
+      target.draw(*character);
+    }
+
+    bool character_layer_found = false;
+    for (auto& layer : map->getLayers()) {
+      if (layer.getName() == "characters") {
+        character_layer_found = true;
+        continue;
+      } else if (!character_layer_found) {
+        continue;
+      }
+
+      drawLayer(layer, target, now, conflicting_tiles);
     }
   }
 
@@ -51,11 +109,11 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  void drawLayer(tson::Layer& layer, sf::RenderTarget& target) const {
+  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::pair<tson::Layer*, const tson::TileObject*>>& conflicting_tiles) const {
     switch (layer.getType()) {
 
     case tson::LayerType::TileLayer:
-      drawTileLayer(layer, target);
+      drawTileLayer(layer, target, now, conflicting_tiles);
       break;
     case tson::LayerType::ObjectGroup:
       drawObjectLayer(layer, target);
@@ -65,15 +123,11 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       break;
     case tson::LayerType::Group:
       for (auto& l : layer.getLayers()) {
-        drawLayer(l, target);
+        drawLayer(l, target, now, conflicting_tiles);
       }
       break;
     default:
       break;
-    }
-
-    if (layer.getName() == "characters") {
-      target.draw(*character);
     }
   }
 
@@ -91,10 +145,77 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     target.draw(collision_box);
   }
 
-  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target) const {
-    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+  void drawTile(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, const tson::TileObject& tileObject) const {
+    const auto& tile = *tileObject.getTile();
+    auto* tileset = tile.getTileset();
 
-    bool collision_layer = layer.getName() == "collision";
+    tson::Rect tsonRect = tile.getDrawingRect();
+    sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
+
+    const auto& animation = tile.getAnimation();
+
+    if (animation.size() > 0) {
+      const auto tile_id = tile.getGid();
+
+      if (running_animations.count(tile_id) == 0) {
+        std::cout << "Adding animation for tile " << tile_id << std::endl;
+        running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, tileset));
+      } else {
+        rect = running_animations.at(tile_id).getDrawingRect(now);
+      }
+    }
+
+    sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
+    const auto& tile_position = tileObject.getPosition();
+    sf::Vector2f position = {
+      (origin.x + tile_position.x + getPosition().x) * getScale().x,
+      (origin.y + tile_position.y + getPosition().y) * getScale().y,
+    };
+
+    sf::Vector2f scale = getScale();
+
+    float rotation = 0.f;
+    if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
+      rotation += 90.f;
+
+    if (layer.getName() != "collision") {
+      auto texture = loadImage(tileset->getImagePath());
+      sf::Sprite sprite(*texture, rect);
+
+      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
+        scale.x = -scale.x;
+      if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
+        scale.y = -scale.y;
+
+      sprite.setOrigin(origin);
+      sprite.setPosition(position);
+      sprite.setScale(scale);
+      sprite.setRotation(rotation);
+
+      target.draw(sprite);
+    }
+
+    // Draw collision boxes.
+    auto object_group = tile.getObjectgroup();
+    for (auto& object: object_group.getObjects()) {
+      drawCollisionRect(
+        {
+          (tile_position.x + getPosition().x + object.getPosition().x),
+          (tile_position.y + getPosition().y + object.getPosition().y),
+          static_cast<float>(object.getSize().x),
+          static_cast<float>(object.getSize().y),
+        },
+        target
+      );
+    }
+  }
+
+  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::pair<tson::Layer*, const tson::TileObject*>>& conflicting_tiles) const {
+    const auto player_texture_rect = character->getTextureBoundingRect();
+    const auto player_texture_tile_from_x = static_cast<int>(player_texture_rect.left / getTileSize().x);
+    const auto player_texture_tile_from_y = static_cast<int>(player_texture_rect.top / getTileSize().y);
+    const auto player_texture_tile_to_x = static_cast<int>((player_texture_rect.left + player_texture_rect.width) / getTileSize().x);
+    const auto player_texture_tile_to_y = static_cast<int>((player_texture_rect.top + player_texture_rect.height) / getTileSize().y);
 
     for (size_t x = from_x; x < to_x; x++) {
       for (size_t y = from_y; y < to_y; y++) {
@@ -106,70 +227,22 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
         const auto& tileObject = *tileObjectP;
 
-        const auto& tile = *tileObject.getTile();
-        auto* tileset = tile.getTileset();
+        if (x >= player_texture_tile_from_x && x <= player_texture_tile_to_x && y >= player_texture_tile_from_y && y <= player_texture_tile_to_y) {
+          auto& tile = *tileObject.getTile();
+          const auto* y = tile.getProp("y");
 
-        tson::Rect tsonRect = tile.getDrawingRect();
-        sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
-
-        const auto& animation = tile.getAnimation();
-
-        if (animation.size() > 0) {
-          const auto tile_id = tile.getGid();
-
-          if (running_animations.count(tile_id) == 0) {
-            std::cout << "Adding animation for tile " << tile_id << std::endl;
-            running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, tileset));
-          } else {
-            rect = running_animations.at(tile_id).getDrawingRect(now);
+          if (y) {
+            std::pair<tson::Layer*, const tson::TileObject*> item = std::make_pair(&layer, tileObjectP);
+            conflicting_tiles.push_back(item);
+            continue;
           }
         }
 
-        sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
-        const auto& tile_position = tileObject.getPosition();
-        sf::Vector2f position = {
-          (origin.x + tile_position.x + getPosition().x) * getScale().x,
-          (origin.y + tile_position.y + getPosition().y) * getScale().y,
-        };
-
-        sf::Vector2f scale = getScale();
-
-        float rotation = 0.f;
-        if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
-          rotation += 90.f;
-
-        if (!collision_layer) {
-          auto texture = loadImage(tileset->getImagePath());
-          sf::Sprite sprite(*texture, rect);
-
-          if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Horizontally))
-            scale.x = -scale.x;
-          if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Vertically))
-            scale.y = -scale.y;
-
-          sprite.setOrigin(origin);
-          sprite.setPosition(position);
-          sprite.setScale(scale);
-          sprite.setRotation(rotation);
-
-          target.draw(sprite);
-        }
-
-        // Draw collision boxes.
-        auto object_group = tile.getObjectgroup();
-        for (auto& object: object_group.getObjects()) {
-          drawCollisionRect(
-            {
-              (tile_position.x + getPosition().x + object.getPosition().x),
-              (tile_position.y + getPosition().y + object.getPosition().y),
-              static_cast<float>(object.getSize().x),
-              static_cast<float>(object.getSize().y),
-            },
-            target
-          );
-        }
+        drawTile(layer, target, now, tileObject);
       }
     }
+
+
   }
 
   void drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const {
@@ -356,7 +429,7 @@ public:
     if (view.x - window_width / 2.f < 0) {
       view.x = window_width / 2.f;
     }
-    
+
     if (view.x + window_width / 2.f > getSize().x * scale.x) {
       view.x = getSize().x * scale.x - window_width / 2.f;
     }
@@ -364,7 +437,7 @@ public:
     if (view.y - window_height / 2.f < 0) {
       view.y = window_height / 2.f;
     }
-    
+
     if (view.y + window_height / 2.f > getSize().y * scale.y) {
       view.y = getSize().y * scale.y - window_height / 2.f;
     }
