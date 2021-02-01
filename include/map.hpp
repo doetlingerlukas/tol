@@ -241,8 +241,6 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         drawTile(layer, target, now, tileObject);
       }
     }
-
-
   }
 
   void drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const {
