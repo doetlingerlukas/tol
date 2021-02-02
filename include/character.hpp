@@ -121,7 +121,9 @@ public:
     };
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects) {
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
+    float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, const sf::Vector2f& map_size) {
+
     auto position = getPosition();
 
     sf::Vector2f velocity = { 0.f, 0.f };
@@ -153,7 +155,7 @@ public:
     const auto player_left = player_bounds.left;
     const auto player_right = player_left + player_width;
     const auto player_top = player_bounds.top;
-    const auto player_bottom = player_top + player_bounds.height;
+    const auto player_bottom = player_top + player_height;
 
     for (auto& rect : collision_rects) {
       auto obstacle_bounds = rect.getGlobalBounds();
@@ -235,6 +237,55 @@ public:
               last_direction = DOWN;
             }
           }
+        }
+      }
+    }
+
+    // Restrict movement outside the map
+    if (next_bounds.left < 0) {
+      next_bounds.left = 0.f;
+
+      if (x_direction == LEFT) {
+        x_direction = std::nullopt;
+
+        if (!y_direction) {
+          last_direction = LEFT;
+        }
+      }
+    }
+
+    if (next_bounds.left + player_width > map_size.x) {
+      next_bounds.left = map_size.x - player_width;
+
+      if (x_direction == RIGHT) {
+        x_direction = std::nullopt;
+
+        if (!y_direction) {
+          last_direction = RIGHT;
+        }
+      }
+    }
+
+    if (next_bounds.top < 0) {
+      next_bounds.top = 0.f;
+
+      if (y_direction == UP) {
+        y_direction = std::nullopt;
+
+        if (!x_direction) {
+          last_direction = UP;
+        }
+      }
+    }
+
+    if (next_bounds.top + player_height > map_size.y) {
+      next_bounds.top = map_size.y - player_height;
+
+      if (y_direction == DOWN) {
+        y_direction = std::nullopt;
+
+        if (!x_direction) {
+          last_direction = DOWN;
         }
       }
     }

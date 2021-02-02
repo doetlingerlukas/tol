@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
       map_view.setCenter({ spawn->x * scale.x, spawn->y * scale.y });
       player.setPosition(*spawn);
     }
+    const auto map_size = map.getSize();
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
@@ -181,7 +182,7 @@ int main(int argc, char **argv) {
       player.move(
         (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
         (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt),
-        dt * CHARACTER_MOVE_SPEED, now, collision_rects
+        dt * CHARACTER_MOVE_SPEED, now, collision_rects, map_size
       );
 
       if (up && !down) {
