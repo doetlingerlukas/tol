@@ -53,13 +53,15 @@ int main(int argc, char **argv) {
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
 
+    const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>("assets");
+
     sf::Font font;
-    font.loadFromFile("assets/fonts/Gaegu-Regular.ttf");
+    font.loadFromFile(asset_cache->dir() / "fonts/Gaegu-Regular.ttf");
 
     sf::View map_view;
 
-    TiledMap map("assets/map.json");
-    Character player("assets/tilesets/character-whitebeard.png");
+    TiledMap map(asset_cache->dir() / "map.json", asset_cache);
+    Character player(asset_cache->dir() / "tilesets/character-whitebeard.png");
     map.setScale(scale);
     player.setScale(scale);
 

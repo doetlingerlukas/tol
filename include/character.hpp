@@ -138,7 +138,7 @@ public:
     };
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, const std::vector<sf::RectangleShape>& collision_rects) {
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, std::vector<sf::RectangleShape>& collision_rects) {
     auto position = getPosition();
 
     sf::Vector2f velocity = { 0.f, 0.f };
@@ -175,6 +175,8 @@ public:
     for (auto& rect : collision_rects) {
       auto obstacle_bounds = rect.getGlobalBounds();
       if (obstacle_bounds.intersects(next_bounds)) {
+        rect.setFillColor(sf::Color(255, 0, 0, 100));
+
         const auto obstacle_left = obstacle_bounds.left;
         const auto obstacle_right = obstacle_left + obstacle_bounds.width;
         const auto obstacle_top = obstacle_bounds.top;
