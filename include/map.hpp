@@ -193,6 +193,17 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     return { 0.f, 0.f };
   }
 
+  void createTileData(tson::Layer& layer) {
+    if (layer.getType() == tson::LayerType::Group) {
+      for (auto& nested: layer.getLayers()) {
+        createTileData(nested);
+      }
+    } else if (layer.getType() == tson::LayerType::TileLayer) {
+   		layer.assignTileMap((std::map<uint32_t, tson::Tile*>*)(&map->getTileMap()));
+   		layer.createTileData(map->getSize(), map->isInfinite());
+    }
+  }
+
 public:
   sf::Vector2i getTileSize() const {
     auto [x, y] = map->getTileSize();
@@ -214,6 +225,12 @@ public:
 
     if (map->getStatus() != tson::ParseStatus::OK) {
       throw std::runtime_error("Failed parsing '" + map_path.string() + "'.\n" + map->getStatusMessage());
+    }
+
+    for (auto& layer: map->getLayers()) {
+      if (layer.getType() == tson::LayerType::Group) {
+        createTileData(layer);
+      }
     }
 
     for (const auto& tileset: map->getTilesets()) {
