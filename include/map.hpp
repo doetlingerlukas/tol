@@ -165,14 +165,14 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       }
     }
 
+    sf::Vector2f scale = getScale();
+
     sf::Vector2f origin = { rect.width / 2.f, rect.height / 2.f };
     const auto& tile_position = tileObject.getPosition();
     sf::Vector2f position = {
-      (origin.x + tile_position.x + getPosition().x) * getScale().x,
-      (origin.y + tile_position.y + getPosition().y) * getScale().y,
+      (origin.x + tile_position.x + getPosition().x) * scale.x,
+      (origin.y + tile_position.y + getPosition().y) * scale.y,
     };
-
-    sf::Vector2f scale = getScale();
 
     float rotation = 0.f;
     if (tileObject.getTile()->hasFlipFlags(tson::TileFlipFlags::Diagonally))
