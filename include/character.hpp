@@ -144,6 +144,26 @@ public:
       velocity.y += 1.0 * speed;
     }
 
+    auto stop_movement = [this, &x_direction, &y_direction](CharacterDirection direction) {
+      if (direction == LEFT || direction == RIGHT) {
+        if (x_direction == direction) {
+          x_direction = std::nullopt;
+
+          if (!y_direction) {
+            last_direction = direction;
+          }
+        }
+      } else if (direction == UP || direction == DOWN) {
+        if (y_direction == direction) {
+          y_direction = std::nullopt;
+
+          if (!x_direction) {
+            last_direction = direction;
+          }
+        }
+      }
+    };
+
     const auto player_bounds = getBoundingRect();
 
     auto next_bounds = player_bounds;
@@ -175,14 +195,7 @@ public:
           player_bottom > obstacle_top
         ) {
           next_bounds.left = obstacle_right;
-
-          if (x_direction == LEFT) {
-            x_direction = std::nullopt;
-
-            if (!y_direction) {
-              last_direction = LEFT;
-            }
-          }
+          stop_movement(LEFT);
         }
 
         // Right collision
@@ -193,14 +206,7 @@ public:
           player_bottom > obstacle_top
         ) {
           next_bounds.left = obstacle_left - player_width;
-
-          if (x_direction == RIGHT) {
-            x_direction = std::nullopt;
-
-            if (!y_direction) {
-              last_direction = RIGHT;
-            }
-          }
+          stop_movement(RIGHT);
         }
 
         // Top collision
@@ -211,14 +217,7 @@ public:
           player_right  > obstacle_left
         ) {
           next_bounds.top = obstacle_bottom;
-
-          if (y_direction == UP) {
-            y_direction = std::nullopt;
-
-            if (!x_direction) {
-              last_direction = UP;
-            }
-          }
+          stop_movement(UP);
         }
 
         // Bottom collision
@@ -229,14 +228,7 @@ public:
           player_right  > obstacle_left
         ) {
           next_bounds.top = obstacle_top - player_height;
-
-          if (y_direction == DOWN) {
-            y_direction = std::nullopt;
-
-            if (!x_direction) {
-              last_direction = DOWN;
-            }
-          }
+          stop_movement(DOWN);
         }
       }
     }
@@ -244,50 +236,22 @@ public:
     // Restrict movement outside the map
     if (next_bounds.left < 0) {
       next_bounds.left = 0.f;
-
-      if (x_direction == LEFT) {
-        x_direction = std::nullopt;
-
-        if (!y_direction) {
-          last_direction = LEFT;
-        }
-      }
+      stop_movement(LEFT);
     }
 
     if (next_bounds.left + player_width > map_size.x) {
       next_bounds.left = map_size.x - player_width;
-
-      if (x_direction == RIGHT) {
-        x_direction = std::nullopt;
-
-        if (!y_direction) {
-          last_direction = RIGHT;
-        }
-      }
+      stop_movement(RIGHT);
     }
 
     if (next_bounds.top < 0) {
       next_bounds.top = 0.f;
-
-      if (y_direction == UP) {
-        y_direction = std::nullopt;
-
-        if (!x_direction) {
-          last_direction = UP;
-        }
-      }
+      stop_movement(UP);
     }
 
     if (next_bounds.top + player_height > map_size.y) {
       next_bounds.top = map_size.y - player_height;
-
-      if (y_direction == DOWN) {
-        y_direction = std::nullopt;
-
-        if (!x_direction) {
-          last_direction = DOWN;
-        }
-      }
+      stop_movement(DOWN);
     }
 
     setPosition({ next_bounds.left + player_width / 2.f, next_bounds.top + player_height / 2.f });
