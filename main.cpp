@@ -94,12 +94,14 @@ int main(int argc, char **argv) {
 
     sf::Clock clock;
     float dt = 0.0;
+    std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
     while (window.isOpen()) {
+      const auto millis = clock.restart().asMilliseconds();
+      const auto dt = millis / 1000.f;
+      now += std::chrono::milliseconds(millis);
+
       sf::Event event;
-
-      dt = clock.restart().asSeconds();
-
       while (window.pollEvent(event)) {
         switch (event.type) {
           case sf::Event::Closed:
@@ -228,7 +230,7 @@ int main(int argc, char **argv) {
       ss << "Player: " << player.getPosition().x << ", " << player.getPosition().y << "\n";
       ss << "Spawn: " << spawn->x << "," << spawn->y << "\n";
 
-      map.update(map_view, window);
+      map.update(map_view, window, now);
 
       window.setView(map_view);
       window.draw(map);

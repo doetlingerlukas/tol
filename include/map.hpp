@@ -254,7 +254,7 @@ public:
     return { static_cast<int>(coords.x / factor_x), static_cast<int>(coords.y / factor_y) };
   }
 
-  void update(const sf::View& view, const sf::RenderWindow& window) {
+  void update(const sf::View& view, const sf::RenderWindow& window, const std::chrono::milliseconds& now) {
     const auto window_size = window.getSize();
 
     auto from = mapCoordsToTile(window.mapPixelToCoords({0, 0}, view));
