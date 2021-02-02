@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>("assets");
 
     sf::Font font;
-    font.loadFromFile(asset_cache->dir() / "fonts/Gaegu-Regular.ttf");
+    font.loadFromFile((asset_cache->dir() / "fonts/Gaegu-Regular.ttf").string());
 
     sf::View map_view;
 
