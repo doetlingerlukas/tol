@@ -26,6 +26,7 @@
 #define NK_SFML_GL2_IMPLEMENTATION
 #include <nuklear.hpp>
 #include <settings.hpp>
+#include <stats.hpp>
 
 namespace fs = std::filesystem;
 
@@ -75,6 +76,8 @@ int main(int argc, char **argv) {
     map.setScale(scale);
     player.setScale(scale);
 
+    Stats stats = Stats();
+
     map_view.reset({ 0, (map.getSize().y - window.getSize().y) * scale.y, (float)window.getSize().x, (float)window.getSize().y });
     map.addCharacter(&player);
 
@@ -107,7 +110,7 @@ int main(int argc, char **argv) {
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
-    const Nuklear& nuklear = Nuklear(window_width, window_height);
+    Nuklear nuklear = Nuklear(window_width, window_height, stats);
     auto ctx = nuklear.init(&window);
 
     while (window.isOpen()) {
