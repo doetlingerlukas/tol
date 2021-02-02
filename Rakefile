@@ -13,6 +13,7 @@ task :deps do
   sh 'vcpkg', 'install', 'glad'
   sh 'vcpkg', 'install', 'glfw3'
   sh 'vcpkg', 'install', 'sfml'
+  sh 'vcpkg', 'install', 'nlohmann-json'
 end
 
 task :map do
@@ -20,14 +21,14 @@ task :map do
 
   map = JSON.parse(File.read('assets/map.json'))
 
-  map['tilesets'].each_with_index do |tileset, i|
+  map['tilesets'].each do |tileset|
     first_gid = tileset['firstgid']
 
-    tileset['tiles']&.each_with_index do |tile, i|
-      tile['id'] = first_gid - 1 + tile["id"]
+    tileset['tiles']&.each do |tile|
+      tile['id'] = first_gid - 1 + tile['id']
 
-      tile["animation"]&.each do |animation|
-        animation["tileid"] = first_gid + animation["tileid"]
+      tile['animation']&.each do |animation|
+        animation['tileid'] = first_gid + animation['tileid']
       end
     end
   end
