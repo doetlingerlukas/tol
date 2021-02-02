@@ -12,11 +12,13 @@
 #include "nuklear_sfml_gl2.h"
 
 #include <SFML/Graphics.hpp>
+#include <stats.hpp>
 
 class Nuklear {
 private:
   int window_width;
   int window_height;
+  Stats stats;
 
 public:
   struct nk_context* init(sf::RenderWindow* window) const {
@@ -75,7 +77,7 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  void render_hud(struct nk_context* ctx) const {
+  void render_hud(struct nk_context* ctx) {
     const float hud_height = 60;
     const float progressbar_height = hud_height / 2;
 
@@ -85,7 +87,7 @@ public:
     if (nk_begin(ctx, "hud", nk_rect(0, window_height - hud_height, window_width, hud_height), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = {0.75f, 0.25f, 0.05f};
 
-      nk_size currentValue = 80;
+      nk_size currentHealth = (nk_size)stats.getHealth();
 
       nk_layout_row_static(ctx, (hud_height - progressbar_height) / 4, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, progressbar_height, 2, ratio);
@@ -93,9 +95,9 @@ public:
 
       ctx->style.progress.normal = nk_style_item_color(nk_rgba(225, 232, 225, 100));
 
-      if (currentValue > 40 && currentValue < 70) {
+      if (currentHealth > 40 && currentHealth < 70) {
         ctx->style.progress.cursor_normal = nk_style_item_color(nk_rgb(255, 165, 0));
-      } else if (currentValue >= 70) {
+      } else if (currentHealth >= 70) {
         ctx->style.progress.cursor_normal = nk_style_item_color(nk_rgb(36, 109, 36));
       } else {
         ctx->style.progress.cursor_normal = nk_style_item_color(nk_rgb(255, 0, 0));
@@ -104,13 +106,13 @@ public:
       ctx->style.progress.padding = nk_vec2(0,0);
       ctx->style.progress.border = 1;
 
-      nk_progress(ctx, &currentValue, 100, NK_FIXED);
+      nk_progress(ctx, &currentHealth, 100, NK_FIXED);
     }
 
     nk_end(ctx);
     nk_style_pop_style_item(ctx);
   }
 
-  Nuklear(int _width, int _height) : window_width(_width), window_height(_height) { }
+  Nuklear(int _width, int _height, Stats& _stats) : window_width(_width), window_height(_height), stats(_stats) { }
 };
 
