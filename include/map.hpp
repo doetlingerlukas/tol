@@ -32,45 +32,31 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-    std::vector<std::variant<Tile, Character>> conflicting_tiles;
+    std::vector<std::variant<Tile, Character>> deferred_tiles;
 
     for (auto& layer : map->getLayers()) {
+      drawLayer(layer, target, now, deferred_tiles);
+
       if (layer.getName() == "characters") {
-        break;
+        deferred_tiles.push_back(*character);
+
+        std::stable_sort(deferred_tiles.begin(), deferred_tiles.end(), [&](auto a, auto b) {
+          const auto z_index = [](const auto& o) { return *o.zIndex(); };
+          return std::visit(z_index, a) < std::visit(z_index, b);
+        });
+
+        for (const auto object: deferred_tiles) {
+          std::visit([&](const auto& o) { target.draw(o); }, object);
+        }
       }
-
-      drawLayer(layer, target, now, conflicting_tiles);
-    }
-
-    conflicting_tiles.push_back(*character);
-
-    std::stable_sort(conflicting_tiles.begin(), conflicting_tiles.end(), [&](auto a, auto b) {
-      const auto z_index = [](const auto& o) { return *o.zIndex(); };
-      return std::visit(z_index, a) < std::visit(z_index, b);
-    });
-
-    for (const auto object: conflicting_tiles) {
-      std::visit([&](const auto& o) { target.draw(o); }, object);
-    }
-
-    bool character_layer_found = false;
-    for (auto& layer : map->getLayers()) {
-      if (layer.getName() == "characters") {
-        character_layer_found = true;
-        continue;
-      } else if (!character_layer_found) {
-        continue;
-      }
-
-      drawLayer(layer, target, now, conflicting_tiles);
     }
   }
 
-  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& conflicting_tiles) const {
+  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
     switch (layer.getType()) {
 
     case tson::LayerType::TileLayer:
-      drawTileLayer(layer, target, now, conflicting_tiles);
+      drawTileLayer(layer, target, now, deferred_tiles);
       break;
     case tson::LayerType::ObjectGroup:
       drawObjectLayer(layer, target);
@@ -80,7 +66,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       break;
     case tson::LayerType::Group:
       for (auto& l : layer.getLayers()) {
-        drawLayer(l, target, now, conflicting_tiles);
+        drawLayer(l, target, now, deferred_tiles);
       }
       break;
     default:
@@ -90,7 +76,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& conflicting_tiles) const {
+  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
     const auto player_texture_rect = character->getTextureBoundingRect();
     const auto player_texture_tile_from_x = static_cast<int>(player_texture_rect.left / getTileSize().x);
     const auto player_texture_tile_from_y = static_cast<int>(player_texture_rect.top / getTileSize().y);
@@ -111,7 +97,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         if (x >= player_texture_tile_from_x && x <= player_texture_tile_to_x &&
             y >= player_texture_tile_from_y && y <= player_texture_tile_to_y &&
             tile.zIndex()) {
-          conflicting_tiles.push_back(std::move(tile));
+          deferred_tiles.push_back(std::move(tile));
           continue;
         }
 
@@ -352,36 +338,52 @@ public:
       shapes.push_back(shape);
     };
 
+    std::function<void(tson::Layer&)> create_collision_shapes;
+    create_collision_shapes = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
+      switch (layer.getType()) {
+        case tson::LayerType::TileLayer:
+          for (size_t x = std::max(0, player_tile_x - 1); x < std::min(max_x, player_tile_x + 2); x++) {
+            for (size_t y = std::max(0, player_tile_y - 1); y < std::min(max_y, player_tile_y + 2); y++) {
+              const auto* tileObjectP = layer.getTileObject(x, y);
+
+              if (!tileObjectP) {
+                continue;
+              }
+
+              const auto tile = Tile(&layer, tileObjectP, asset_cache);
+
+              for (auto& collision_rect: tile.getCollisionRects()) {
+                create_collision_shape(collision_rect);
+              }
+            }
+          }
+          break;
+        case tson::LayerType::ObjectGroup:
+          for (auto& obj : layer.getObjects()) {
+            if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
+              sf::FloatRect object_rect = {
+                static_cast<float>(obj.getPosition().x),
+                static_cast<float>(obj.getPosition().y),
+                static_cast<float>(obj.getSize().x),
+                static_cast<float>(obj.getSize().y),
+              };
+              create_collision_shape(object_rect);
+            }
+          }
+          break;
+        case tson::LayerType::Group:
+          for (auto& layer: layer.getLayers()) {
+            create_collision_shapes(layer);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
     for (auto& layer: map->getLayers()) {
-      for (size_t x = std::max(0, player_tile_x - 1); x < std::min(max_x, player_tile_x + 2); x++) {
-        for (size_t y = std::max(0, player_tile_y - 1); y < std::min(max_y, player_tile_y + 2); y++) {
-          const auto* tileObjectP = layer.getTileObject(x, y);
-
-          if (!tileObjectP) {
-            continue;
-          }
-
-          const auto tile = Tile(&layer, tileObjectP, asset_cache);
-
-          for (auto& collision_rect: tile.getCollisionRects()) {
-            create_collision_shape(collision_rect);
-          }
-        }
-      }
-
-      for (auto& obj : layer.getObjects()) {
-        if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
-          sf::FloatRect object_rect = {
-            static_cast<float>(obj.getPosition().x),
-            static_cast<float>(obj.getPosition().y),
-            static_cast<float>(obj.getSize().x),
-            static_cast<float>(obj.getSize().y),
-          };
-          create_collision_shape(object_rect);
-        }
-      }
+      create_collision_shapes(layer);
     }
-
 
     return shapes;
   }
