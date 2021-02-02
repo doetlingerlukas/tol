@@ -1,5 +1,6 @@
 #pragma once
 
+#include <variant>
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -31,7 +32,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-    std::vector<Tile> conflicting_tiles;
+    std::vector<std::variant<Tile, Character>> conflicting_tiles;
 
     for (auto& layer : map->getLayers()) {
       if (layer.getName() == "characters") {
@@ -41,26 +42,15 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       drawLayer(layer, target, now, conflicting_tiles);
     }
 
-    std::stable_sort(conflicting_tiles.begin(), conflicting_tiles.end(), [](auto a, auto b) {
-      return a.zIndex() < b.zIndex();
+    conflicting_tiles.push_back(*character);
+
+    std::stable_sort(conflicting_tiles.begin(), conflicting_tiles.end(), [&](auto a, auto b) {
+      const auto z_index = [](const auto& o) { return *o.zIndex(); };
+      return std::visit(z_index, a) < std::visit(z_index, b);
     });
 
-    const float char_y = character->getTextureBoundingRect().top + character->getTextureBoundingRect().height;
-
-    // TODO:
-    //   - Sort character together with tiles.
-    bool character_drawn = false;
-    for (const auto tile: conflicting_tiles) {
-      if (char_y <= tile.zIndex() && !character_drawn) {
-        target.draw(*character);
-        character_drawn = true;
-      }
-
-      target.draw(tile);
-    }
-
-    if (!character_drawn) {
-      target.draw(*character);
+    for (const auto object: conflicting_tiles) {
+      std::visit([&](const auto& o) { target.draw(o); }, object);
     }
 
     bool character_layer_found = false;
@@ -76,7 +66,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<Tile>& conflicting_tiles) const {
+  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& conflicting_tiles) const {
     switch (layer.getType()) {
 
     case tson::LayerType::TileLayer:
@@ -100,7 +90,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<Tile>& conflicting_tiles) const {
+  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& conflicting_tiles) const {
     const auto player_texture_rect = character->getTextureBoundingRect();
     const auto player_texture_tile_from_x = static_cast<int>(player_texture_rect.left / getTileSize().x);
     const auto player_texture_tile_from_y = static_cast<int>(player_texture_rect.top / getTileSize().y);

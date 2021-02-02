@@ -1,7 +1,9 @@
 #pragma once
 
-#include <animation.hpp>
 #include <optional>
+
+#include <animation.hpp>
+#include <z_indexable.hpp>
 
 enum CharacterDirection {
   UP = 0,
@@ -33,15 +35,13 @@ const int TILE_SIZE = 64;
 class Character: public sf::Drawable, public sf::Transformable {
   sf::Texture texture;
   mutable sf::Sprite sprite;
-  mutable std::optional<Animation> animation;
-
-  std::optional<CharacterDirection> x_direction;
-  std::optional<CharacterDirection> y_direction;
+  std::optional<Animation> animation;
 
 public:
   Character(const fs::path& path) {
     texture.loadFromFile(path.string());
     sprite.setTexture(texture);
+    sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE / 8.f * 7.f });
   }
 
@@ -51,28 +51,6 @@ public:
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-
-    const auto direction = x_direction ? x_direction : y_direction;
-
-    if (direction) {
-      if (direction != last_direction) {
-        animation = std::nullopt;
-        last_direction = *direction;
-      }
-
-      if (!animation) {
-        std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
-
-        auto animation_type = WALK;
-        for (int i = 1; i < CHARACTER_ANIMATION_FRAMES[animation_type]; i++) {
-          frames.push_back(std::make_tuple(std::chrono::milliseconds(125), sf::IntRect{ i * TILE_SIZE, (animation_type * 4 + *direction) * TILE_SIZE, TILE_SIZE, TILE_SIZE }));
-        }
-
-        animation = Animation(std::move(frames));
-      }
-    } else {
-      animation = std::nullopt;
-    }
 
     if (animation) {
       sprite.setTextureRect(animation->getDrawingRect(now));
@@ -118,23 +96,28 @@ public:
   }
 
   sf::FloatRect getBoundingRect() const {
+    const auto& position = getPosition();
     const auto width = (TILE_SIZE / 8.f * 3.f);
     const auto height = (TILE_SIZE / 8.f * 2.f);
 
     return {
-      (getPosition().x - width / 2.f),
-      (getPosition().y - height / 2.f),
+      (position.x - width / 2.f),
+      (position.y - height / 2.f),
       width,
       height,
     };
   }
 
   sf::FloatRect getTextureBoundingRect() const {
+    const auto& position = getPosition();
+    const auto& origin = sprite.getOrigin();
+    const auto& texture_rect = sprite.getTextureRect();
+
     return {
-      static_cast<float>(getPosition().x - sprite.getOrigin().x),
-      static_cast<float>(getPosition().y - sprite.getOrigin().y),
-      static_cast<float>(sprite.getTextureRect().width),
-      static_cast<float>(sprite.getTextureRect().height),
+      static_cast<float>(position.x - origin.x),
+      static_cast<float>(position.y - origin.y),
+      static_cast<float>(texture_rect.width),
+      static_cast<float>(texture_rect.height),
     };
   }
 
@@ -256,8 +239,33 @@ public:
       }
     }
 
-    this->x_direction = x_direction;
-    this->y_direction = y_direction;
     setPosition({ next_bounds.left + player_width / 2.f, next_bounds.top + player_height / 2.f });
+
+    const auto direction = x_direction ? x_direction : y_direction;
+
+    if (direction) {
+      if (direction != last_direction) {
+        animation = std::nullopt;
+        last_direction = *direction;
+      }
+
+      if (!animation) {
+        std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
+
+        auto animation_type = WALK;
+        for (int i = 1; i < CHARACTER_ANIMATION_FRAMES[animation_type]; i++) {
+          frames.push_back(std::make_tuple(std::chrono::milliseconds(100), sf::IntRect{ i * TILE_SIZE, (animation_type * 4 + *direction) * TILE_SIZE, TILE_SIZE, TILE_SIZE }));
+        }
+
+        animation = Animation(std::move(frames));
+      }
+    } else {
+      animation = std::nullopt;
+    }
+  }
+
+  virtual std::optional<float> zIndex() const {
+    const auto& texture_bounding_rect = getTextureBoundingRect();
+    return texture_bounding_rect.top + texture_bounding_rect.height;
   }
 };
