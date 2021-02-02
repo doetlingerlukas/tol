@@ -33,15 +33,16 @@ const int CHARACTER_ANIMATION_FRAMES[6] {
 const int TILE_SIZE = 64;
 
 class Character: public sf::Drawable, public sf::Transformable {
-  sf::Texture texture;
+  std::shared_ptr<AssetCache> asset_cache;
+
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
   std::chrono::milliseconds now;
 
 public:
-  Character(const fs::path& path) {
-    texture.loadFromFile(path.string());
-    sprite.setTexture(texture);
+  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_) {
+    auto texture = asset_cache->loadTexture(path);
+    sprite.setTexture(*texture);
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE / 8.f * 7.f });
   }

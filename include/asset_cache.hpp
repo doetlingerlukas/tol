@@ -23,7 +23,7 @@ public:
         }
       }
 
-      throw std::runtime_error("Failed to load '" + path.string() + "'.");
+      throw std::runtime_error("Failed to load '" + absolute_path.string() + "'.");
     } else {
       return textures.at(path.string());
     }

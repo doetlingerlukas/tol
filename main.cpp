@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     sf::View map_view;
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
-    Character player(asset_cache->dir() / "tilesets/character-whitebeard.png");
+    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache);
     map.setScale(scale);
     player.setScale(scale);
 
