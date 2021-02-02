@@ -28,14 +28,13 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   size_t to_y;
 
   const Character* character;
+  std::chrono::milliseconds now;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
-    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-
     std::vector<std::variant<Tile, Character>> deferred_tiles;
 
     for (auto& layer : map->getLayers()) {
-      drawLayer(layer, target, now, deferred_tiles);
+      drawLayer(layer, target, deferred_tiles);
 
       if (layer.getName() == "characters") {
         deferred_tiles.push_back(*character);
@@ -52,11 +51,11 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
+  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
     switch (layer.getType()) {
 
     case tson::LayerType::TileLayer:
-      drawTileLayer(layer, target, now, deferred_tiles);
+      drawTileLayer(layer, target, deferred_tiles);
       break;
     case tson::LayerType::ObjectGroup:
       drawObjectLayer(layer, target);
@@ -66,7 +65,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       break;
     case tson::LayerType::Group:
       for (auto& l : layer.getLayers()) {
-        drawLayer(l, target, now, deferred_tiles);
+        drawLayer(l, target, deferred_tiles);
       }
       break;
     default:
@@ -76,7 +75,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::chrono::milliseconds now, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
+  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
     const auto player_texture_rect = character->getTextureBoundingRect();
     const auto player_texture_tile_from_x = static_cast<int>(player_texture_rect.left / getTileSize().x);
     const auto player_texture_tile_from_y = static_cast<int>(player_texture_rect.top / getTileSize().y);
@@ -93,6 +92,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
         auto tile = Tile(&layer, tileObjectP, asset_cache);
         tile.setScale(getScale());
+        tile.update(now);
 
         if (x >= player_texture_tile_from_x && x <= player_texture_tile_to_x &&
             y >= player_texture_tile_from_y && y <= player_texture_tile_to_y &&
@@ -258,6 +258,8 @@ public:
   }
 
   void update(const sf::View& view, const sf::RenderWindow& window, const std::chrono::milliseconds& now) {
+    this->now = now;
+
     const auto window_size = window.getSize();
 
     auto from = mapCoordsToTile(window.mapPixelToCoords({0, 0}, view));
@@ -350,7 +352,9 @@ public:
                 continue;
               }
 
-              const auto tile = Tile(&layer, tileObjectP, asset_cache);
+              auto tile = Tile(&layer, tileObjectP, asset_cache);
+              tile.setScale(getScale());
+              tile.update(now);
 
               for (auto& collision_rect: tile.getCollisionRects()) {
                 create_collision_shape(collision_rect);

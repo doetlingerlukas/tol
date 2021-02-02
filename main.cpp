@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
       player.move(
         (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
         (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt),
-        dt * CHARACTER_MOVE_SPEED, collision_rects
+        dt * CHARACTER_MOVE_SPEED, now, collision_rects
       );
 
       if (up && !down) {

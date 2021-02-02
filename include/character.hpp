@@ -36,6 +36,7 @@ class Character: public sf::Drawable, public sf::Transformable {
   sf::Texture texture;
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
+  std::chrono::milliseconds now;
 
 public:
   Character(const fs::path& path) {
@@ -50,8 +51,6 @@ public:
   mutable CharacterDirection last_direction = DOWN;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
-    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-
     if (animation) {
       sprite.setTextureRect(animation->getDrawingRect(now));
     } else {
@@ -121,7 +120,7 @@ public:
     };
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, std::vector<sf::RectangleShape>& collision_rects) {
+  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects) {
     auto position = getPosition();
 
     sf::Vector2f velocity = { 0.f, 0.f };
@@ -262,6 +261,8 @@ public:
     } else {
       animation = std::nullopt;
     }
+
+    this->now = now;
   }
 
   virtual std::optional<float> zIndex() const {

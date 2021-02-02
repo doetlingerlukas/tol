@@ -19,10 +19,9 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   std::optional<float> z_index;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
-    // TODO: Pass total time or `df` from main.
-    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+  std::chrono::milliseconds now;
 
+  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     const auto& tileObject = getTileObject();
     const auto& tile = *tileObject.getTile();
     auto* tileset = tile.getTileset();
@@ -111,6 +110,10 @@ public:
     }
 
     return collision_rects;
+  }
+
+  void update(std::chrono::milliseconds now) {
+    this->now = now;
   }
 };
 
