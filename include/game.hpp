@@ -7,18 +7,14 @@
 #include <character.hpp>
 #include <settings.hpp>
 #include <input.hpp>
-
-const float VIEW_MOVE_SPEED = 40.f;
-const float VIEW_MOVE_ACCEL = 20.f;
-const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;
-const float CHARACTER_MOVE_SPEED = 80.f;
+#include <play_state.hpp>
 
 #if __APPLE__
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #endif
 
-enum GameState {
-  MENU = 0,
+enum class GameState {
+  MENU,
   PLAY
 };
 
@@ -40,11 +36,11 @@ class Game {
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
       case sf::Keyboard::Escape:
-        state = MENU;
+        state = GameState::MENU;
         window.setKeyRepeatEnabled(true);
         break;
       case sf::Keyboard::Right:
-        if (state == MENU) {
+        if (state == GameState::MENU) {
           key_input.right = false;
         }
         else {
@@ -55,7 +51,7 @@ class Game {
         key_input.d = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Left:
-        if (state == MENU) {
+        if (state == GameState::MENU) {
           key_input.left = false;
         }
         else {
@@ -66,7 +62,7 @@ class Game {
         key_input.a = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Up:
-        if (state == MENU) {
+        if (state == GameState::MENU) {
           if (event.type == sf::Event::KeyPressed) {
             menu.up();
           }
@@ -80,7 +76,7 @@ class Game {
         key_input.w = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Down:
-        if (state == MENU) {
+        if (state == GameState::MENU) {
           if (event.type == sf::Event::KeyPressed) {
             menu.down();
           }
@@ -94,7 +90,7 @@ class Game {
         key_input.s = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Enter:
-        if (state == MENU) {
+        if (state == GameState::MENU) {
           menu.enter(event.type == sf::Event::KeyPressed);
         }
         break;
@@ -110,7 +106,7 @@ class Game {
   }
 
 public:
-  Game(const Settings& settings_) : settings(settings_), state(MENU) {}
+  Game(const Settings& settings_) : settings(settings_), state(GameState::MENU) {}
 
   void run() {
     scale = { 2.0, 2.0 };
@@ -147,25 +143,15 @@ public:
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>("assets");
 
-    sf::Font font;
-    font.loadFromFile((asset_cache->dir() / "fonts/Gaegu-Regular.ttf").string());
-
-    sf::View map_view;
-
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
     Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache);
+
     map.setScale(scale);
     player.setScale(scale);
 
-    map_view.reset({ 0, (map.getSize().y - window.getSize().y) * scale.y, (float)window.getSize().x, (float)window.getSize().y });
     map.addCharacter(&player);
 
-    const auto spawn = map.getSpawn();
-    if (spawn) {
-      map_view.setCenter({ spawn->x * scale.x, spawn->y * scale.y });
-      player.setPosition(*spawn);
-    }
-    const auto map_size = map.getSize();
+    PlayState play_state(&map, &player, asset_cache, scale, window.getSize());
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     KeyInput key_input;
@@ -173,14 +159,12 @@ public:
     Menu menu;
     menu.add_item("PLAY", [this]() {
       window.setKeyRepeatEnabled(false);
-      state = PLAY;
+      state = GameState::PLAY;
       });
     menu.add_item("LOAD GAME", [&]() {});
     menu.add_item("SAVE GAME", [&]() {});
     menu.add_item("EXIT", [&]() { window.close(); });
     menu.setScale(scale);
-
-    std::vector<sf::RectangleShape> collision_rects;
 
     sf::Clock clock;
     float dt = 0.0;
@@ -196,90 +180,18 @@ public:
         handle_event(event, key_input, menu);
       }
 
-      if (state == PLAY) {
-        collision_rects = map.collisionTiles(player);
-
-        player.move(
-          (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
-          (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-          dt * CHARACTER_MOVE_SPEED, now, collision_rects, map_size
-        );
-
-
-        if (key_input.up && !key_input.down) {
-          direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
-        }
-        else if (key_input.down && !key_input.up) {
-          direction.y = std::clamp(direction.y - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
-        }
-        else {
-          if (direction.y >= 0.5) {
-            direction.y -= 1.0 * dt * VIEW_MOVE_DECEL;
-          }
-          else if (direction.y <= -0.5) {
-            direction.y += 1.0 * dt * VIEW_MOVE_DECEL;
-          }
-          else {
-            direction.y = 0;
-          }
-        }
-
-        if (key_input.right && !key_input.left) {
-          direction.x = std::clamp(direction.x - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
-        }
-        else if (key_input.left && !key_input.right) {
-          direction.x = std::clamp(direction.x + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
-        }
-        else {
-          if (direction.x >= 0.5) {
-            direction.x -= 1.0 * dt * VIEW_MOVE_DECEL;
-          }
-          else if (direction.x <= -0.5) {
-            direction.x += 1.0 * dt * VIEW_MOVE_DECEL;
-          }
-          else {
-            direction.x = 0;
-          }
-        }
-      }
-
-      map_view.setCenter(map.getView(window.getSize().x, window.getSize().y));
-      auto center = map_view.getCenter();
-
       window.clear();
 
-      std::stringstream ss;
-      ss << "Center Coords: " << center.x << ", " << center.y << "\n";
-      ss << "Player: " << player.getPosition().x << ", " << player.getPosition().y << "\n";
-      ss << "Spawn: " << spawn->x << "," << spawn->y << "\n";
-
-      map.update(map_view, window, now);
-
-      window.setView(map_view);
-      window.draw(map);
-
-      for (auto shape : collision_rects) {
-        shape.setScale(scale);
-        auto position = shape.getPosition();
-        shape.setPosition({ position.x * scale.x, position.y * scale.y });
-        window.draw(shape);
+      if (state == GameState::PLAY) {
+        play_state.update(key_input, window, now, dt, direction);
+        window.draw(play_state);
       }
 
       window.setView(window.getDefaultView());
 
-      if (state == MENU) {
+      if (state == GameState::MENU) {
         window.draw(menu);
       }
-
-      sf::Text text;
-      text.setFont(font);
-      text.setCharacterSize(16 * scale.y);
-      text.setFillColor(sf::Color::White);
-      text.setOutlineColor(sf::Color::Black);
-      text.setOutlineThickness(1);
-      text.setString(ss.str());
-
-      window.draw(text);
 
       window.display();
     }
