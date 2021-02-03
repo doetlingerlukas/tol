@@ -101,7 +101,10 @@ int main(int argc, char **argv) {
     });
     menu.add_item("LOAD GAME", [&]() { });
     menu.add_item("SAVE GAME", [&]() { });
-    menu.add_item("EXIT", [&]() { window.close(); });
+    menu.add_item("EXIT", [&]() {
+      window.close();
+      std::exit(0);
+    });
     menu.setScale(scale);
 
     std::vector<sf::RectangleShape> collision_rects;
