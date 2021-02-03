@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <stats.hpp>
 
 #include <animation.hpp>
 #include <z_indexable.hpp>
@@ -34,13 +35,14 @@ const int TILE_SIZE = 64;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
+  std::shared_ptr<Stats> stats;
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
   std::chrono::milliseconds now;
 
 public:
-  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_) {
+  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> _stats) : asset_cache(asset_cache_), stats(_stats) {
     auto texture = asset_cache->loadTexture(path);
     sprite.setTexture(*texture);
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
@@ -196,6 +198,8 @@ public:
         ) {
           next_bounds.left = obstacle_right;
           stop_movement(LEFT);
+          (*stats).decrementHealth(1);
+          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
 
         // Right collision
@@ -207,6 +211,8 @@ public:
         ) {
           next_bounds.left = obstacle_left - player_width;
           stop_movement(RIGHT);
+          (*stats).decrementHealth(1);
+          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
 
         // Top collision
@@ -218,6 +224,8 @@ public:
         ) {
           next_bounds.top = obstacle_bottom;
           stop_movement(UP);
+          (*stats).decrementHealth(1);
+          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
 
         // Bottom collision
@@ -229,6 +237,8 @@ public:
         ) {
           next_bounds.top = obstacle_top - player_height;
           stop_movement(DOWN);
+          (*stats).decrementHealth(1);
+          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
       }
     }
