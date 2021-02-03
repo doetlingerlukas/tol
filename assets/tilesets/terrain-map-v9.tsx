@@ -106,20 +106,34 @@
  <tile id="63" terrain="17,27,17,2"/>
  <tile id="64" terrain="32,32,32,32"/>
  <tile id="65" terrain="33,33,33,33"/>
- <tile id="66" terrain="28,28,28,5"/>
- <tile id="67" terrain="28,28,28,6"/>
- <tile id="68" terrain="28,28,28,3"/>
- <tile id="69" terrain="28,28,28,0"/>
- <tile id="70" terrain="28,28,28,22"/>
- <tile id="71" terrain="28,28,5,28"/>
- <tile id="72" terrain="28,28,5,5"/>
- <tile id="73" terrain="28,28,5,6"/>
- <tile id="74" terrain="28,28,5,3"/>
- <tile id="75" terrain="28,28,5,0"/>
- <tile id="76" terrain="28,28,5,22"/>
- <tile id="77" terrain="28,28,6,28"/>
- <tile id="78" terrain="28,28,6,5"/>
- <tile id="79" terrain="28,28,6,6"/>
+ <tile id="66" terrain="28,28,28,5">
+ </tile>
+ <tile id="67" terrain="28,28,28,6">
+ </tile>
+ <tile id="68" terrain="28,28,28,3">
+ </tile>
+ <tile id="69" terrain="28,28,28,0">
+ </tile>
+ <tile id="70" terrain="28,28,28,22">
+ </tile>
+ <tile id="71" terrain="28,28,5,28">
+ </tile>
+ <tile id="72" terrain="28,28,5,5">
+ </tile>
+ <tile id="73" terrain="28,28,5,6">
+ </tile>
+ <tile id="74" terrain="28,28,5,3">
+ </tile>
+ <tile id="75" terrain="28,28,5,0">
+ </tile>
+ <tile id="76" terrain="28,28,5,22">
+ </tile>
+ <tile id="77" terrain="28,28,6,28">
+ </tile>
+ <tile id="78" terrain="28,28,6,5">
+ </tile>
+ <tile id="79" terrain="28,28,6,6">
+ </tile>
  <tile id="80" terrain="17,27,17,15"/>
  <tile id="81" terrain="17,27,17,16"/>
  <tile id="82" terrain="17,27,17,17"/>
@@ -139,7 +153,8 @@
  <tile id="96" terrain="28,28,6,3"/>
  <tile id="97" terrain="28,28,6,0"/>
  <tile id="98" terrain="28,28,6,22"/>
- <tile id="99" terrain="28,28,3,28"/>
+ <tile id="99" terrain="28,28,3,28">
+ </tile>
  <tile id="100" terrain="28,28,3,5"/>
  <tile id="101" terrain="28,28,3,6"/>
  <tile id="102" terrain="28,28,3,3"/>
@@ -168,19 +183,25 @@
  <tile id="125" terrain="17,2,3,17"/>
  <tile id="126" terrain="17,2,26,5"/>
  <tile id="127" terrain="17,2,26,6"/>
- <tile id="128" terrain="28,28,22,5"/>
- <tile id="129" terrain="28,28,22,6"/>
+ <tile id="128" terrain="28,28,22,5">
+ </tile>
+ <tile id="129" terrain="28,28,22,6">
+ </tile>
  <tile id="130" terrain="28,28,22,3"/>
  <tile id="131" terrain="28,28,22,0"/>
- <tile id="132" terrain="28,28,22,22"/>
- <tile id="133" terrain="28,5,28,28"/>
- <tile id="134" terrain="28,5,28,5"/>
+ <tile id="132" terrain="28,28,22,22">
+ </tile>
+ <tile id="133" terrain="28,5,28,28">
+ </tile>
+ <tile id="134" terrain="28,5,28,5">
+ </tile>
  <tile id="135" terrain="28,5,28,6"/>
  <tile id="136" terrain="28,5,28,3"/>
  <tile id="137" terrain="28,5,28,0"/>
  <tile id="138" terrain="28,5,28,22"/>
  <tile id="139" terrain="28,5,5,28"/>
- <tile id="140" terrain="28,5,5,5"/>
+ <tile id="140" terrain="28,5,5,5">
+ </tile>
  <tile id="141" terrain="28,5,5,6"/>
  <tile id="142" terrain="28,5,5,3"/>
  <tile id="143" terrain="28,5,5,0"/>
@@ -241,9 +262,11 @@
  <tile id="198" terrain="28,5,22,3"/>
  <tile id="199" terrain="28,5,22,0"/>
  <tile id="200" terrain="28,5,22,22"/>
- <tile id="201" terrain="28,6,28,28"/>
+ <tile id="201" terrain="28,6,28,28">
+ </tile>
  <tile id="202" terrain="28,6,28,5"/>
- <tile id="203" terrain="28,6,28,6"/>
+ <tile id="203" terrain="28,6,28,6">
+ </tile>
  <tile id="204" terrain="28,6,28,3"/>
  <tile id="205" terrain="28,6,28,0"/>
  <tile id="206" terrain="28,6,28,22"/>
@@ -393,7 +416,8 @@
  <tile id="350" terrain="17,15,15,27"/>
  <tile id="351" terrain="17,15,15,2"/>
  <tile id="352" terrain="28,3,22,22"/>
- <tile id="353" terrain="28,0,28,28"/>
+ <tile id="353" terrain="28,0,28,28">
+ </tile>
  <tile id="354" terrain="28,0,28,5"/>
  <tile id="355" terrain="28,0,28,6"/>
  <tile id="356" terrain="28,0,28,3"/>
@@ -528,14 +552,17 @@
  <tile id="485" terrain="28,22,22,6"/>
  <tile id="486" terrain="28,22,22,3"/>
  <tile id="487" terrain="28,22,22,0"/>
- <tile id="488" terrain="28,22,22,22"/>
- <tile id="489" terrain="5,28,28,28"/>
+ <tile id="488" terrain="28,22,22,22">
+ </tile>
+ <tile id="489" terrain="5,28,28,28">
+ </tile>
  <tile id="490" terrain="5,28,28,5"/>
  <tile id="491" terrain="5,28,28,6"/>
  <tile id="492" terrain="5,28,28,3"/>
  <tile id="493" terrain="5,28,28,0"/>
  <tile id="494" terrain="5,28,28,22"/>
- <tile id="495" terrain="5,28,5,28"/>
+ <tile id="495" terrain="5,28,5,28">
+ </tile>
  <tile id="496" terrain="17,16,27,16"/>
  <tile id="497" terrain="17,16,27,17"/>
  <tile id="498" terrain="17,16,2,5"/>
@@ -552,7 +579,8 @@
  <tile id="509" terrain="17,16,15,3"/>
  <tile id="510" terrain="17,16,15,26"/>
  <tile id="511" terrain="17,16,15,27"/>
- <tile id="512" terrain="5,28,5,5"/>
+ <tile id="512" terrain="5,28,5,5">
+ </tile>
  <tile id="513" terrain="5,28,5,6"/>
  <tile id="514" terrain="5,28,5,3"/>
  <tile id="515" terrain="5,28,5,0"/>
@@ -591,14 +619,17 @@
  <tile id="548" terrain="5,28,0,3"/>
  <tile id="549" terrain="5,28,0,0"/>
  <tile id="550" terrain="5,28,0,22"/>
- <tile id="551" terrain="5,28,22,28"/>
+ <tile id="551" terrain="5,28,22,28">
+ </tile>
  <tile id="552" terrain="5,28,22,5"/>
  <tile id="553" terrain="5,28,22,6"/>
  <tile id="554" terrain="5,28,22,3"/>
  <tile id="555" terrain="5,28,22,0"/>
  <tile id="556" terrain="5,28,22,22"/>
- <tile id="557" terrain="5,5,28,28"/>
- <tile id="558" terrain="5,5,28,5"/>
+ <tile id="557" terrain="5,5,28,28">
+ </tile>
+ <tile id="558" terrain="5,5,28,5">
+ </tile>
  <tile id="559" terrain="5,5,28,6"/>
  <tile id="560" terrain="17,16,17,26"/>
  <tile id="561" terrain="17,16,17,27"/>
@@ -968,7 +999,8 @@
  <tile id="925" terrain="21,19,21,17"/>
  <tile id="926" terrain="21,19,20,21"/>
  <tile id="927" terrain="21,19,20,20"/>
- <tile id="928" terrain="6,28,28,28"/>
+ <tile id="928" terrain="6,28,28,28">
+ </tile>
  <tile id="929" terrain="6,28,28,5"/>
  <tile id="930" terrain="6,28,28,6"/>
  <tile id="931" terrain="6,28,28,3"/>
@@ -980,7 +1012,8 @@
  <tile id="937" terrain="6,28,5,3"/>
  <tile id="938" terrain="6,28,5,0"/>
  <tile id="939" terrain="6,28,5,22"/>
- <tile id="940" terrain="6,28,6,28"/>
+ <tile id="940" terrain="6,28,6,28">
+ </tile>
  <tile id="941" terrain="6,28,6,5"/>
  <tile id="942" terrain="6,28,6,6"/>
  <tile id="943" terrain="6,28,6,3"/>
@@ -1104,9 +1137,11 @@
  <tile id="1061" terrain="6,5,22,3"/>
  <tile id="1062" terrain="6,5,22,0"/>
  <tile id="1063" terrain="6,5,22,22"/>
- <tile id="1064" terrain="6,6,28,28"/>
+ <tile id="1064" terrain="6,6,28,28">
+ </tile>
  <tile id="1065" terrain="6,6,28,5"/>
- <tile id="1066" terrain="6,6,28,6"/>
+ <tile id="1066" terrain="6,6,28,6">
+ </tile>
  <tile id="1067" terrain="6,6,28,3"/>
  <tile id="1068" terrain="6,6,28,0"/>
  <tile id="1069" terrain="6,6,28,22"/>
@@ -1132,12 +1167,14 @@
  <tile id="1089" terrain="6,6,5,3"/>
  <tile id="1090" terrain="6,6,5,0"/>
  <tile id="1091" terrain="6,6,5,22"/>
- <tile id="1092" terrain="6,6,6,28"/>
+ <tile id="1092" terrain="6,6,6,28">
+ </tile>
  <tile id="1093" terrain="6,6,6,5"/>
  <tile id="1094" terrain="6,6,6,3"/>
  <tile id="1095" terrain="6,6,6,0"/>
  <tile id="1096" terrain="6,6,6,22"/>
- <tile id="1097" terrain="6,6,3,28"/>
+ <tile id="1097" terrain="6,6,3,28">
+ </tile>
  <tile id="1098" terrain="6,6,3,5"/>
  <tile id="1099" terrain="6,6,3,6"/>
  <tile id="1100" terrain="6,6,3,3"/>
@@ -1165,7 +1202,8 @@
  <tile id="1122" terrain="6,6,0,3"/>
  <tile id="1123" terrain="6,6,0,0"/>
  <tile id="1124" terrain="6,6,0,22"/>
- <tile id="1125" terrain="6,6,22,28"/>
+ <tile id="1125" terrain="6,6,22,28">
+ </tile>
  <tile id="1126" terrain="6,6,22,5"/>
  <tile id="1127" terrain="6,6,22,6"/>
  <tile id="1128" terrain="6,6,22,3"/>
@@ -1175,7 +1213,8 @@
  <tile id="1132" terrain="6,3,28,5"/>
  <tile id="1133" terrain="6,3,28,6"/>
  <tile id="1134" terrain="6,3,28,3"/>
- <tile id="1135" terrain="6,3,28,0"/>
+ <tile id="1135" terrain="6,3,28,0">
+ </tile>
  <tile id="1136" terrain="21,15,20,21"/>
  <tile id="1137" terrain="21,15,20,20"/>
  <tile id="1138" terrain="21,15,20,19"/>
@@ -1259,7 +1298,8 @@
  <tile id="1216" terrain="6,0,28,5"/>
  <tile id="1217" terrain="6,0,28,6"/>
  <tile id="1218" terrain="6,0,28,3"/>
- <tile id="1219" terrain="6,0,28,0"/>
+ <tile id="1219" terrain="6,0,28,0">
+ </tile>
  <tile id="1220" terrain="6,0,28,22"/>
  <tile id="1221" terrain="6,0,5,28"/>
  <tile id="1222" terrain="6,0,5,5"/>
@@ -1328,7 +1368,8 @@
  <tile id="1285" terrain="6,22,28,6"/>
  <tile id="1286" terrain="6,22,28,3"/>
  <tile id="1287" terrain="6,22,28,0"/>
- <tile id="1288" terrain="6,22,28,22"/>
+ <tile id="1288" terrain="6,22,28,22">
+ </tile>
  <tile id="1289" terrain="6,22,5,28"/>
  <tile id="1290" terrain="6,22,5,5"/>
  <tile id="1291" terrain="6,22,5,6"/>
@@ -1391,7 +1432,8 @@
  <tile id="1348" terrain="6,22,22,3"/>
  <tile id="1349" terrain="6,22,22,0"/>
  <tile id="1350" terrain="6,22,22,22"/>
- <tile id="1351" terrain="3,28,28,28"/>
+ <tile id="1351" terrain="3,28,28,28">
+ </tile>
  <tile id="1352" terrain="3,28,28,5"/>
  <tile id="1353" terrain="3,28,28,6"/>
  <tile id="1354" terrain="3,28,28,3"/>
@@ -1768,7 +1810,8 @@
  <tile id="1725" terrain="20,2,19,20"/>
  <tile id="1726" terrain="20,2,19,19"/>
  <tile id="1727" terrain="20,2,19,2"/>
- <tile id="1728" terrain="3,22,5,28"/>
+ <tile id="1728" terrain="3,22,5,28">
+ </tile>
  <tile id="1729" terrain="3,22,5,5"/>
  <tile id="1730" terrain="3,22,5,6"/>
  <tile id="1731" terrain="3,22,5,3"/>
@@ -2028,13 +2071,15 @@
  <tile id="1985" terrain="0,6,0,3"/>
  <tile id="1986" terrain="0,6,0,0"/>
  <tile id="1987" terrain="0,6,0,22"/>
- <tile id="1988" terrain="0,6,22,28"/>
+ <tile id="1988" terrain="0,6,22,28">
+ </tile>
  <tile id="1989" terrain="0,6,22,5"/>
  <tile id="1990" terrain="0,6,22,6"/>
  <tile id="1991" terrain="0,6,22,3"/>
  <tile id="1992" terrain="0,6,22,0"/>
  <tile id="1993" terrain="0,6,22,22"/>
- <tile id="1994" terrain="0,3,28,28"/>
+ <tile id="1994" terrain="0,3,28,28">
+ </tile>
  <tile id="1995" terrain="0,3,28,5"/>
  <tile id="1996" terrain="0,3,28,6"/>
  <tile id="1997" terrain="0,3,28,3"/>
@@ -2321,7 +2366,8 @@
  <tile id="2278" terrain="22,28,22,3"/>
  <tile id="2279" terrain="22,28,22,0"/>
  <tile id="2280" terrain="22,28,22,22"/>
- <tile id="2281" terrain="22,5,28,28"/>
+ <tile id="2281" terrain="22,5,28,28">
+ </tile>
  <tile id="2282" terrain="22,5,28,5"/>
  <tile id="2283" terrain="22,5,28,6"/>
  <tile id="2284" terrain="22,5,28,3"/>
@@ -2609,13 +2655,15 @@
  <tile id="2566" terrain="22,0,22,3"/>
  <tile id="2567" terrain="22,0,22,0"/>
  <tile id="2568" terrain="22,0,22,22"/>
- <tile id="2569" terrain="22,22,28,28"/>
+ <tile id="2569" terrain="22,22,28,28">
+ </tile>
  <tile id="2570" terrain="22,22,28,5"/>
  <tile id="2571" terrain="22,22,28,6"/>
  <tile id="2572" terrain="22,22,28,3"/>
  <tile id="2573" terrain="22,22,28,0"/>
  <tile id="2574" terrain="22,22,28,22"/>
- <tile id="2575" terrain="22,22,5,28"/>
+ <tile id="2575" terrain="22,22,5,28">
+ </tile>
  <tile id="2576" terrain="19,15,17,20"/>
  <tile id="2577" terrain="19,15,17,19"/>
  <tile id="2578" terrain="19,15,17,2"/>
@@ -12134,7 +12182,8 @@
  <tile id="12091" terrain="28,33,33,33"/>
  <tile id="12092" terrain="28,33,33,22"/>
  <tile id="12093" terrain="28,33,22,28"/>
- <tile id="12094" terrain="28,33,22,33"/>
+ <tile id="12094" terrain="28,33,22,33">
+ </tile>
  <tile id="12095" terrain="28,33,22,22"/>
  <tile id="12096" terrain="15,5,5,3"/>
  <tile id="12097" terrain="15,5,5,26"/>
@@ -12152,7 +12201,8 @@
  <tile id="12109" terrain="15,5,6,15"/>
  <tile id="12110" terrain="15,5,6,16"/>
  <tile id="12111" terrain="15,5,6,17"/>
- <tile id="12112" terrain="28,22,28,33"/>
+ <tile id="12112" terrain="28,22,28,33">
+ </tile>
  <tile id="12113" terrain="28,22,33,28"/>
  <tile id="12114" terrain="28,22,33,33"/>
  <tile id="12115" terrain="28,22,33,22"/>
@@ -12193,8 +12243,10 @@
  <tile id="12150" terrain="33,22,28,28"/>
  <tile id="12151" terrain="33,22,28,33"/>
  <tile id="12152" terrain="33,22,28,22"/>
- <tile id="12153" terrain="33,22,33,28"/>
- <tile id="12154" terrain="33,22,33,33"/>
+ <tile id="12153" terrain="33,22,33,28">
+ </tile>
+ <tile id="12154" terrain="33,22,33,33">
+ </tile>
  <tile id="12155" terrain="33,22,33,22"/>
  <tile id="12156" terrain="33,22,22,28"/>
  <tile id="12157" terrain="33,22,22,33"/>
@@ -12216,22 +12268,28 @@
  <tile id="12173" terrain="15,5,2,3"/>
  <tile id="12174" terrain="15,5,2,26"/>
  <tile id="12175" terrain="15,5,2,27"/>
- <tile id="12176" terrain="22,28,33,28"/>
+ <tile id="12176" terrain="22,28,33,28">
+ </tile>
  <tile id="12177" terrain="22,28,33,33"/>
  <tile id="12178" terrain="22,28,33,22"/>
  <tile id="12179" terrain="22,28,22,33"/>
  <tile id="12180" terrain="22,33,28,28"/>
- <tile id="12181" terrain="22,33,28,33"/>
+ <tile id="12181" terrain="22,33,28,33">
+ </tile>
  <tile id="12182" terrain="22,33,28,22"/>
  <tile id="12183" terrain="22,33,33,28"/>
- <tile id="12184" terrain="22,33,33,33"/>
+ <tile id="12184" terrain="22,33,33,33">
+ </tile>
  <tile id="12185" terrain="22,33,33,22"/>
  <tile id="12186" terrain="22,33,22,28"/>
- <tile id="12187" terrain="22,33,22,33"/>
- <tile id="12188" terrain="22,33,22,22"/>
+ <tile id="12187" terrain="22,33,22,33">
+ </tile>
+ <tile id="12188" terrain="22,33,22,22">
+ </tile>
  <tile id="12189" terrain="22,22,28,33"/>
  <tile id="12190" terrain="22,22,33,28"/>
- <tile id="12191" terrain="22,22,33,33"/>
+ <tile id="12191" terrain="22,22,33,33">
+ </tile>
  <tile id="12192" terrain="15,5,2,2"/>
  <tile id="12193" terrain="15,5,2,15"/>
  <tile id="12194" terrain="15,5,2,16"/>
@@ -12248,7 +12306,8 @@
  <tile id="12205" terrain="15,5,16,5"/>
  <tile id="12206" terrain="15,5,16,6"/>
  <tile id="12207" terrain="15,5,16,3"/>
- <tile id="12208" terrain="22,22,33,22"/>
+ <tile id="12208" terrain="22,22,33,22">
+ </tile>
  <tile id="12209" terrain="22,22,22,33"/>
  <tile id="12210" terrain="28,28,28,32"/>
  <tile id="12211" terrain="28,28,32,28"/>
@@ -12517,7 +12576,8 @@
  <tile id="12474" terrain="32,32,32,5"/>
  <tile id="12475" terrain="32,32,32,6"/>
  <tile id="12476" terrain="32,32,3,28"/>
- <tile id="12477" terrain="32,32,3,32"/>
+ <tile id="12477" terrain="32,32,3,32">
+ </tile>
  <tile id="12478" terrain="32,32,3,3"/>
  <tile id="12479" terrain="32,32,3,0"/>
  <tile id="12480" terrain="15,3,26,2"/>
@@ -13572,7 +13632,8 @@
  <tile id="13529" terrain="6,6,32,0"/>
  <tile id="13530" terrain="6,6,32,5"/>
  <tile id="13531" terrain="6,6,32,6"/>
- <tile id="13532" terrain="6,6,3,32"/>
+ <tile id="13532" terrain="6,6,3,32">
+ </tile>
  <tile id="13533" terrain="6,6,0,32"/>
  <tile id="13534" terrain="6,6,5,32"/>
  <tile id="13535" terrain="6,6,6,32"/>

@@ -51,15 +51,17 @@ int main(int argc, char **argv) {
 
     sf::RenderWindow window(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), "Tales of Lostness", style);
     window.setVerticalSyncEnabled(settings.vsync());
-    window.setActive(true);
+    window.requestFocus();
+
+    const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>("assets");
 
     sf::Font font;
-    font.loadFromFile("assets/fonts/Gaegu-Regular.ttf");
+    font.loadFromFile((asset_cache->dir() / "fonts/Gaegu-Regular.ttf").string());
 
     sf::View map_view;
 
-    TiledMap map("assets/map.json");
-    Character player("assets/tilesets/character-whitebeard.png");
+    TiledMap map(asset_cache->dir() / "map.json", asset_cache);
+    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache);
     map.setScale(scale);
     player.setScale(scale);
 
@@ -71,6 +73,7 @@ int main(int argc, char **argv) {
       map_view.setCenter({ spawn->x * scale.x, spawn->y * scale.y });
       player.setPosition(*spawn);
     }
+    const auto map_size = map.getSize();
 
     sf::Vector2f direction = { 0.0f, 0.0f };
     bool up = false, down = false, left = false, right = false;
@@ -92,12 +95,14 @@ int main(int argc, char **argv) {
 
     sf::Clock clock;
     float dt = 0.0;
+    std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
     while (window.isOpen()) {
+      const auto millis = clock.restart().asMilliseconds();
+      const auto dt = millis / 1000.f;
+      now += std::chrono::milliseconds(millis);
+
       sf::Event event;
-
-      dt = clock.restart().asSeconds();
-
       while (window.pollEvent(event)) {
         switch (event.type) {
           case sf::Event::Closed:
@@ -177,7 +182,7 @@ int main(int argc, char **argv) {
       player.move(
         (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
         (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt),
-        dt * CHARACTER_MOVE_SPEED, collision_rects
+        dt * CHARACTER_MOVE_SPEED, now, collision_rects, map_size
       );
 
       if (up && !down) {
@@ -216,7 +221,7 @@ int main(int argc, char **argv) {
         }
       }
 
-      map_view.setCenter(map_view.getCenter() + -direction * dt * VIEW_MOVE_SPEED);
+      map_view.setCenter(map.getView(window.getSize().x, window.getSize().y));
       auto center = map_view.getCenter();
 
       window.clear();
@@ -226,7 +231,7 @@ int main(int argc, char **argv) {
       ss << "Player: " << player.getPosition().x << ", " << player.getPosition().y << "\n";
       ss << "Spawn: " << spawn->x << "," << spawn->y << "\n";
 
-      map.update(map_view, window);
+      map.update(map_view, window, now);
 
       window.setView(map_view);
       window.draw(map);

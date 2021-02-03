@@ -197,12 +197,55 @@
    <frame tileid="731" duration="200"/>
   </animation>
  </tile>
+ <tile id="752">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
  <tile id="753">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
   <animation>
    <frame tileid="753" duration="200"/>
    <frame tileid="756" duration="200"/>
    <frame tileid="759" duration="200"/>
   </animation>
+ </tile>
+ <tile id="754">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="755">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="756">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="757">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="758">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="759">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="760">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
  </tile>
  <tile id="761">
   <animation>
@@ -218,20 +261,59 @@
    <frame tileid="766" duration="200"/>
   </animation>
  </tile>
+ <tile id="768">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="769">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="1" y="6" width="30" height="14"/>
   </objectgroup>
+ </tile>
+ <tile id="770">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="771">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
  </tile>
  <tile id="772">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="1" y="6" width="30" height="14"/>
   </objectgroup>
  </tile>
+ <tile id="773">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="774">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="775">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="1" y="6" width="30" height="14"/>
   </objectgroup>
+ </tile>
+ <tile id="776">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
  </tile>
  <tile id="777">
   <animation>

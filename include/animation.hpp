@@ -3,12 +3,15 @@
 #include <chrono>
 
 class Animation {
-  std::chrono::milliseconds start_time = std::chrono::milliseconds(0);
-  size_t current = 0;
+  std::chrono::milliseconds total_time = std::chrono::milliseconds(0);
   std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
 
 public:
   Animation(std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>>&& frames) {
+    for (const auto& frame: frames) {
+      total_time += std::get<0>(frame);
+    }
+
     this->frames = frames;
   }
 
@@ -16,22 +19,26 @@ public:
     for (const auto& frame: frames) {
       const auto tile_id = frame.getTileId();
       const auto rect = tileset->getTile(tile_id)->getDrawingRect();
-      this->frames.push_back(std::make_tuple(std::chrono::milliseconds(frame.getDuration()), sf::IntRect{ rect.x, rect.y, rect.width, rect.height }));
+      const auto duration = std::chrono::milliseconds(frame.getDuration());
+      total_time += duration;
+      this->frames.emplace_back(duration, sf::IntRect{ rect.x, rect.y, rect.width, rect.height });
     }
   }
 
-  sf::IntRect getDrawingRect(std::chrono::milliseconds ms) {
-    const auto& [duration, rect] = frames.at(current);
+  sf::IntRect getDrawingRect(std::chrono::milliseconds ms) const {
+    std::chrono::milliseconds current = ms % total_time;
 
-    if (start_time == std::chrono::milliseconds(0)) {
-      start_time = ms;
-    } else if (ms > start_time + duration) {
-      current = (current + 1) % frames.size();
-      start_time = ms;
+    std::chrono::milliseconds now = std::chrono::milliseconds(0);
+    for (const auto& frame: frames) {
+      const auto duration = std::get<0>(frame);
 
-      return std::get<1>(frames.at(current));
+      if (current >= now && current <= now + duration) {
+        return std::get<1>(frame);
+      }
+
+      now += duration;
     }
 
-    return rect;
+    throw std::runtime_error("failed to select animation frame");
   }
 };
