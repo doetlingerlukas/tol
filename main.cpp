@@ -71,12 +71,12 @@ int main(int argc, char **argv) {
 
     sf::View map_view;
 
+    const std::shared_ptr<Stats> stats = std::make_shared<Stats>();
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
-    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache);
+    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats);
     map.setScale(scale);
     player.setScale(scale);
 
-    Stats stats = Stats();
 
     map_view.reset({ 0, (map.getSize().y - window.getSize().y) * scale.y, (float)window.getSize().x, (float)window.getSize().y });
     map.addCharacter(&player);
