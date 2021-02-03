@@ -19,6 +19,7 @@ private:
   int window_width;
   int window_height;
   const std::shared_ptr<Stats> stats;
+  std::chrono::milliseconds current_time;
 
 public:
   struct nk_context* init(sf::RenderWindow* window) const {
