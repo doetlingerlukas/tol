@@ -6,6 +6,7 @@
 #include <menu.hpp>
 #include <character.hpp>
 #include <settings.hpp>
+#include <input.hpp>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
@@ -16,14 +17,100 @@ const float CHARACTER_MOVE_SPEED = 80.f;
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #endif
 
+enum GameState {
+  MENU = 0,
+  PLAY
+};
+
 class Game {
   sf::RenderWindow window;
   const Settings& settings;
 
+  GameState state;
+
   sf::Vector2f scale;
 
+  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu) {
+    switch (event.type) {
+    case sf::Event::Closed:
+      window.close();
+      break;
+
+    case sf::Event::KeyPressed:
+    case sf::Event::KeyReleased: {
+      switch (event.key.code) {
+      case sf::Keyboard::Escape:
+        state = MENU;
+        window.setKeyRepeatEnabled(true);
+        break;
+      case sf::Keyboard::Right:
+        if (state == MENU) {
+          key_input.right = false;
+        }
+        else {
+          key_input.right = event.type == sf::Event::KeyPressed;
+        }
+        break;
+      case sf::Keyboard::D:
+        key_input.d = event.type == sf::Event::KeyPressed;
+        break;
+      case sf::Keyboard::Left:
+        if (state == MENU) {
+          key_input.left = false;
+        }
+        else {
+          key_input.left = event.type == sf::Event::KeyPressed;
+        }
+        break;
+      case sf::Keyboard::A:
+        key_input.a = event.type == sf::Event::KeyPressed;
+        break;
+      case sf::Keyboard::Up:
+        if (state == MENU) {
+          if (event.type == sf::Event::KeyPressed) {
+            menu.up();
+          }
+          key_input.up = false;
+        }
+        else {
+          key_input.up = event.type == sf::Event::KeyPressed;
+        }
+        break;
+      case sf::Keyboard::W:
+        key_input.w = event.type == sf::Event::KeyPressed;
+        break;
+      case sf::Keyboard::Down:
+        if (state == MENU) {
+          if (event.type == sf::Event::KeyPressed) {
+            menu.down();
+          }
+          key_input.down = false;
+        }
+        else {
+          key_input.down = event.type == sf::Event::KeyPressed;
+        }
+        break;
+      case sf::Keyboard::S:
+        key_input.s = event.type == sf::Event::KeyPressed;
+        break;
+      case sf::Keyboard::Enter:
+        if (state == MENU) {
+          menu.enter(event.type == sf::Event::KeyPressed);
+        }
+        break;
+      default:
+        break;
+      }
+
+      break;
+    }
+    default:
+      break;
+    }
+  }
+
 public:
-  Game(const Settings& settings_) : settings(settings_) {}
+  Game(const Settings& settings_) : settings(settings_), state(MENU) {}
 
   void run() {
     scale = { 2.0, 2.0 };
@@ -81,16 +168,12 @@ public:
     const auto map_size = map.getSize();
 
     sf::Vector2f direction = { 0.0f, 0.0f };
-    bool up = false, down = false, left = false, right = false;
-    bool w = false, a = false, s = false, d = false;
-
-
-    bool menu_open = true;
+    KeyInput key_input;
 
     Menu menu;
-    menu.add_item("PLAY", [&]() {
+    menu.add_item("PLAY", [this]() {
       window.setKeyRepeatEnabled(false);
-      menu_open = false;
+      state = PLAY;
       });
     menu.add_item("LOAD GAME", [&]() {});
     menu.add_item("SAVE GAME", [&]() {});
@@ -110,124 +193,53 @@ public:
 
       sf::Event event;
       while (window.pollEvent(event)) {
-        switch (event.type) {
-        case sf::Event::Closed:
-          window.close();
-          break;
-        case sf::Event::KeyPressed:
-        case sf::Event::KeyReleased: {
-          switch (event.key.code) {
-          case sf::Keyboard::Escape:
-            menu_open = true;
-            window.setKeyRepeatEnabled(true);
-            break;
-          case sf::Keyboard::Right:
-            if (menu_open) {
-              right = false;
-            }
-            else {
-              right = event.type == sf::Event::KeyPressed;
-            }
-            break;
-          case sf::Keyboard::D:
-            d = event.type == sf::Event::KeyPressed;
-            break;
-          case sf::Keyboard::Left:
-            if (menu_open) {
-              left = false;
-            }
-            else {
-              left = event.type == sf::Event::KeyPressed;
-            }
-            break;
-          case sf::Keyboard::A:
-            a = event.type == sf::Event::KeyPressed;
-            break;
-          case sf::Keyboard::Up:
-            if (menu_open) {
-              if (event.type == sf::Event::KeyPressed) {
-                menu.up();
-              }
-              up = false;
-            }
-            else {
-              up = event.type == sf::Event::KeyPressed;
-            }
-            break;
-          case sf::Keyboard::W:
-            w = event.type == sf::Event::KeyPressed;
-            break;
-          case sf::Keyboard::Down:
-            if (menu_open) {
-              if (event.type == sf::Event::KeyPressed) {
-                menu.down();
-              }
-              down = false;
-            }
-            else {
-              down = event.type == sf::Event::KeyPressed;
-            }
-            break;
-          case sf::Keyboard::S:
-            s = event.type == sf::Event::KeyPressed;
-            break;
-          case sf::Keyboard::Enter:
-            if (menu_open) {
-              menu.enter(event.type == sf::Event::KeyPressed);
-            }
-            break;
-          default:
-            break;
+        handle_event(event, key_input, menu);
+      }
+
+      if (state == PLAY) {
+        collision_rects = map.collisionTiles(player);
+
+        player.move(
+          (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
+          (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
+          dt * CHARACTER_MOVE_SPEED, now, collision_rects, map_size
+        );
+
+
+        if (key_input.up && !key_input.down) {
+          direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
+        }
+        else if (key_input.down && !key_input.up) {
+          direction.y = std::clamp(direction.y - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
+        }
+        else {
+          if (direction.y >= 0.5) {
+            direction.y -= 1.0 * dt * VIEW_MOVE_DECEL;
           }
-
-          break;
+          else if (direction.y <= -0.5) {
+            direction.y += 1.0 * dt * VIEW_MOVE_DECEL;
+          }
+          else {
+            direction.y = 0;
+          }
         }
-        default:
-          break;
+
+        if (key_input.right && !key_input.left) {
+          direction.x = std::clamp(direction.x - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
         }
-      }
-
-      collision_rects = map.collisionTiles(player);
-
-      player.move(
-        (a && !d) ? std::optional(LEFT) : ((d && !a) ? std::optional(RIGHT) : std::nullopt),
-        (w && !s) ? std::optional(UP) : ((s && !w) ? std::optional(DOWN) : std::nullopt),
-        dt * CHARACTER_MOVE_SPEED, now, collision_rects, map_size
-      );
-
-      if (up && !down) {
-        direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
-      }
-      else if (down && !up) {
-        direction.y = std::clamp(direction.y - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
-      }
-      else {
-        if (direction.y >= 0.5) {
-          direction.y -= 1.0 * dt * VIEW_MOVE_DECEL;
-        }
-        else if (direction.y <= -0.5) {
-          direction.y += 1.0 * dt * VIEW_MOVE_DECEL;
+        else if (key_input.left && !key_input.right) {
+          direction.x = std::clamp(direction.x + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
         }
         else {
-          direction.y = 0;
-        }
-      }
-
-      if (right && !left) {
-        direction.x = std::clamp(direction.x - 1.0 * dt * VIEW_MOVE_ACCEL, -25.0, -1.0);
-      }
-      else if (left && !right) {
-        direction.x = std::clamp(direction.x + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
-      }
-      else {
-        if (direction.x >= 0.5) {
-          direction.x -= 1.0 * dt * VIEW_MOVE_DECEL;
-        }
-        else if (direction.x <= -0.5) {
-          direction.x += 1.0 * dt * VIEW_MOVE_DECEL;
-        }
-        else {
-          direction.x = 0;
+          if (direction.x >= 0.5) {
+            direction.x -= 1.0 * dt * VIEW_MOVE_DECEL;
+          }
+          else if (direction.x <= -0.5) {
+            direction.x += 1.0 * dt * VIEW_MOVE_DECEL;
+          }
+          else {
+            direction.x = 0;
+          }
         }
       }
 
@@ -255,7 +267,7 @@ public:
 
       window.setView(window.getDefaultView());
 
-      if (menu_open) {
+      if (state == MENU) {
         window.draw(menu);
       }
 
