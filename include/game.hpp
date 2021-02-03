@@ -152,8 +152,7 @@ public:
     map.addCharacter(&player);
 
     PlayState play_state(&map, &player, asset_cache, scale, window.getSize());
-
-    sf::Vector2f direction = { 0.0f, 0.0f };
+    
     KeyInput key_input;
 
     Menu menu;
@@ -182,15 +181,16 @@ public:
 
       window.clear();
 
-      if (state == GameState::PLAY) {
-        play_state.update(key_input, window, now, dt, direction);
-        window.draw(play_state);
-      }
-
-      window.setView(window.getDefaultView());
-
-      if (state == GameState::MENU) {
+      switch (state) {
+      case GameState::MENU:
         window.draw(menu);
+        break;
+      case GameState::PLAY:
+        play_state.update(key_input, window, now, dt);
+        window.draw(play_state);
+        break;
+      default:
+        break;
       }
 
       window.display();

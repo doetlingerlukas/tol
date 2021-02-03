@@ -20,6 +20,7 @@ class PlayState: public sf::Drawable {
   Character* player;
 
   sf::Vector2f scale;
+  sf::Vector2f direction = { 0.0f, 0.0f };
 
   std::vector<sf::RectangleShape> collision_rects;
 
@@ -67,7 +68,7 @@ public:
     }
   }
 
-  void update(KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt, sf::Vector2f& direction) {
+  void update(KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt) {
     collision_rects = map->collisionTiles(*player);
 
     player->move(
