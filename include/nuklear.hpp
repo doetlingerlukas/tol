@@ -89,8 +89,6 @@ public:
 
       nk_size currentHealth = (*stats).getHealth();
 
-      std::cout << "nuklear health: " << currentHealth << std::endl;
-
       nk_layout_row_static(ctx, (hud_height - progressbar_height) / 4, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, progressbar_height, 2, ratio);
       nk_spacing(ctx, 1);

@@ -10,13 +10,12 @@ public:
   }
 
   void decrementHealth(size_t value) {
-    if ((health - value) <= 0) {
+    if (health == 0 || health == value) {
       health = 0;
       return;
     }
 
     health = health - value;
-
   }
 
   Stats() { }

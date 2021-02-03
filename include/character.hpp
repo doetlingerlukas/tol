@@ -199,7 +199,6 @@ public:
           next_bounds.left = obstacle_right;
           stop_movement(LEFT);
           (*stats).decrementHealth(1);
-          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
 
         // Right collision
@@ -212,7 +211,6 @@ public:
           next_bounds.left = obstacle_left - player_width;
           stop_movement(RIGHT);
           (*stats).decrementHealth(1);
-          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
 
         // Top collision
@@ -225,7 +223,6 @@ public:
           next_bounds.top = obstacle_bottom;
           stop_movement(UP);
           (*stats).decrementHealth(1);
-          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
 
         // Bottom collision
@@ -238,7 +235,6 @@ public:
           next_bounds.top = obstacle_top - player_height;
           stop_movement(DOWN);
           (*stats).decrementHealth(1);
-          std::cout << "health: " << (*stats).getHealth() << std::endl;
         }
       }
     }
