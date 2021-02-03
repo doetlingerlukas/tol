@@ -48,6 +48,7 @@ class PlayState: public sf::Drawable {
     text.setOutlineThickness(1);
     text.setString(ss.str());
     
+    target.setView(target.getDefaultView());
     target.draw(text);
   }
 
