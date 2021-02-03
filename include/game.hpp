@@ -1,5 +1,24 @@
 #pragma once
 
+#if __APPLE__
+#include <CoreGraphics/CGDisplayConfiguration.h>
+
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl.h>
+#else
+
+#if _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
+
+#include <GL/gl.h>
+#endif
+
+#define NK_IMPLEMENTATION
+#define NK_SFML_GL2_IMPLEMENTATION
+#include <nuklear.hpp>
+
 #include <SFML/Graphics.hpp>
 
 #include <map.hpp>
@@ -8,10 +27,9 @@
 #include <settings.hpp>
 #include <input.hpp>
 #include <play_state.hpp>
+#include <settings.hpp>
+#include <stats.hpp>
 
-#if __APPLE__
-#include <CoreGraphics/CGDisplayConfiguration.h>
-#endif
 
 enum class GameState {
   MENU,
@@ -103,6 +121,8 @@ class Game {
     default:
       break;
     }
+
+    nk_sfml_handle_event(&event);
   }
 
 public:
@@ -143,8 +163,10 @@ public:
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>("assets");
 
+    const std::shared_ptr<Stats> stats = std::make_shared<Stats>();
+
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
-    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache);
+    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats);
 
     map.setScale(scale);
     player.setScale(scale);
@@ -162,12 +184,18 @@ public:
       });
     menu.add_item("LOAD GAME", [&]() {});
     menu.add_item("SAVE GAME", [&]() {});
-    menu.add_item("EXIT", [&]() { window.close(); });
+    menu.add_item("EXIT", [&]() { 
+      window.close();
+      std::exit(0);
+    });
     menu.setScale(scale);
 
     sf::Clock clock;
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
+
+    Nuklear nuklear = Nuklear(window_width, window_height, stats);
+    auto ctx = nuklear.init(&window);
 
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
@@ -175,19 +203,31 @@ public:
       now += std::chrono::milliseconds(millis);
 
       sf::Event event;
+      nk_input_begin(ctx);
       while (window.pollEvent(event)) {
         handle_event(event, key_input, menu);
       }
+      nk_input_end(ctx);
 
       window.clear();
 
       switch (state) {
       case GameState::MENU:
         window.draw(menu);
+
+        window.pushGLStates();
+        nuklear.render_menu(ctx);
+        nk_sfml_render(NK_ANTI_ALIASING_ON);
+        window.popGLStates();
         break;
       case GameState::PLAY:
         play_state.update(key_input, window, now, dt);
         window.draw(play_state);
+
+        window.pushGLStates();
+        nuklear.render_hud(ctx);
+        nk_sfml_render(NK_ANTI_ALIASING_ON);
+        window.popGLStates();
         break;
       default:
         break;
@@ -195,5 +235,7 @@ public:
 
       window.display();
     }
+
+    nk_sfml_shutdown();
   }
 };
