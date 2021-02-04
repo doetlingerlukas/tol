@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <memory>
+#include <filesystem>
 
 #include <SFML/Graphics.hpp>
 #include <nuklear.h>
