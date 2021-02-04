@@ -193,6 +193,10 @@ public:
     Nuklear nuklear = Nuklear(window_width, window_height, stats);
     auto ctx = nuklear.init(&window);
 
+    stats->health().subscribe([]() {
+      std::exit(0);
+    });
+
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
       const auto dt = millis / 1000.f;

@@ -93,7 +93,7 @@ public:
     if (nk_begin(ctx, "hud", nk_rect(0, window_height - hud_height, window_width, hud_height), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = {0.75f, 0.25f, 0.05f};
 
-      nk_size currentHealth = (*stats).getHealth();
+      nk_size currentHealth = stats->health().get();
 
       nk_layout_row_static(ctx, (hud_height - progressbar_height) / 4, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, progressbar_height, 2, ratio);
@@ -119,6 +119,10 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  Nuklear(int _width, int _height, const std::shared_ptr<Stats> _stats) : window_width(_width), window_height(_height), stats(_stats) { }
+  Nuklear(int _width, int _height, const std::shared_ptr<Stats> _stats) : window_width(_width), window_height(_height), stats(_stats) {
+    stats->health().subscribe([]() {
+      std::cout << "dead" << std::endl;
+    });
+  }
 };
 

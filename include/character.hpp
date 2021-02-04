@@ -168,7 +168,7 @@ public:
       const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_collision);
 
       if(td.count() > 250)
-        (*stats).decrementHealth(10);
+        stats->health().decrement(10);
 
       this->last_collision = now;
     };
