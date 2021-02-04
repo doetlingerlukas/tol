@@ -8,6 +8,7 @@ struct MenuItem {
 };
 
 class Menu: public sf::Drawable, public sf::Transformable {
+  std::shared_ptr<AssetCache> asset_cache;
   size_t current_item = 0;
   std::vector<MenuItem> items;
   bool enter_pressed = false;
@@ -27,7 +28,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
       text.setCharacterSize(character_size);
 
       if (i == current_item) {
-        text.setFont(*load_font("assets/fonts/Gaegu-Bold.ttf"));
+        text.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
 
         text.setStyle(sf::Text::Bold);
         text.setFillColor(sf::Color::White);
@@ -37,7 +38,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
         }
       }
       else {
-        text.setFont(*load_font("assets/fonts/Gaegu-Regular.ttf"));
+        text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
         text.setFillColor(sf::Color(200, 200, 200, 255));
       }
 
@@ -48,6 +49,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
   }
 
 public:
+  Menu(const std::shared_ptr<AssetCache> asset_cache_): asset_cache(asset_cache_) {}
 
   void up() {
     if (current_item > 0) {

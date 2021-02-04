@@ -176,7 +176,7 @@ public:
 
     KeyInput key_input;
 
-    Menu menu;
+    Menu menu(asset_cache);
     menu.add_item("PLAY", [this]() {
       window.setKeyRepeatEnabled(false);
       state = GameState::PLAY;
@@ -190,7 +190,8 @@ public:
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
-    Nuklear nuklear = Nuklear(window_width, window_height, stats);
+    Nuklear nuklear = Nuklear(window.getSize(), stats, asset_cache);
+    nuklear.setScale(scale);
     auto ctx = nuklear.init(&window);
 
     stats->health().subscribe([]() {

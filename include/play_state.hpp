@@ -15,7 +15,6 @@ class PlayState: public sf::Drawable {
   std::shared_ptr<AssetCache> asset_cache;
 
   sf::View map_view;
-  sf::Font font;
   TiledMap* map;
   Character* player;
 
@@ -42,7 +41,7 @@ class PlayState: public sf::Drawable {
     ss << "Player: " << player->getPosition().x << ", " << player->getPosition().y << "\n";
 
     sf::Text text;
-    text.setFont(font);
+    text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
     text.setCharacterSize(16 * scale.y);
     text.setFillColor(sf::Color::White);
     text.setOutlineColor(sf::Color::Black);
