@@ -48,7 +48,7 @@ class PlayState: public sf::Drawable {
     text.setOutlineColor(sf::Color::Black);
     text.setOutlineThickness(1);
     text.setString(ss.str());
-    
+
     target.setView(target.getDefaultView());
     target.draw(text);
   }
@@ -56,7 +56,7 @@ class PlayState: public sf::Drawable {
 public:
   PlayState(TiledMap* map_, Character* player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size):
     map(map_), player(player_), asset_cache(asset_cache_), scale(scale_) {
-    
+
     font.loadFromFile((asset_cache_->dir() / "fonts/Gaegu-Regular.ttf").string());
 
     map_view.reset({ 0, (map->getSize().y - window_size.y) * scale_.y, (float) window_size.x, (float) window_size.y });
@@ -76,6 +76,7 @@ public:
       (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
       dt * CHARACTER_MOVE_SPEED, now, collision_rects, map->getSize()
     );
+    player->update(dt);
 
 
     if (key_input.up && !key_input.down) {
