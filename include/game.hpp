@@ -15,8 +15,6 @@
 #include <GL/gl.h>
 #endif
 
-#define NK_IMPLEMENTATION
-#define NK_SFML_GL2_IMPLEMENTATION
 #include <nuklear.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -185,10 +183,7 @@ public:
       });
     menu.add_item("LOAD GAME", [&]() {});
     menu.add_item("SAVE GAME", [&]() {});
-    menu.add_item("EXIT", [&]() { 
-      window.close();
-      std::exit(0);
-    });
+    menu.add_item("EXIT", [&]() { window.close(); });
     menu.setScale(scale);
 
     sf::Clock clock;
