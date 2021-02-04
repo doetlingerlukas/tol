@@ -131,7 +131,7 @@ public:
     scale.x *= resolution_scale.x;
     scale.y *= resolution_scale.y;
 
-    sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close;
+    sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
 
     if (settings.fullscreen()) {
       style = sf::Style::Fullscreen;
