@@ -1,0 +1,23 @@
+{
+  "dialog": {
+    "npc1": [
+      {
+        "question": "Am I lost?",
+        "response": "Yes you are."
+      },
+      {
+        "question": "Why am I here?",
+        "response": "Not sure."
+      },
+      {
+        "question": "Are you lost?",
+        "response": "Surely not."
+      },
+      {
+        "question": "What is happening?",
+        "response": "Exceptional things."
+      }
+    ]
+  }
+}
+

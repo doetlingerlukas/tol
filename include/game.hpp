@@ -27,6 +27,7 @@
 #include <play_state.hpp>
 #include <settings.hpp>
 #include <stats.hpp>
+#include <dialog.hpp>
 
 
 enum class GameState {
@@ -198,8 +199,10 @@ public:
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
-    Nuklear nuklear = Nuklear(window.getSize(), stats, asset_cache, &window);
-    nuklear.setScale(scale);
+    const std::shared_ptr<Nuklear> nuklear = std::make_shared<Nuklear>(window.getSize(), stats, asset_cache, &window);
+    const auto dialog = Dialog(nuklear);
+
+    nuklear->setScale(scale);
 
     stats->health().subscribe([]() {
       std::exit(0);
@@ -211,11 +214,11 @@ public:
       now += std::chrono::milliseconds(millis);
 
       sf::Event event;
-      nk_input_begin(nuklear.getCtx());
+      nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
         handle_event(event, key_input, menu);
       }
-      nk_input_end(nuklear.getCtx());
+      nk_input_end(nuklear->getCtx());
 
       window.clear();
 
@@ -224,7 +227,7 @@ public:
         window.draw(menu);
 
         window.pushGLStates();
-        nuklear.renderMenu();
+        nuklear->renderMenu();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;
@@ -233,7 +236,7 @@ public:
         window.draw(play_state);
 
         window.pushGLStates();
-        nuklear.renderHud();
+        nuklear->renderHud();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;
@@ -241,7 +244,8 @@ public:
         window.draw(play_state);
 
         window.pushGLStates();
-        nuklear.renderDialog();
+        dialog.show("npc1");
+        //nuklear->renderDialog();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
       default:

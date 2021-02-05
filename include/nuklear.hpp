@@ -135,7 +135,7 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  void renderDialog() {
+  void renderDialog(const std::vector<std::string>& lines) {
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
@@ -158,24 +158,11 @@ public:
       nk_layout_row_static(ctx, dialog_height * 0.065, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
 
-      nk_spacing(ctx, 1);
-      if (nk_button_label(ctx, "1) Option 1"))
-        fprintf(stdout, "option 1 pressed\n");
-
-      nk_spacing(ctx, 1);
-
-      if (nk_button_label(ctx, "2) Option 2"))
-        fprintf(stdout, "option 2 pressed\n");
-
-      nk_spacing(ctx, 1);
-
-      if (nk_button_label(ctx, "3) Option 3"))
-        fprintf(stdout, "option 3 pressed\n");
-
-      nk_spacing(ctx, 1);
-
-      if (nk_button_label(ctx, "4) Option 4"))
-        fprintf(stdout, "option 4 pressed\n");
+      for (const auto& line : lines) {
+        nk_spacing(ctx, 1);
+        if (nk_button_label(ctx, line.c_str()))
+          fprintf(stdout, "option 1 pressed\n");
+      }
     }
 
     nk_end(ctx);
