@@ -24,15 +24,20 @@ class Nuklear {
   sf::Vector2f scale;
   const std::shared_ptr<Stats> stats;
   std::chrono::milliseconds current_time;
+  struct nk_context* ctx;
 
-public:
   struct nk_context* init(sf::RenderWindow* window) const {
     struct nk_context *ctx;
     ctx = nk_sfml_init(window);
     return ctx;
   }
 
-  void render_menu(struct nk_context* ctx) const {
+public:
+  struct nk_context* getCtx() const {
+    return ctx;
+  }
+
+  void renderMenu() const {
     const float button_height = 40;
     const int r = 0;
     const int g = 0;
@@ -98,7 +103,7 @@ public:
     nk_style_pop_color(ctx);
   }
 
-  void render_hud(struct nk_context* ctx) {
+  void renderHud() {
     const float progressbar_height = 24;
     const float margin = 16;
 
@@ -130,7 +135,7 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  void render_dialog(struct nk_context* ctx) {
+  void renderDialog() {
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
@@ -180,8 +185,10 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_):
-    size(size_), stats(stats_), asset_cache(asset_cache_) {}
+  Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* window):
+    size(size_), stats(stats_), asset_cache(asset_cache_) {
+    ctx = init(window);
+  }
 
   void setSize(sf::Vector2u size) {
     this->size = size;

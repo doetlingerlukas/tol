@@ -198,9 +198,8 @@ public:
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
-    Nuklear nuklear = Nuklear(window.getSize(), stats, asset_cache);
+    Nuklear nuklear = Nuklear(window.getSize(), stats, asset_cache, &window);
     nuklear.setScale(scale);
-    auto ctx = nuklear.init(&window);
 
     stats->health().subscribe([]() {
       std::exit(0);
@@ -212,11 +211,11 @@ public:
       now += std::chrono::milliseconds(millis);
 
       sf::Event event;
-      nk_input_begin(ctx);
+      nk_input_begin(nuklear.getCtx());
       while (window.pollEvent(event)) {
         handle_event(event, key_input, menu);
       }
-      nk_input_end(ctx);
+      nk_input_end(nuklear.getCtx());
 
       window.clear();
 
@@ -225,7 +224,7 @@ public:
         window.draw(menu);
 
         window.pushGLStates();
-        nuklear.render_menu(ctx);
+        nuklear.renderMenu();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;
@@ -234,7 +233,7 @@ public:
         window.draw(play_state);
 
         window.pushGLStates();
-        nuklear.render_hud(ctx);
+        nuklear.renderHud();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;
@@ -242,7 +241,7 @@ public:
         window.draw(play_state);
 
         window.pushGLStates();
-        nuklear.render_dialog(ctx);
+        nuklear.renderDialog();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
       default:
