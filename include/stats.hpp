@@ -43,7 +43,7 @@ public:
     while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
       bool damage_received = false;
 
-      while(health == 100) {
+      while(health == 100 && future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
 

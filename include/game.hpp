@@ -31,7 +31,8 @@
 
 enum class GameState {
   MENU,
-  PLAY
+  PLAY,
+  DIALOG
 };
 
 class Game {
@@ -52,6 +53,13 @@ class Game {
     case sf::Event::KeyPressed:
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
+
+      case sf::Keyboard::Q:
+        if (state == GameState::PLAY)
+          state = GameState::DIALOG;
+        else
+          state = GameState::PLAY;
+        break;
       case sf::Keyboard::Escape:
         state = GameState::MENU;
         window.setKeyRepeatEnabled(true);
@@ -230,6 +238,13 @@ public:
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;
+      case GameState::DIALOG:
+        window.draw(play_state);
+
+        window.pushGLStates();
+        nuklear.render_dialog(ctx);
+        nk_sfml_render(NK_ANTI_ALIASING_ON);
+        window.popGLStates();
       default:
         break;
       }

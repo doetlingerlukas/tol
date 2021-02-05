@@ -130,6 +130,56 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
+  void render_dialog(struct nk_context* ctx) {
+    struct nk_style& s = ctx->style;
+    nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
+
+    const float dialog_height = size.y * 0.25;
+    const float dialog_height_offset = size.y - dialog_height - size.y * 0.05;
+    const float dialog_element_height = size.y * 0.05;
+    const float dialog_width = size.x * 0.8;
+    const float dialog_width_offset = (size.x - dialog_width) / 2;
+
+    nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
+    nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(255, 232, 225, 100)));
+    nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(255, 232,225, 200)));
+    ctx->style.button.text_alignment = NK_TEXT_LEFT;
+    ctx->style.button.border = 0;
+    ctx->style.window.border = 10.0f;
+
+    if (nk_begin(ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
+      static const float ratio[] = {0.01f, 0.9f, 0.09f};
+
+      nk_layout_row_static(ctx, dialog_height * 0.065, 15, 1);
+      nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
+
+      nk_spacing(ctx, 1);
+      if (nk_button_label(ctx, "1) Option 1"))
+        fprintf(stdout, "option 1 pressed\n");
+
+      nk_spacing(ctx, 1);
+
+      if (nk_button_label(ctx, "2) Option 2"))
+        fprintf(stdout, "option 2 pressed\n");
+
+      nk_spacing(ctx, 1);
+
+      if (nk_button_label(ctx, "3) Option 3"))
+        fprintf(stdout, "option 3 pressed\n");
+
+      nk_spacing(ctx, 1);
+
+      if (nk_button_label(ctx, "4) Option 4"))
+        fprintf(stdout, "option 4 pressed\n");
+    }
+
+    nk_end(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+  }
+
   Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_):
     size(size_), stats(stats_), asset_cache(asset_cache_) {}
 
