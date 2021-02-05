@@ -19,13 +19,7 @@ private:
 
 public:
   void show(std::string character) const {
-    std::vector<std::string> dialog_lines;
-
-    for(const auto& line : dialog[character]) {
-      dialog_lines.push_back(line["question"].get<std::string>());
-    }
-
-    ui->renderDialog(dialog_lines);
+    ui->renderDialog(dialog[character]);
   }
 
   Dialog(const std::shared_ptr<Nuklear> _ui) : ui(_ui), dialog(load()) { }

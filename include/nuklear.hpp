@@ -17,6 +17,9 @@
 
 #include <asset_cache.hpp>
 #include <stats.hpp>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 class Nuklear {
   std::shared_ptr<AssetCache> asset_cache;
@@ -135,7 +138,7 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  void renderDialog(const std::vector<std::string>& lines) {
+  void renderDialog(const json& lines) {
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
@@ -160,8 +163,9 @@ public:
 
       for (const auto& line : lines) {
         nk_spacing(ctx, 1);
-        if (nk_button_label(ctx, line.c_str()))
-          fprintf(stdout, "option 1 pressed\n");
+
+        if (nk_button_label(ctx, line["question"].get<std::string>().c_str()))
+          std::cout << line["response"] << std::endl;
       }
     }
 
