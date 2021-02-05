@@ -28,6 +28,7 @@
 #include <settings.hpp>
 #include <stats.hpp>
 #include <dialog.hpp>
+#include <music.hpp>
 
 
 enum class GameState {
@@ -120,6 +121,11 @@ class Game {
           menu.enter(event.type == sf::Event::KeyPressed);
         }
         break;
+      case sf::Keyboard::M:
+        if (state == GameState::MENU) {
+          menu.enter(event.type == sf::Event::KeyPressed);
+        }
+        break;
       default:
         break;
       }
@@ -184,6 +190,7 @@ public:
     PlayState play_state(&map, &player, asset_cache, scale, window.getSize());
 
     KeyInput key_input;
+    tol::Music music(fs::path("assets/music"));
 
     Menu menu(asset_cache);
     menu.add_item("PLAY", [this]() {
@@ -221,6 +228,8 @@ public:
       nk_input_end(nuklear->getCtx());
 
       window.clear();
+
+      music.play_background();
 
       switch (state) {
       case GameState::MENU:
