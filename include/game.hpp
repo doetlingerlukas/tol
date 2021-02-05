@@ -29,24 +29,21 @@
 #include <stats.hpp>
 #include <dialog.hpp>
 #include <music.hpp>
+#include <game-state.hpp>
 
-
-enum class GameState {
-  MENU,
-  PLAY,
-  DIALOG
-};
 
 class Game {
   sf::RenderWindow window;
   const Settings& settings;
   fs::path dir;
 
-  GameState state;
+  GameInstance instance;
 
   sf::Vector2f scale;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu, tol::Music& music) {
+  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu) {
+    const auto state = instance.getState();
+
     switch (event.type) {
     case sf::Event::Closed:
       window.close();
@@ -58,12 +55,12 @@ class Game {
 
       case sf::Keyboard::Q:
         if (state == GameState::PLAY)
-          state = GameState::DIALOG;
+          instance.setState(GameState::DIALOG);
         else
-          state = GameState::PLAY;
+          instance.setState(GameState::PLAY);
         break;
       case sf::Keyboard::Escape:
-        state = GameState::MENU;
+        instance.setState(GameState::MENU);
         window.setKeyRepeatEnabled(true);
         break;
       case sf::Keyboard::Right:
@@ -138,6 +135,7 @@ class Game {
   }
 
 public:
+  Game(const Settings& settings_) : settings(settings_), instance(GameInstance()) {}
   Game(const fs::path dir, const Settings& settings_): dir(dir), settings(settings_), state(GameState::MENU) {}
 
   void run() {
@@ -194,8 +192,8 @@ public:
     Menu menu(asset_cache);
     menu.add_item("PLAY", [this]() {
       window.setKeyRepeatEnabled(false);
-      state = GameState::PLAY;
-      });
+      instance.setState(GameState::PLAY);
+    });
     menu.add_item("LOAD GAME", [&]() {});
     menu.add_item("SAVE GAME", [&]() {});
     menu.add_item("EXIT", [&]() { window.close(); });
@@ -228,12 +226,15 @@ public:
 
       window.clear();
 
-      switch (state) {
+      switch (instance.getState()) {
+      case GameState::QUIT:
+        window.close();
+        break;
       case GameState::MENU:
         window.draw(menu);
 
         window.pushGLStates();
-        nuklear->renderMenu();
+        nuklear->renderMenu(instance);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;

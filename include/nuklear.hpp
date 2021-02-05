@@ -18,6 +18,7 @@
 #include <asset_cache.hpp>
 #include <stats.hpp>
 #include <nlohmann/json.hpp>
+#include <game-state.hpp>
 
 using json = nlohmann::json;
 
@@ -40,7 +41,7 @@ public:
     return ctx;
   }
 
-  void renderMenu() const {
+  void renderMenu(GameInstance& game) const {
     const float button_height = 40;
     const int r = 0;
     const int g = 0;
@@ -76,7 +77,7 @@ public:
       nk_spacing(ctx, 1);
 
       if (nk_button_label(ctx, "CONTINUE"))
-        fprintf(stdout, "continue pressed\n");
+        game.setState(GameState::PLAY);
 
       nk_spacing(ctx, 1);
 
@@ -91,7 +92,7 @@ public:
       nk_spacing(ctx, 1);
 
       if (nk_button_label(ctx, "EXIT"))
-        fprintf(stdout, "exit pressed\n");
+        game.setState(GameState::QUIT);
     }
 
     nk_end(ctx);
