@@ -41,7 +41,7 @@ class Game {
 
   sf::Vector2f scale;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu) {
+  void handle_event(sf::Event& event, KeyInput& key_input) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -64,59 +64,30 @@ class Game {
         window.setKeyRepeatEnabled(true);
         break;
       case sf::Keyboard::Right:
-        if (state == GameState::MENU) {
-          key_input.right = false;
-        }
-        else {
-          key_input.right = event.type == sf::Event::KeyPressed;
-        }
+        key_input.right = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::D:
         key_input.d = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Left:
-        if (state == GameState::MENU) {
-          key_input.left = false;
-        }
-        else {
-          key_input.left = event.type == sf::Event::KeyPressed;
-        }
+        key_input.left = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::A:
         key_input.a = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Up:
-        if (state == GameState::MENU) {
-          if (event.type == sf::Event::KeyPressed) {
-            menu.up();
-          }
-          key_input.up = false;
-        }
-        else {
-          key_input.up = event.type == sf::Event::KeyPressed;
-        }
+        key_input.up = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::W:
         key_input.w = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Down:
-        if (state == GameState::MENU) {
-          if (event.type == sf::Event::KeyPressed) {
-            menu.down();
-          }
-          key_input.down = false;
-        }
-        else {
-          key_input.down = event.type == sf::Event::KeyPressed;
-        }
+        key_input.down = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::S:
         key_input.s = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Enter:
-        if (state == GameState::MENU) {
-          menu.enter(event.type == sf::Event::KeyPressed);
-        }
         break;
       case sf::Keyboard::M:
         music.stop_background();
@@ -184,20 +155,9 @@ public:
     map.addCharacter(&player);
 
     PlayState play_state(&map, &player, asset_cache, scale, window.getSize());
-
     KeyInput key_input;
     tol::Music music(fs::path("assets/music"));
     music.play_background();
-
-    Menu menu(asset_cache);
-    menu.add_item("PLAY", [this]() {
-      window.setKeyRepeatEnabled(false);
-      instance.setState(GameState::PLAY);
-    });
-    menu.add_item("LOAD GAME", [&]() {});
-    menu.add_item("SAVE GAME", [&]() {});
-    menu.add_item("EXIT", [&]() { window.close(); });
-    menu.setScale(scale);
 
     sf::Clock clock;
     float dt = 0.0;
@@ -225,14 +185,13 @@ public:
       nk_input_end(nuklear->getCtx());
 
       window.clear();
+      window.resetGLStates();
 
       switch (instance.getState()) {
       case GameState::QUIT:
         window.close();
         break;
       case GameState::MENU:
-        window.draw(menu);
-
         window.pushGLStates();
         nuklear->renderMenu(instance);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
