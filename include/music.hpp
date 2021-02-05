@@ -14,7 +14,7 @@ class Music {
 public:
   Music(std::filesystem::path dir_) : dir(dir_) {
     background.setLoop(true);
-    background.setVolume(25.f);
+    background.setVolume(10.f);
   }
 
   void play_background() {

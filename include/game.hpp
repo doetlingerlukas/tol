@@ -46,7 +46,7 @@ class Game {
 
   sf::Vector2f scale;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu) {
+  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu, tol::Music& music) {
     switch (event.type) {
     case sf::Event::Closed:
       window.close();
@@ -122,9 +122,7 @@ class Game {
         }
         break;
       case sf::Keyboard::M:
-        if (state == GameState::MENU) {
-          menu.enter(event.type == sf::Event::KeyPressed);
-        }
+        music.stop_background();
         break;
       default:
         break;
@@ -191,6 +189,7 @@ public:
 
     KeyInput key_input;
     tol::Music music(fs::path("assets/music"));
+    music.play_background();
 
     Menu menu(asset_cache);
     menu.add_item("PLAY", [this]() {
@@ -223,13 +222,11 @@ public:
       sf::Event event;
       nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
-        handle_event(event, key_input, menu);
+        handle_event(event, key_input, menu, music);
       }
       nk_input_end(nuklear->getCtx());
 
       window.clear();
-
-      music.play_background();
 
       switch (state) {
       case GameState::MENU:
