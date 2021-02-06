@@ -16,27 +16,7 @@ task :deps do
   sh 'vcpkg', 'install', 'nlohmann-json'
 end
 
-task :map do
-  sh 'tiled', '--minimize', '--embed-tilesets', '--export-map', 'assets/map.tmx', 'assets/map.json'
-
-  map = JSON.parse(File.read('assets/map.json'))
-
-  map['tilesets'].each do |tileset|
-    first_gid = tileset['firstgid']
-
-    tileset['tiles']&.each do |tile|
-      tile['id'] = first_gid - 1 + tile['id']
-
-      tile['animation']&.each do |animation|
-        animation['tileid'] = first_gid + animation['tileid']
-      end
-    end
-  end
-
-  File.write('assets/map.json', JSON.pretty_generate(map))
-end
-
-task :build => :map do
+task :build do
   vcpkg_prefix = if mac?
     `brew --prefix vcpkg`.chomp
   else

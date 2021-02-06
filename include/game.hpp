@@ -21,6 +21,7 @@ enum class GameState {
 class Game {
   sf::RenderWindow window;
   const Settings& settings;
+  fs::path dir;
 
   GameState state;
 
@@ -106,7 +107,7 @@ class Game {
   }
 
 public:
-  Game(const Settings& settings_) : settings(settings_), state(GameState::MENU) {}
+  Game(const fs::path dir, const Settings& settings_): dir(dir), settings(settings_), state(GameState::MENU) {}
 
   void run() {
     scale = { 2.0, 2.0 };
@@ -141,7 +142,7 @@ public:
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
 
-    const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>("assets");
+    const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
     Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache);
@@ -152,7 +153,7 @@ public:
     map.addCharacter(&player);
 
     PlayState play_state(&map, &player, asset_cache, scale, window.getSize());
-    
+
     KeyInput key_input;
 
     Menu menu;
