@@ -7,7 +7,6 @@
 using json = nlohmann::json;
 
 class Settings {
-private:
   int resolution_height;
   int resolution_width;
   bool is_fullscreen;
@@ -50,6 +49,10 @@ private:
     settings_field["vsync"] = vsync;
     vsync_enabled = vsync;
 
+    const float volume = get_or_else<float>(settings_field, "volume", 0.1f);
+    settings_field["volume"] = volume;
+    volume_level = volume;
+
     std::cout << std::setw(2) << settings << std::endl;
 
     std::ofstream out(settings_path);
@@ -57,6 +60,8 @@ private:
   }
 
 public:
+  float volume_level;
+
   Settings(const fs::path exec_path) : settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
     loadSettings();
   }
@@ -71,5 +76,13 @@ public:
 
   bool vsync() const {
     return vsync_enabled;
+  }
+
+  void set_fullscreen(bool value) {
+    is_fullscreen = value;
+  }
+
+  void set_vsync(bool value) {
+    vsync_enabled = value;
   }
 };

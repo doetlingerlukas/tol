@@ -34,7 +34,7 @@
 
 class Game {
   sf::RenderWindow window;
-  const Settings& settings;
+  Settings& settings;
   fs::path dir;
 
   GameInstance instance;
@@ -105,9 +105,16 @@ class Game {
     nk_sfml_handle_event(&event);
   }
 
+  void handle_settings_update() {
+    std::cout << "V-Sync: " << settings.vsync() << std::endl;
+    std::cout << "Fullscreen: " << settings.fullscreen() << std::endl;
+    std::cout << "Volume: " << settings.volume_level << std::endl;
+
+    instance.setSettingsChanged(false);
+  }
+
 public:
-  Game(const Settings& settings_) : settings(settings_), instance(GameInstance()) {}
-  Game(const fs::path dir, const Settings& settings_): dir(dir), settings(settings_), state(GameState::MENU) {}
+  Game(Settings& settings_) : settings(settings_), instance(GameInstance()) {}
 
   void run() {
     scale = { 2.0, 2.0 };
@@ -184,6 +191,10 @@ public:
       }
       nk_input_end(nuklear->getCtx());
 
+      if (instance.isSettingsChanged()) {
+        handle_settings_update();
+      }
+
       window.clear();
       window.resetGLStates();
 
@@ -216,7 +227,7 @@ public:
         window.popGLStates();
       case GameState::SETTINGS:
         window.pushGLStates();
-        nuklear->renderSettings(instance);
+        nuklear->renderSettings(instance, settings);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;

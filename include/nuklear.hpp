@@ -19,6 +19,7 @@
 #include <stats.hpp>
 #include <nlohmann/json.hpp>
 #include <game-state.hpp>
+#include <settings.hpp>
 
 using json = nlohmann::json;
 
@@ -107,7 +108,7 @@ public:
     nk_style_pop_color(ctx);
   }
 
-  void renderSettings(GameInstance& game) {
+  void renderSettings(GameInstance& game, Settings& settings) {
     const float setting_height = 40;
     const float space = 10;
 
@@ -117,36 +118,51 @@ public:
     nk_style_set_font(ctx, &font->handle);
 
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
-    nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(40, 40, 40, 255)));
     nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(50, 50, 50, 255)));
-    nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(30, 30, 30, 255)));
-    nk_style_push_color(ctx, &s.button.text_normal, nk_rgba(255, 255, 255, 255));
     nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
-    nk_style_push_color(ctx, &s.button.text_active, nk_rgba(255, 255, 255, 255));
     nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, space * scale.y));
 
-    // settings
-    auto volume = 0.1f;
+    if (nk_begin(ctx, "settings", nk_rect(0, space * scale.y, size.x, size.y), NK_WINDOW_BACKGROUND)) {
+      static const float ratio[] = { 0.f, 1.f, 0.f };
+      static const float button_ratio[] = { 0.f, 0.25f, 0.f };
 
-    if (nk_begin(ctx, "settings", nk_rect(0.2 * size.x, 0, size.x * 0.6, size.y), NK_WINDOW_BACKGROUND)) {
-      static const float ratio[] = { 0.f, 1.0, 0.f };
+      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio);
 
-      nk_layout_row_static(ctx, (size.y - (setting_height * 4.f + space * 5.f) * scale.y) / 2.f, 0, 1);
-      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
-      
       nk_spacing(ctx, 1);
       
-      if (nk_button_label(ctx, "BACK"))
+      if (nk_button_label(ctx, "SAVE")) {
+        game.setSettingsChanged(true);
         game.setState(GameState::MENU);
+      }
       
+      nk_spacing(ctx, 1);
+
+      nk_label(ctx, "V-Sync:", NK_TEXT_LEFT);
+
+      nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
+      if (nk_option_label(ctx, "Enabled", settings.vsync())) settings.set_vsync(true);
+      if (nk_option_label(ctx, "Disabled", !settings.vsync())) settings.set_vsync(false);
+
+      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
+
+      nk_spacing(ctx, 1);
+
+      nk_label(ctx, "Video Mode:", NK_TEXT_LEFT);
+
+      nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
+      if (nk_option_label(ctx, "Fullscreen", settings.fullscreen())) settings.set_fullscreen(true);
+      if (nk_option_label(ctx, "Windowed", !settings.fullscreen())) settings.set_fullscreen(false);
+
+      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
+
       nk_spacing(ctx, 1);
       
       nk_layout_row_begin(ctx, NK_DYNAMIC, setting_height * scale.y, 2);
       {
         nk_layout_row_push(ctx, 0.3);
         nk_label(ctx, "Volume:", NK_TEXT_LEFT);
-        nk_layout_row_push(ctx, 0.6);
-        nk_slider_float(ctx, 0, &volume, 1.0f, 0.01f);
+        nk_layout_row_push(ctx, 0.5);
+        nk_slider_float(ctx, 0, &settings.volume_level , 1.0f, 0.1f);
       }
       nk_layout_row_end(ctx);
     }
@@ -154,10 +170,6 @@ public:
     nk_end(ctx);
     nk_style_pop_vec2(ctx);
     nk_style_pop_color(ctx);
-    nk_style_pop_color(ctx);
-    nk_style_pop_color(ctx);
-    nk_style_pop_style_item(ctx);
-    nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
   }
