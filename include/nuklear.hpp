@@ -69,9 +69,9 @@ public:
 
     /* GUI */
     if (nk_begin(ctx, "menu", nk_rect(0, 0, size.x, size.y), NK_WINDOW_BACKGROUND)) {
-      static const float ratio[] = {0.05f, 0.35f, 0.6f};
+      static const float ratio[] = { 0.3, 0.4, 0.3 };
 
-      nk_layout_row_static(ctx, (size.y - (button_height * 4.f + spacing * 5.f) * scale.y) / 2.f, 15, 1);
+      nk_layout_row_static(ctx, (size.y - (button_height * 4.f + spacing * 5.f) * scale.y) / 2.f, 0, 1);
       nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
 
       nk_spacing(ctx, 1);
