@@ -214,6 +214,12 @@ public:
         //nuklear->renderDialog();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
+      case GameState::SETTINGS:
+        window.pushGLStates();
+        nuklear->renderSettings(instance);
+        nk_sfml_render(NK_ANTI_ALIASING_ON);
+        window.popGLStates();
+        break;
       default:
         break;
       }

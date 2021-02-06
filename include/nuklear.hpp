@@ -55,7 +55,7 @@ public:
 
     struct nk_style& s = ctx->style;
 
-    const float spacing = 4;
+    const float spacing = 10;
 
     nk_style_push_color(ctx, &s.window.background, background);
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(r, g, b, a)));
@@ -87,7 +87,7 @@ public:
       nk_spacing(ctx, 1);
 
       if (nk_button_label(ctx, "SETTINGS"))
-        fprintf(stdout, "settings pressed\n");
+        game.setState(GameState::SETTINGS);
 
       nk_spacing(ctx, 1);
 
@@ -105,6 +105,61 @@ public:
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_color(ctx);
+  }
+
+  void renderSettings(GameInstance& game) {
+    const float setting_height = 40;
+    const float space = 10;
+
+    struct nk_style& s = ctx->style;
+
+    const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
+    nk_style_set_font(ctx, &font->handle);
+
+    nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
+    nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(40, 40, 40, 255)));
+    nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(50, 50, 50, 255)));
+    nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(30, 30, 30, 255)));
+    nk_style_push_color(ctx, &s.button.text_normal, nk_rgba(255, 255, 255, 255));
+    nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
+    nk_style_push_color(ctx, &s.button.text_active, nk_rgba(255, 255, 255, 255));
+    nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, space * scale.y));
+
+    // settings
+    auto volume = 0.1f;
+
+    if (nk_begin(ctx, "settings", nk_rect(0.2 * size.x, 0, size.x * 0.6, size.y), NK_WINDOW_BACKGROUND)) {
+      static const float ratio[] = { 0.f, 1.0, 0.f };
+
+      nk_layout_row_static(ctx, (size.y - (setting_height * 4.f + space * 5.f) * scale.y) / 2.f, 0, 1);
+      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
+      
+      nk_spacing(ctx, 1);
+      
+      if (nk_button_label(ctx, "BACK"))
+        game.setState(GameState::MENU);
+      
+      nk_spacing(ctx, 1);
+      
+      nk_layout_row_begin(ctx, NK_DYNAMIC, setting_height * scale.y, 2);
+      {
+        nk_layout_row_push(ctx, 0.3);
+        nk_label(ctx, "Volume:", NK_TEXT_LEFT);
+        nk_layout_row_push(ctx, 0.6);
+        nk_slider_float(ctx, 0, &volume, 1.0f, 0.01f);
+      }
+      nk_layout_row_end(ctx);
+    }
+
+    nk_end(ctx);
+    nk_style_pop_vec2(ctx);
+    nk_style_pop_color(ctx);
+    nk_style_pop_color(ctx);
+    nk_style_pop_color(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
   }
 
   void renderHud() {
