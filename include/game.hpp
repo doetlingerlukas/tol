@@ -110,6 +110,8 @@ class Game {
     std::cout << "Fullscreen: " << settings.fullscreen() << std::endl;
     std::cout << "Volume: " << settings.volume_level << std::endl;
 
+    window.setVerticalSyncEnabled(settings.vsync());
+
     instance.setSettingsChanged(false);
   }
 
