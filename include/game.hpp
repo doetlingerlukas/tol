@@ -20,7 +20,6 @@
 #include <SFML/Graphics.hpp>
 
 #include <map.hpp>
-#include <menu.hpp>
 #include <character.hpp>
 #include <settings.hpp>
 #include <input.hpp>
@@ -41,7 +40,7 @@ class Game {
 
   sf::Vector2f scale;
 
-  void handle_event(sf::Event& event, KeyInput& key_input) {
+  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -105,12 +104,13 @@ class Game {
     nk_sfml_handle_event(&event);
   }
 
-  void handle_settings_update() {
+  void handle_settings_update(tol::Music& music) {
     std::cout << "V-Sync: " << settings.vsync() << std::endl;
     std::cout << "Fullscreen: " << settings.fullscreen() << std::endl;
     std::cout << "Volume: " << settings.volume_level << std::endl;
 
     window.setVerticalSyncEnabled(settings.vsync());
+    music.set_volume(settings.volume_level);
 
     instance.setSettingsChanged(false);
   }
@@ -189,12 +189,12 @@ public:
       sf::Event event;
       nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
-        handle_event(event, key_input, menu, music);
+        handle_event(event, key_input, music);
       }
       nk_input_end(nuklear->getCtx());
 
       if (instance.isSettingsChanged()) {
-        handle_settings_update();
+        handle_settings_update(music);
       }
 
       window.clear();

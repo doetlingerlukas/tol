@@ -3,6 +3,7 @@
 #include <SFML/Audio.hpp>
 
 #include <filesystem>
+#include <algorithm>
 
 namespace tol {
 
@@ -31,6 +32,10 @@ public:
     background.stop();
   }
 
+  // Expects values between 0 and 1
+  void set_volume(float volume) {
+    background.setVolume(std::min(volume * 100.f, 100.f));
+  }
 };
 
 }
