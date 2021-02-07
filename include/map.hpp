@@ -11,6 +11,7 @@
 
 #include <asset_cache.hpp>
 #include <tile.hpp>
+#include <object.hpp>
 #include <animation.hpp>
 #include <character.hpp>
 
@@ -21,6 +22,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   fs::path filename;
 
   std::unique_ptr<tson::Map> map;
+  std::map<int, Object> collectibles;
 
   size_t from_x;
   size_t to_x;
@@ -122,21 +124,13 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     for (auto& obj : layer.getObjects()) {
       switch (obj.getObjectType()) {
         case tson::ObjectType::Object: {
-          auto* tileset = map->getTilesetByGid(obj.getGid());
-          const auto object_position = obj.getPosition();
-
-          // Y for tile objects is on bottom, so go up one tile.
-          // See https://github.com/mapeditor/tiled/issues/91.
-          const auto y_offset = -map->getTileSize().y;
-
-          auto tile = Tile(
-            tileset->getTile(obj.getGid()),
-            { static_cast<float>(object_position.x), static_cast<float>(object_position.y + y_offset) },
-            asset_cache
-          );
-          tile.setScale(getScale());
-          tile.update(now);
-          target.draw(tile);
+          const auto id = obj.getId();
+          if (collectibles.count(id) != 0) {
+            auto object = collectibles.at(id);
+            object.setScale(getScale());
+            object.update(now);
+            target.draw(object);
+          }
 
           break;
         }
@@ -156,6 +150,26 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     } else if (layer.getType() == tson::LayerType::TileLayer) {
    		layer.assignTileMap((std::map<uint32_t, tson::Tile*>*)(&map->getTileMap()));
    		layer.createTileData(map->getSize(), map->isInfinite());
+    }
+  }
+
+  void gatherCollectibles(tson::Layer& layer) {
+    if (layer.getType() == tson::LayerType::Group) {
+      for (auto& nested: layer.getLayers()) {
+        gatherCollectibles(nested);
+      }
+    } else if (layer.getType() == tson::LayerType::ObjectGroup) {
+      for (auto& obj : layer.getObjects()) {
+        if (obj.getObjectType() == tson::ObjectType::Object && obj.getType() == "collectible") {
+          auto* tileset = map->getTilesetByGid(obj.getGid());
+
+          collectibles.emplace(
+            std::piecewise_construct,
+            std::make_tuple(obj.getId()),
+            std::make_tuple(&obj, tileset->getTile(obj.getGid()), asset_cache)
+          );
+        }
+      }
     }
   }
 
@@ -186,6 +200,8 @@ public:
       if (layer.getType() == tson::LayerType::Group) {
         createTileData(layer);
       }
+
+      gatherCollectibles(layer);
     }
 
     for (const auto& tileset: map->getTilesets()) {
@@ -287,6 +303,10 @@ public:
 
   void addCharacter(const Character* character) {
     this->character = character;
+  }
+
+  std::map<int, Object>& getCollectibles() {
+    return collectibles;
   }
 
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const {

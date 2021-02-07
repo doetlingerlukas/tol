@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="30" nextobjectid="271">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="32" nextobjectid="299">
  <editorsettings>
   <export target="map.json" format="json"/>
  </editorsettings>
@@ -643,6 +643,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="30" name="objects_bottom_1">
+  <object id="273" name="strawberry" type="collectible" gid="33845" x="191.552" y="2491.9" width="32" height="32"/>
+ </objectgroup>
  <group id="29" name="trees">
   <layer id="19" name="tree_stumps" width="100" height="100">
    <data encoding="csv">
@@ -1477,6 +1480,15 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="31" name="objects_bottom_2">
+  <object id="294" name="melon" type="collectible" gid="33812" x="281.241" y="2536.69" width="32" height="32"/>
+  <object id="276" name="strawberry" type="collectible" gid="33845" x="638.623" y="2634.62" width="32" height="32"/>
+  <object id="291" name="lemon" type="collectible" gid="33716" x="586.759" y="2467.03" width="32" height="32"/>
+  <object id="295" name="lemon" type="collectible" gid="33716" x="170.207" y="2371.17" width="32" height="32"/>
+  <object id="296" name="orange" type="collectible" gid="33813" x="111.586" y="2153.93" width="32" height="32"/>
+  <object id="297" name="pear" type="collectible" gid="33814" x="397.103" y="2442.9" width="32" height="32"/>
+  <object id="298" name="cherry" type="collectible" gid="33783" x="454.345" y="2377.38" width="32" height="32"/>
+ </objectgroup>
  <layer id="18" name="objects_bottom" width="100" height="100">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

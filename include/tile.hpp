@@ -67,6 +67,11 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
     target.draw(sprite);
   }
 
+protected:
+  tson::Tile* getTile() const {
+    return tile;
+  }
+
 public:
   Tile(tson::Tile* tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): tile(tile_), asset_cache(asset_cache_) {
     setPosition({ position.x, position.y });

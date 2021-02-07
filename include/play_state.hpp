@@ -77,9 +77,8 @@ public:
     player->move(
       (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
       (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-      dt * CHARACTER_MOVE_SPEED, now, collision_rects, map->getSize()
+      dt * CHARACTER_MOVE_SPEED, now, collision_rects, map->getCollectibles(), map->getSize()
     );
-
 
     if (key_input.up && !key_input.down) {
       direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);

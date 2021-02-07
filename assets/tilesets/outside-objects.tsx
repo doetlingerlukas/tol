@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.3" name="outside-objects" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
  <image source="outside-objects.png" trans="000000" width="1024" height="1024"/>
+ <tile id="19">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="7.00272" width="20" height="14"/>
+  </objectgroup>
+ </tile>
+ <tile id="86">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6.99755" y="3" width="19" height="19"/>
+  </objectgroup>
+ </tile>
  <tile id="102">
   <properties>
    <property name="y" type="int" value="5"/>
@@ -31,6 +41,21 @@
    <property name="y" type="int" value="5"/>
   </properties>
  </tile>
+ <tile id="115">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="2" y="7" width="28" height="18"/>
+  </objectgroup>
+ </tile>
+ <tile id="116">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="6" width="21" height="18"/>
+  </objectgroup>
+ </tile>
+ <tile id="117">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="9" y="3" width="13" height="20"/>
+  </objectgroup>
+ </tile>
  <tile id="134">
   <properties>
    <property name="y" type="int" value="4"/>
@@ -60,6 +85,11 @@
   <properties>
    <property name="y" type="int" value="4"/>
   </properties>
+ </tile>
+ <tile id="148">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="7" y="5" width="21" height="17"/>
+  </objectgroup>
  </tile>
  <tile id="166">
   <properties>
