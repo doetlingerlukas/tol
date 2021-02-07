@@ -70,6 +70,11 @@ public:
     return std::make_tuple(resolution_width, resolution_height);
   }
 
+  void set_resolution(sf::VideoMode video_mode) {
+    resolution_width = video_mode.width;
+    resolution_height = video_mode.height;
+  }
+
   bool fullscreen() const {
     return is_fullscreen;
   }

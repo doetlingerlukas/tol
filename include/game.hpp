@@ -20,6 +20,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <map.hpp>
+#include <string>
 #include <character.hpp>
 #include <settings.hpp>
 #include <input.hpp>
@@ -30,8 +31,8 @@
 #include <music.hpp>
 #include <game-state.hpp>
 
-
 class Game {
+  const std::string name = "Tales of Lostness";
   sf::RenderWindow window;
   Settings& settings;
   fs::path dir;
@@ -39,6 +40,8 @@ class Game {
   GameInstance instance;
 
   sf::Vector2f scale;
+  sf::Vector2f resolution_scale;
+  sf::Uint32 window_style;
 
   void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music) {
     const auto state = instance.getState();
@@ -105,27 +108,31 @@ class Game {
   }
 
   void handle_settings_update(tol::Music& music) {
-    std::cout << "V-Sync: " << settings.vsync() << std::endl;
-    std::cout << "Fullscreen: " << settings.fullscreen() << std::endl;
-    std::cout << "Volume: " << settings.volume_level << std::endl;
-
     window.setVerticalSyncEnabled(settings.vsync());
     music.set_volume(settings.volume_level);
+
+    const auto [window_width, window_height] = settings.resolution();
+
+    if (settings.fullscreen() && window_style != sf::Style::Fullscreen) {
+      window_style = sf::Style::Fullscreen;
+      window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
+    }
+
+    if (!settings.fullscreen() && window_style == sf::Style::Fullscreen) {
+      window_style = window_style = sf::Style::Titlebar | sf::Style::Close;
+      window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
+    }
 
     instance.setSettingsChanged(false);
   }
 
 public:
-  Game(Settings& settings_) : settings(settings_), instance(GameInstance()) {}
-
-  void run() {
+  Game(Settings& settings_) : settings(settings_), instance(GameInstance()) {
     scale = { 2.0, 2.0 };
-    sf::Vector2f resolution_scale = { 1.0, 1.0 };
+    resolution_scale = { 1.0, 1.0 };
 
     auto video_mode = sf::VideoMode::getDesktopMode();
     std::cout << "Full Resolution: " << video_mode.width << "," << video_mode.height << std::endl;
-
-    const auto [window_width, window_height] = settings.resolution();
 
     #if __APPLE__
     auto display_id = CGMainDisplayID();
@@ -144,10 +151,16 @@ public:
     sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
 
     if (settings.fullscreen()) {
-      style = sf::Style::Fullscreen;
+      window_style = sf::Style::Fullscreen;
+    } else {
+      window_style = sf::Style::Titlebar | sf::Style::Close;
     }
+  }
 
-    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), "Tales of Lostness", style);
+  void run() {
+    const auto [window_width, window_height] = settings.resolution();
+
+    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
 
