@@ -120,35 +120,20 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       switch (obj.getObjectType()) {
         case tson::ObjectType::Object: {
           auto* tileset = map->getTilesetByGid(obj.getGid());
-          const auto offset = getTileOffset(obj.getGid(), map, tileset);
+          const auto object_position = obj.getPosition();
 
-          auto texture = asset_cache->loadTexture(tileset->getImagePath());
-          sf::Sprite sprite;
-          sprite.setTexture(*texture);
-          std::string name = obj.getName();
-          sf::Vector2f position = { (float)obj.getPosition().x + getPosition().x, (float)obj.getPosition().y + getPosition().y };
+          // Y for tile objects is on bottom, so go up one tile.
+          // See https://github.com/mapeditor/tiled/issues/91.
+          const auto y_offset = -map->getTileSize().y;
 
-          sf::Vector2f scale = sprite.getScale();
-          float rotation = sprite.getRotation();
-          sf::Vector2f origin{ ((float) map->getTileSize().x) / 2, ((float) map->getTileSize().y) / 2 };
-
-          if (obj.hasFlipFlags(tson::TileFlipFlags::Horizontally))
-            scale.x = -scale.x;
-          if (obj.hasFlipFlags(tson::TileFlipFlags::Vertically))
-            scale.y = -scale.y;
-          if (obj.hasFlipFlags(tson::TileFlipFlags::Diagonally))
-            rotation += 90.f;
-
-          position = { position.x + origin.x, position.y + origin.y };
-          sprite.setOrigin(origin);
-
-          sprite.setTextureRect({ (int)offset.x, (int)offset.y, map->getTileSize().x, map->getTileSize().y });
-          sprite.setPosition({ position.x, position.y });
-
-          sprite.setScale(scale);
-          sprite.setRotation(rotation);
-
-          target.draw(sprite);
+          auto tile = Tile(
+            &layer, tileset->getTile(obj.getGid()),
+            { static_cast<float>(object_position.x), static_cast<float>(object_position.y + y_offset) },
+            asset_cache
+          );
+          tile.setScale(getScale());
+          tile.update(now);
+          target.draw(tile);
 
           break;
         }
@@ -158,25 +143,6 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           break;
       }
     }
-  }
-
-  sf::Vector2f getTileOffset(const uint32_t tileId, const tson::Map* map, const tson::Tileset* tileset) const {
-    uint32_t firstId = tileset->getFirstgid();
-    int columns = tileset->getColumns();
-    int rows = tileset->getTileCount() / columns;
-    uint32_t lastId = (tileset->getFirstgid() + tileset->getTileCount()) - 1;
-
-    if (tileId >= firstId && tileId <= lastId) {
-      const size_t baseTilePosition = tileId - firstId;
-
-      const size_t tileModX = (baseTilePosition % columns);
-      const size_t currentRow = (baseTilePosition / columns);
-      const float offsetX = (tileModX != 0) ? ((tileModX) * map->getTileSize().x) : (0 * map->getTileSize().x);
-      const float offsetY = (currentRow < rows - 1) ? (currentRow * map->getTileSize().y) : ((rows - 1) * map->getTileSize().y);
-      return sf::Vector2f(offsetX, offsetY);
-    }
-
-    return { 0.f, 0.f };
   }
 
   void createTileData(tson::Layer& layer) {
