@@ -89,6 +89,11 @@ public:
     return z_index;
   }
 
+  sf::FloatRect getBoundingRect() const {
+    tson::Rect tsonRect = tile->getDrawingRect();
+    return { getPosition().x, getPosition().y, static_cast<float>(tsonRect.width), static_cast<float>(tsonRect.height) };
+  }
+
   std::vector<sf::FloatRect> getCollisionRects() const {
     std::vector<sf::FloatRect> collision_rects;
 

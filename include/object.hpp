@@ -16,6 +16,10 @@ public:
     ) {}
 
   bool intersects(const sf::FloatRect& rect) const {
+    return rect.intersects({ getPosition().x, getPosition().y, static_cast<float>(getTile()->getTileSize().y), static_cast<float>(getTile()->getTileSize().y) });
+  }
+
+  bool collides_with(const sf::FloatRect& rect) const {
     auto object_group = getTile()->getObjectgroup();
     for (auto& obj : object_group.getObjects()) {
       sf::FloatRect object_rect = {
@@ -35,5 +39,9 @@ public:
 
   const std::string& getName() const {
     return object->getName();
+  }
+
+  virtual std::optional<float> zIndex() const {
+    return getPosition().y + getTile()->getTileSize().y;
   }
 };

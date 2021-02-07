@@ -268,7 +268,7 @@ public:
     for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
       auto& [id, collectible] = *it;
 
-      if (collectible.intersects(next_bounds)) {
+      if (collectible.collides_with(next_bounds)) {
         std::cout << "Item collected: " << collectible.getName() << std::endl;
         it = collectibles.erase(it);
       } else {
