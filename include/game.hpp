@@ -208,6 +208,7 @@ public:
 
       if (instance.isSettingsChanged()) {
         handle_settings_update(music);
+        nuklear->setSize(window.getSize());
       }
 
       window.clear();
