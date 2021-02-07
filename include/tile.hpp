@@ -14,7 +14,6 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   static std::map<int, Animation> running_animations;
 
-  tson::Layer* layer;
   tson::Tile* tile;
 
   std::optional<float> z_index;
@@ -52,26 +51,24 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
     if (tile->hasFlipFlags(tson::TileFlipFlags::Diagonally))
       rotation += 90.f;
 
-    if (layer->getName() != "collision") {
-      auto texture = asset_cache->loadTexture(tileset->getImagePath());
-      sf::Sprite sprite(*texture, rect);
+    auto texture = asset_cache->loadTexture(tileset->getImagePath());
+    sf::Sprite sprite(*texture, rect);
 
-      if (tile->hasFlipFlags(tson::TileFlipFlags::Horizontally))
-        scale.x = -scale.x;
-      if (tile->hasFlipFlags(tson::TileFlipFlags::Vertically))
-        scale.y = -scale.y;
+    if (tile->hasFlipFlags(tson::TileFlipFlags::Horizontally))
+      scale.x = -scale.x;
+    if (tile->hasFlipFlags(tson::TileFlipFlags::Vertically))
+      scale.y = -scale.y;
 
-      sprite.setOrigin(origin);
-      sprite.setPosition(position);
-      sprite.setScale(scale);
-      sprite.setRotation(rotation);
+    sprite.setOrigin(origin);
+    sprite.setPosition(position);
+    sprite.setScale(scale);
+    sprite.setRotation(rotation);
 
-      target.draw(sprite);
-    }
+    target.draw(sprite);
   }
 
 public:
-  Tile(tson::Layer* layer_, tson::Tile* tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): layer(layer_), tile(tile_), asset_cache(asset_cache_) {
+  Tile(tson::Tile* tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): tile(tile_), asset_cache(asset_cache_) {
     setPosition({ position.x, position.y });
 
     const auto y_prop = tile->getProp("y");
@@ -80,15 +77,11 @@ public:
     }
   }
 
-  Tile(tson::Layer* layer, const tson::TileObject* object, std::shared_ptr<AssetCache> asset_cache):
-    Tile(layer, object->getTile(), { object->getPosition().x, object->getPosition().y }, asset_cache) {}
+  Tile(const tson::TileObject* object, std::shared_ptr<AssetCache> asset_cache):
+    Tile(object->getTile(), { object->getPosition().x, object->getPosition().y }, asset_cache) {}
 
   virtual std::optional<float> zIndex() const {
     return z_index;
-  }
-
-  tson::Layer& getLayer() const {
-    return *layer;
   }
 
   std::vector<sf::FloatRect> getCollisionRects() const {

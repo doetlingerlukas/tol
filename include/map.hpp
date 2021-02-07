@@ -52,24 +52,27 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   }
 
   void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
-    switch (layer.getType()) {
+    if (layer.getName() == "collision") {
+      return;
+    }
 
-    case tson::LayerType::TileLayer:
-      drawTileLayer(layer, target, deferred_tiles);
-      break;
-    case tson::LayerType::ObjectGroup:
-      drawObjectLayer(layer, target);
-      break;
-    case tson::LayerType::ImageLayer:
-      drawImageLayer(layer, target);
-      break;
-    case tson::LayerType::Group:
-      for (auto& l : layer.getLayers()) {
-        drawLayer(l, target, deferred_tiles);
-      }
-      break;
-    default:
-      break;
+    switch (layer.getType()) {
+      case tson::LayerType::TileLayer:
+        drawTileLayer(layer, target, deferred_tiles);
+        break;
+      case tson::LayerType::ObjectGroup:
+        drawObjectLayer(layer, target);
+        break;
+      case tson::LayerType::ImageLayer:
+        drawImageLayer(layer, target);
+        break;
+      case tson::LayerType::Group:
+        for (auto& l : layer.getLayers()) {
+          drawLayer(l, target, deferred_tiles);
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -90,7 +93,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           continue;
         }
 
-        auto tile = Tile(&layer, tileObjectP, asset_cache);
+        auto tile = Tile(tileObjectP, asset_cache);
         tile.setScale(getScale());
         tile.update(now);
 
@@ -127,7 +130,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           const auto y_offset = -map->getTileSize().y;
 
           auto tile = Tile(
-            &layer, tileset->getTile(obj.getGid()),
+            tileset->getTile(obj.getGid()),
             { static_cast<float>(object_position.x), static_cast<float>(object_position.y + y_offset) },
             asset_cache
           );
@@ -318,7 +321,7 @@ public:
                 continue;
               }
 
-              auto tile = Tile(&layer, tileObjectP, asset_cache);
+              auto tile = Tile(tileObjectP, asset_cache);
               tile.setScale(getScale());
               tile.update(now);
 
