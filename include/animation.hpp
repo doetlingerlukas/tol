@@ -15,10 +15,10 @@ public:
     this->frames = frames;
   }
 
-  Animation(const std::vector<tson::Frame>& frames, tson::Tileset* tileset) {
+  Animation(const std::vector<tson::Frame>& frames, tson::Tileset& tileset) {
     for (const auto& frame: frames) {
       const auto tile_id = frame.getTileId();
-      const auto rect = tileset->getTile(tile_id)->getDrawingRect();
+      const auto rect = tileset.getTile(tile_id)->getDrawingRect();
       const auto duration = std::chrono::milliseconds(frame.getDuration());
       total_time += duration;
       this->frames.emplace_back(duration, sf::IntRect{ rect.x, rect.y, rect.width, rect.height });

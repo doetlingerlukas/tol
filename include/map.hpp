@@ -95,7 +95,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           continue;
         }
 
-        auto tile = Tile(tileObjectP, asset_cache);
+        auto tile = Tile(*tileObjectP, asset_cache);
         tile.setScale(getScale());
         tile.update(now);
 
@@ -131,7 +131,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
             object.update(now);
 
             if (object.intersects(character->getTextureBoundingRect())) {
-              deferred_tiles.push_back(object);
+              deferred_tiles.push_back(std::move(object));
             } else {
               target.draw(object);
             }
@@ -171,7 +171,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           collectibles.emplace(
             std::piecewise_construct,
             std::make_tuple(obj.getId()),
-            std::make_tuple(&obj, tileset->getTile(obj.getGid()), asset_cache)
+            std::make_tuple(std::cref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache)
           );
         }
       }
@@ -361,7 +361,7 @@ public:
                 continue;
               }
 
-              auto tile = Tile(tileObjectP, asset_cache);
+              auto tile = Tile(*tileObjectP, asset_cache);
               tile.setScale(getScale());
               tile.update(now);
 

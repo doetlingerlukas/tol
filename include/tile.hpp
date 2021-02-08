@@ -14,26 +14,27 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   static std::map<int, Animation> running_animations;
 
-  tson::Tile* tile;
+  std::reference_wrapper<tson::Tile> tile;
 
   std::optional<float> z_index;
 
   std::chrono::milliseconds now;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
-    auto* tileset = tile->getTileset();
+    auto& tile = this->tile;
+    auto& tileset = *getTile().getTileset();
 
-    tson::Rect tsonRect = tile->getDrawingRect();
+    tson::Rect tsonRect = getTile().getDrawingRect();
     sf::IntRect rect = { tsonRect.x, tsonRect.y, tsonRect.width, tsonRect.height };
 
-    const auto& animation = tile->getAnimation();
+    const auto& animation = getTile().getAnimation();
 
     if (animation.size() > 0) {
-      const auto tile_id = tile->getGid();
+      const auto tile_id = getTile().getGid();
 
       if (running_animations.count(tile_id) == 0) {
         std::cout << "Adding animation for tile " << tile_id << std::endl;
-        running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, tileset));
+        running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, std::ref(tileset)));
       } else {
         rect = running_animations.at(tile_id).getDrawingRect(now);
       }
@@ -48,15 +49,15 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
     };
 
     float rotation = 0.f;
-    if (tile->hasFlipFlags(tson::TileFlipFlags::Diagonally))
+    if (getTile().hasFlipFlags(tson::TileFlipFlags::Diagonally))
       rotation += 90.f;
 
-    auto texture = asset_cache->loadTexture(tileset->getImagePath());
+    auto texture = asset_cache->loadTexture(tileset.getImagePath());
     sf::Sprite sprite(*texture, rect);
 
-    if (tile->hasFlipFlags(tson::TileFlipFlags::Horizontally))
+    if (getTile().hasFlipFlags(tson::TileFlipFlags::Horizontally))
       scale.x = -scale.x;
-    if (tile->hasFlipFlags(tson::TileFlipFlags::Vertically))
+    if (getTile().hasFlipFlags(tson::TileFlipFlags::Vertically))
       scale.y = -scale.y;
 
     sprite.setOrigin(origin);
@@ -68,36 +69,36 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
   }
 
 protected:
-  tson::Tile* getTile() const {
+  inline tson::Tile& getTile() const {
     return tile;
   }
 
 public:
-  Tile(tson::Tile* tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): tile(tile_), asset_cache(asset_cache_) {
+  Tile(tson::Tile& tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): tile(tile_), asset_cache(asset_cache_) {
     setPosition({ position.x, position.y });
 
-    const auto y_prop = tile->getProp("y");
+    const auto y_prop = getTile().getProp("y");
     if (y_prop) {
-      z_index = position.y + (y_prop->template getValue<int>() + 1) * tile->getTileSize().y;
+      z_index = position.y + (y_prop->template getValue<int>() + 1) * getTile().getTileSize().y;
     }
   }
 
-  Tile(const tson::TileObject* object, std::shared_ptr<AssetCache> asset_cache):
-    Tile(object->getTile(), { object->getPosition().x, object->getPosition().y }, asset_cache) {}
+  Tile(const tson::TileObject& object, std::shared_ptr<AssetCache> asset_cache):
+    Tile(*object.getTile(), { object.getPosition().x, object.getPosition().y }, asset_cache) {}
 
   virtual std::optional<float> zIndex() const {
     return z_index;
   }
 
   sf::FloatRect getBoundingRect() const {
-    tson::Rect tsonRect = tile->getDrawingRect();
+    tson::Rect tsonRect = getTile().getDrawingRect();
     return { getPosition().x, getPosition().y, static_cast<float>(tsonRect.width), static_cast<float>(tsonRect.height) };
   }
 
   std::vector<sf::FloatRect> getCollisionRects() const {
     std::vector<sf::FloatRect> collision_rects;
 
-    auto object_group = tile->getObjectgroup();
+    auto object_group = getTile().getObjectgroup();
     for (auto& object: object_group.getObjects()) {
       collision_rects.emplace_back(
         (getPosition().x + object.getPosition().x),
