@@ -16,11 +16,11 @@
           "response": [
             {
               "question": "Yes",
-              "response": 1
+              "response": 3
             },
             {
               "question": "No",
-              "response": 0
+              "response": 1
             }
           ]
         }

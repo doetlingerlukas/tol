@@ -225,7 +225,7 @@ public:
 
     bool selected = false;
     if (nk_begin(ctx, "dialog_response", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
-      static const float ratio[] = {0.01f, 0.9f, 0.09f};
+      static const float ratio[] = {0.01f, 0.98f, 0.01f};
 
       nk_layout_row_static(ctx, dialog_height / 5, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, 0, 2, ratio);
@@ -261,7 +261,7 @@ public:
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
-    const float dialog_height = size.y * 0.25;
+    const float dialog_height = size.y * (lines.size() + 1) * 0.06;
     const float dialog_height_offset = size.y - dialog_height - size.y * 0.05;
     const float dialog_element_height = size.y * 0.05;
     const float dialog_width = size.x * 0.8;
@@ -276,9 +276,9 @@ public:
 
     std::optional<int> response;
     if (nk_begin(ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
-      static const float ratio[] = {0.01f, 0.9f, 0.09f};
+      static const float ratio[] = {0.01f, 0.98f, 0.01f};
 
-      nk_layout_row_static(ctx, dialog_height * 0.065, 15, 1);
+      nk_layout_row_static(ctx, dialog_height * 0.05, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
 
       for (int i = 0; i < lines.size(); i++) {
@@ -287,6 +287,11 @@ public:
         if (nk_button_label(ctx, lines[i][stateAsString(dialog_state)].get<std::string>().c_str()))
           response = i;
       }
+
+      nk_spacing(ctx, 1);
+
+      if (nk_button_label(ctx, "leave"))
+        response = -1;
     }
 
     nk_end(ctx);
@@ -297,7 +302,12 @@ public:
 
     if (response) {
       const auto dialog_type = !dialog_state;
-      return std::make_pair(lines[*response][stateAsString(dialog_type)], dialog_type);
+      if (*response != -1) {
+        std::cout << std::setw(2) << lines[*response][stateAsString(dialog_type)] << std::endl;
+        return std::make_pair(lines[*response][stateAsString(dialog_type)], dialog_type);
+      } else {
+        return std::make_pair(0, dialog_type);
+      }
     } else
       return std::make_pair(lines, dialog_state);
   }

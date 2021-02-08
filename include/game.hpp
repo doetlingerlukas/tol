@@ -28,8 +28,7 @@
 #include <settings.hpp>
 #include <stats.hpp>
 #include <dialog.hpp>
-#include <music.hpp>
-#include <game-state.hpp>
+#include <game_state.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -222,6 +221,8 @@ public:
         window.popGLStates();
         break;
       case GameState::PLAY:
+      case GameState::QUEST:
+      case GameState::FIGHT:
         play_state.update(key_input, window, now, dt);
         window.draw(play_state);
 
@@ -234,7 +235,7 @@ public:
         window.draw(play_state);
 
         window.pushGLStates();
-        dialog.show("npc1");
+        state = dialog.show("npc1");
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
       case GameState::SETTINGS:
