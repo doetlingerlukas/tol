@@ -54,12 +54,8 @@ class Game {
     case sf::Event::KeyPressed:
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
-
-      case sf::Keyboard::Q:
-        if (state == GameState::PLAY)
-          instance.setState(GameState::DIALOG);
-        else
-          instance.setState(GameState::PLAY);
+        case sf::Keyboard::Q:
+        state = GameState::DIALOG;
         break;
       case sf::Keyboard::Escape:
         instance.setState(GameState::MENU);
@@ -186,7 +182,7 @@ public:
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
     const std::shared_ptr<Nuklear> nuklear = std::make_shared<Nuklear>(window.getSize(), stats, asset_cache, &window);
-    const auto dialog = Dialog(nuklear);
+    auto dialog = Dialog(nuklear);
 
     nuklear->setScale(scale);
 
@@ -195,6 +191,7 @@ public:
     });
 
     while (window.isOpen()) {
+      //std::this_thread::sleep_for(std::chrono::milliseconds(200));
       const auto millis = clock.restart().asMilliseconds();
       const auto dt = millis / 1000.f;
       now += std::chrono::milliseconds(millis);
@@ -238,7 +235,6 @@ public:
 
         window.pushGLStates();
         dialog.show("npc1");
-        //nuklear->renderDialog();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
       case GameState::SETTINGS:

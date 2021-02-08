@@ -17,6 +17,7 @@
 
 #include <asset_cache.hpp>
 #include <stats.hpp>
+#include <dialog_state.hpp>
 #include <nlohmann/json.hpp>
 #include <game-state.hpp>
 #include <settings.hpp>
@@ -36,7 +37,6 @@ class Nuklear {
     ctx = nk_sfml_init(window);
     return ctx;
   }
-
 public:
   struct nk_context* getCtx() const {
     return ctx;
@@ -206,7 +206,58 @@ public:
     nk_style_pop_style_item(ctx);
   }
 
-  void renderDialog(const json& lines) {
+  std::pair<json, DialogState> renderResponseDialog(const json& dialog, DialogState dialog_state, const json& init) {
+    struct nk_style& s = ctx->style;
+    nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
+
+    const float dialog_height = size.y * 0.10;
+    const float dialog_height_offset = size.y - dialog_height - size.y * 0.05;
+    const float dialog_element_height = size.y * 0.05;
+    const float dialog_width = size.x * 0.8;
+    const float dialog_width_offset = (size.x - dialog_width) / 2;
+
+    nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
+    nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(255, 232, 225, 100)));
+    nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(255, 232,225, 200)));
+    ctx->style.button.text_alignment = NK_TEXT_LEFT;
+    ctx->style.button.border = 0;
+    ctx->style.window.border = 10.0f;
+
+    bool selected = false;
+    if (nk_begin(ctx, "dialog_response", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
+      static const float ratio[] = {0.01f, 0.9f, 0.09f};
+
+      nk_layout_row_static(ctx, dialog_height / 5, 15, 1);
+      nk_layout_row(ctx, NK_DYNAMIC, 0, 2, ratio);
+      nk_spacing(ctx, 1);
+
+      if(dialog.is_string()) {
+        if (nk_button_label(ctx, dialog.get<std::string>().c_str()))
+          selected = true;
+      } else {
+        if (nk_button_label(ctx, dialog[stateAsString(dialog_state)].get<std::string>().c_str()))
+          selected = true;
+      }
+    }
+
+    nk_end(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+    nk_style_pop_style_item(ctx);
+
+    if (!selected) {
+      return std::make_pair(dialog, dialog_state);
+    } else {
+      if(dialog.is_string()) {
+        return std::make_pair(init, !dialog_state);
+      } else {
+        return std::make_pair(dialog, !dialog_state);
+      }
+    }
+  }
+
+  std::pair<json, DialogState> renderDialog(const json& lines, DialogState dialog_state) {
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
@@ -223,17 +274,18 @@ public:
     ctx->style.button.border = 0;
     ctx->style.window.border = 10.0f;
 
+    std::optional<int> response;
     if (nk_begin(ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = {0.01f, 0.9f, 0.09f};
 
       nk_layout_row_static(ctx, dialog_height * 0.065, 15, 1);
       nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
 
-      for (const auto& line : lines) {
+      for (int i = 0; i < lines.size(); i++) {
         nk_spacing(ctx, 1);
 
-        if (nk_button_label(ctx, line["question"].get<std::string>().c_str()))
-          std::cout << line["response"] << std::endl;
+        if (nk_button_label(ctx, lines[i][stateAsString(dialog_state)].get<std::string>().c_str()))
+          response = i;
       }
     }
 
@@ -242,6 +294,12 @@ public:
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
+
+    if (response) {
+      const auto dialog_type = !dialog_state;
+      return std::make_pair(lines[*response][stateAsString(dialog_type)], dialog_type);
+    } else
+      return std::make_pair(lines, dialog_state);
   }
 
   Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* window):
