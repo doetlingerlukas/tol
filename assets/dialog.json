@@ -11,7 +11,19 @@
       },
       {
         "question": "Are you lost?",
-        "response": "Surely not."
+        "response": {
+          "question": "You think this is funny?",
+          "response": [
+            {
+              "question": "Yes",
+              "response": 1
+            },
+            {
+              "question": "No",
+              "response": 0
+            }
+          ]
+        }
       },
       {
         "question": "What is happening?",
