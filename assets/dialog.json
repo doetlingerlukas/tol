@@ -29,7 +29,40 @@
         "question": "What is happening?",
         "response": "Exceptional things."
       }
-    ]
+    ],
+    "npc2": {
+      "question": "You, who do you think you are?",
+      "response": [
+        {
+          "question": "I am Detlef de Loost.",
+          "response": {
+            "question": "What a shitty name.",
+            "response": [
+              {
+                "question": "You take that back!",
+                "response": 3
+              },
+              {
+                "question": "Don't be so rude.",
+                "response": 1
+              }
+            ]
+          }
+        },
+        {
+          "question": "None of your business!",
+          "response": "Yes I think it is."
+        },
+        {
+          "question": "Why you have to be so mad?",
+          "response": "I am not mad, you are!"
+        },
+        {
+          "question": "Who are you?",
+          "response": "I am Juan, the wisdom of Oz."
+        }
+      ]
+    }
   }
 }
 

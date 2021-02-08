@@ -303,7 +303,6 @@ public:
     if (response) {
       const auto dialog_type = !dialog_state;
       if (*response != -1) {
-        std::cout << std::setw(2) << lines[*response][stateAsString(dialog_type)] << std::endl;
         return std::make_pair(lines[*response][stateAsString(dialog_type)], dialog_type);
       } else {
         return std::make_pair(0, dialog_type);

@@ -12,6 +12,8 @@ extern std::string stateAsString(DialogState state) {
     case DialogState::RESPONSE:
       return "response";
   }
+
+  return "question";
 }
 
 extern DialogState operator!(DialogState state) {

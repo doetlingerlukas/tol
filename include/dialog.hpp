@@ -26,6 +26,11 @@ public:
   GameState show(const std::string& character) {
     if(dialog_progress.is_null()) {
       init_npc_dialog = dialog_progress = dialog[character];
+
+      if(dialog_progress.is_object()) {
+        dialog_state = DialogState::RESPONSE;
+        init_npc_dialog = dialog_progress[stateAsString(dialog_state)];
+      }
     }
 
     if(dialog_progress.is_array()) {
