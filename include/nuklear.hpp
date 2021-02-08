@@ -10,6 +10,7 @@
 
 #include <cstdarg>
 #include <cstring>
+#include <optional>
 #include "nuklear.h"
 #include "nuklear_sfml_gl2.h"
 
