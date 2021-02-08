@@ -20,7 +20,7 @@
 #include <stats.hpp>
 #include <dialog_state.hpp>
 #include <nlohmann/json.hpp>
-#include <game-state.hpp>
+#include <game_state.hpp>
 #include <settings.hpp>
 
 using json = nlohmann::json;

@@ -1,9 +1,11 @@
 #pragma once
 
 enum class GameState {
-  MENU,
   PLAY,
   DIALOG,
+  FIGHT,
+  QUEST,
+  MENU,
   SETTINGS,
   QUIT
 };

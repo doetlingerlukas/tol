@@ -28,6 +28,7 @@
 #include <settings.hpp>
 #include <stats.hpp>
 #include <dialog.hpp>
+#include <music.hpp>
 #include <game_state.hpp>
 
 class Game {
