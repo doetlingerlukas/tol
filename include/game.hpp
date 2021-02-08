@@ -52,7 +52,7 @@ class Game {
         break;
       case sf::Event::MouseMoved:
         if (state == GameState::MENU) {
-          menu.mouse({ event.mouseMove.x, event.mouseMove.y }, mouse_pressed);
+          //menu.mouse({ event.mouseMove.x, event.mouseMove.y }, mouse_pressed);
         }
         break;
       case sf::Event::MouseButtonPressed:
@@ -61,7 +61,7 @@ class Game {
           mouse_pressed = event.type == sf::Event::MouseButtonPressed;
 
           if (event.mouseButton.button == sf::Mouse::Button::Left) {
-            menu.mouse({ event.mouseButton.x, event.mouseButton.y }, mouse_pressed);
+            //menu.mouse({ event.mouseButton.x, event.mouseButton.y }, mouse_pressed);
           }
         } else {
           mouse_pressed = false;
@@ -72,7 +72,7 @@ class Game {
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
         case sf::Keyboard::Q:
-        state = GameState::DIALOG;
+        instance.setState(GameState::DIALOG);
         break;
       case sf::Keyboard::Escape:
         instance.setState(GameState::MENU);
@@ -208,7 +208,6 @@ public:
     });
 
     while (window.isOpen()) {
-      //std::this_thread::sleep_for(std::chrono::milliseconds(200));
       const auto millis = clock.restart().asMilliseconds();
       const auto dt = millis / 1000.f;
       now += std::chrono::milliseconds(millis);
@@ -253,9 +252,10 @@ public:
         window.draw(play_state);
 
         window.pushGLStates();
-        state = dialog.show("npc1");
+        instance.setState(dialog.show("npc1"));
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
+        break;
       case GameState::SETTINGS:
         window.pushGLStates();
         nuklear->renderSettings(instance, settings);
