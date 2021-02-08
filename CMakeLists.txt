@@ -18,6 +18,9 @@ if(UNIX AND NOT APPLE)
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL)
   target_link_libraries(tol PRIVATE OpenGL::GL)
+
+  find_package(OpenAL CONFIG REQUIRED)
+  target_link_libraries(tol PRIVATE OpenAL::OpenAL)
 endif()
 
 if(WIN32)
