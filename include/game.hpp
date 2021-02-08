@@ -42,12 +42,29 @@ class Game {
   sf::Vector2f resolution_scale;
   sf::Uint32 window_style;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music) {
-    const auto state = instance.getState();
+  bool mouse_pressed;
 
+  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu) {
     switch (event.type) {
-    case sf::Event::Closed:
-      window.close();
+      case sf::Event::Closed:
+        window.close();
+        break;
+      case sf::Event::MouseMoved:
+        if (state == GameState::MENU) {
+          menu.mouse({ event.mouseMove.x, event.mouseMove.y }, mouse_pressed);
+        }
+        break;
+      case sf::Event::MouseButtonPressed:
+      case sf::Event::MouseButtonReleased:
+        if (state == GameState::MENU) {
+          mouse_pressed = event.type == sf::Event::MouseButtonPressed;
+
+          if (event.mouseButton.button == sf::Mouse::Button::Left) {
+            menu.mouse({ event.mouseButton.x, event.mouseButton.y }, mouse_pressed);
+          }
+        } else {
+          mouse_pressed = false;
+        }
       break;
 
     case sf::Event::KeyPressed:
