@@ -54,12 +54,12 @@ public:
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 8.f });
 
-    pick_up_sound.setBuffer(pick_up_sound_buffer);
-
-    const auto file = asset_cache->loadFile("music/item-pick-up.ogg");
+    const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
     if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
       throw std::runtime_error("Failed loading sound.");
     }
+
+    pick_up_sound.setBuffer(pick_up_sound_buffer);
   }
 
   sf::FloatRect bounding_box_rect;
@@ -281,9 +281,9 @@ public:
       auto& [id, collectible] = *it;
 
       if (collectible.collides_with(next_bounds)) {
-        it = collectibles.erase(it);
         std::cout << "Item collected: " << collectible.getName() << std::endl;
         pick_up_sound.play();
+        it = collectibles.erase(it);
       } else {
         it++;
       }
