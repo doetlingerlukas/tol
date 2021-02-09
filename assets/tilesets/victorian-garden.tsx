@@ -134,6 +134,66 @@
    <object id="1" x="6" y="20" width="20" height="12"/>
   </objectgroup>
  </tile>
+ <tile id="295">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="296">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="297">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="298">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="299">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="300">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="311">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="312">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="313">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="314">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="315">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="316">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="592">
   <animation>
    <frame tileid="592" duration="300"/>
