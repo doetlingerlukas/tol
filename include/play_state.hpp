@@ -15,12 +15,12 @@ class PlayState: public sf::Drawable {
   std::shared_ptr<AssetCache> asset_cache;
 
   sf::View map_view;
-  sf::Font font;
   TiledMap* map;
   Character* player;
 
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
+  sf::Font font;
 
   std::vector<sf::RectangleShape> collision_rects;
 
@@ -42,7 +42,7 @@ class PlayState: public sf::Drawable {
     ss << "Player: " << player->getPosition().x << ", " << player->getPosition().y << "\n";
 
     sf::Text text;
-    text.setFont(font);
+    text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
     text.setCharacterSize(16 * scale.y);
     text.setFillColor(sf::Color::White);
     text.setOutlineColor(sf::Color::Black);

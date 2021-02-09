@@ -18,14 +18,23 @@ if(UNIX AND NOT APPLE)
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL)
   target_link_libraries(tol PRIVATE OpenGL::GL)
+
+  find_package(OpenAL CONFIG REQUIRED)
+  target_link_libraries(tol PRIVATE OpenAL::OpenAL)
 endif()
 
+if(WIN32)
+  target_link_libraries(tol PRIVATE opengl32)
+endif()
+
+find_path(NUKLEAR_INCLUDE_DIRS "nuklear.h")
+target_include_directories(tol PRIVATE ${NUKLEAR_INCLUDE_DIRS})
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
-find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
-target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-system)
+find_package(SFML COMPONENTS system window graphics audio CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-audio sfml-system)
 
 add_custom_target(assets ALL
   COMMAND "${CMAKE_COMMAND}" -E copy_directory

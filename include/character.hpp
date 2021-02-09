@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <stats.hpp>
 
 #include <animation.hpp>
 #include <z_indexable.hpp>
@@ -34,13 +35,15 @@ const int TILE_SIZE = 64;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
+  std::shared_ptr<Stats> stats;
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
   std::chrono::milliseconds now;
+  std::chrono::milliseconds last_collision = std::chrono::milliseconds(0);
 
 public:
-  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_) {
+  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> _stats) : asset_cache(asset_cache_), stats(_stats) {
     auto texture = asset_cache->loadTexture(path);
     sprite.setTexture(*texture);
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
@@ -123,7 +126,6 @@ public:
 
   void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
     float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, const sf::Vector2f& map_size) {
-
     auto position = getPosition();
 
     sf::Vector2f velocity = { 0.f, 0.f };
@@ -144,7 +146,7 @@ public:
       velocity.y += 1.0 * speed;
     }
 
-    auto stop_movement = [this, &x_direction, &y_direction](CharacterDirection direction) {
+    auto stop_movement = [this, &x_direction, &y_direction, now](CharacterDirection direction) {
       if (direction == LEFT || direction == RIGHT) {
         if (x_direction == direction) {
           x_direction = std::nullopt;
@@ -162,6 +164,13 @@ public:
           }
         }
       }
+
+      const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_collision);
+
+      if(td.count() > 250)
+        stats->health().decrement(10);
+
+      this->last_collision = now;
     };
 
     const auto player_bounds = getBoundingRect();
@@ -176,6 +185,8 @@ public:
     const auto player_right = player_left + player_width;
     const auto player_top = player_bounds.top;
     const auto player_bottom = player_top + player_height;
+
+    const auto td2 = now - this->now;
 
     for (auto& rect : collision_rects) {
       auto obstacle_bounds = rect.getGlobalBounds();
