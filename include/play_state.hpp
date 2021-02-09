@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <fmt/core.h>
 
 #include <map.hpp>
 #include <character.hpp>
@@ -35,10 +36,10 @@ class PlayState: public sf::Drawable {
     }
 
     auto center = map_view.getCenter();
+    const auto& position = getPlayer().getPosition();
 
-    std::stringstream ss;
-    ss << "Center Coords: " << center.x << ", " << center.y << "\n";
-    ss << "Player: " << getPlayer().getPosition().x << ", " << getPlayer().getPosition().y << "\n";
+    auto ss = fmt::format("Center Coords: {:.1f}, {:.1f}\nPlayer: {:.1f}, {:.1f}\n",
+                center.x, center.y, position.x, position.y);
 
     sf::Text text;
     text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
@@ -46,7 +47,7 @@ class PlayState: public sf::Drawable {
     text.setFillColor(sf::Color::White);
     text.setOutlineColor(sf::Color::Black);
     text.setOutlineThickness(1);
-    text.setString(ss.str());
+    text.setString(ss);
 
     target.setView(target.getDefaultView());
     target.draw(text);

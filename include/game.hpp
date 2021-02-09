@@ -18,6 +18,7 @@
 #include <nuklear.hpp>
 
 #include <SFML/Graphics.hpp>
+#include <fmt/core.h>
 
 #include <map.hpp>
 #include <string>
@@ -147,14 +148,13 @@ public:
     resolution_scale = { 1.0, 1.0 };
 
     auto video_mode = sf::VideoMode::getDesktopMode();
-    std::cout << "Full Resolution: " << video_mode.width << "," << video_mode.height << std::endl;
+    fmt::print("Full Resolution: {}, {}\n", video_mode.width, video_mode.height);
 
     #if __APPLE__
     auto display_id = CGMainDisplayID();
     auto width = CGDisplayPixelsWide(display_id);
     auto height = CGDisplayPixelsHigh(display_id);
-
-    std::cout << "Scaled Resolution: " << width << "," << height << std::endl;
+    fmt::print("Scaled Resolution: {}, {}\n", width, height);
 
     resolution_scale.x = static_cast<float>(video_mode.width) / static_cast<float>(width);
     resolution_scale.y = static_cast<float>(video_mode.height) / static_cast<float>(height);

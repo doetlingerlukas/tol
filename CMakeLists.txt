@@ -36,6 +36,9 @@ target_link_libraries(tol PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 find_package(SFML COMPONENTS system window graphics audio CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-audio sfml-system)
 
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE fmt::fmt)
+
 add_custom_target(assets ALL
   COMMAND "${CMAKE_COMMAND}" -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
