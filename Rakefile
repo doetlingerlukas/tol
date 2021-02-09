@@ -10,8 +10,6 @@ end
 
 task :deps do
   sh 'brew', 'install', 'vcpkg' if mac?
-  sh 'vcpkg', 'install', 'glad'
-  sh 'vcpkg', 'install', 'glfw3'
   sh 'vcpkg', 'install', 'sfml'
   sh 'vcpkg', 'install', 'nlohmann-json'
 end
