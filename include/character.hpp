@@ -47,7 +47,7 @@ public:
     auto texture = asset_cache->loadTexture(path);
     sprite.setTexture(*texture);
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
-    sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE / 8.f * 7.f });
+    sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 8.f });
   }
 
   sf::FloatRect bounding_box_rect;
@@ -100,8 +100,8 @@ public:
 
   sf::FloatRect getBoundingRect() const {
     const auto& position = getPosition();
-    const auto width = (TILE_SIZE / 8.f * 3.f);
-    const auto height = (TILE_SIZE / 8.f * 2.f);
+    const auto width = 16.f;
+    const auto height = 8.f;
 
     return {
       (position.x - width / 2.f),
