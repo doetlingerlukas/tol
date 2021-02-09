@@ -1,3 +1,7 @@
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/cfg/env.h"
+
 #include <game.hpp>
 #include <settings.hpp>
 
@@ -9,8 +13,14 @@
 
 int main(int argc, char **argv) {
   try {
+    spdlog::cfg::load_env_levels();
+
     const auto executeable_path = fs::canonical(argv[0]);
     const auto executeable_dir = executeable_path.parent_path();
+
+    spdlog::basic_logger_mt("file_logger", fs::path(executeable_dir / "logs"  / "basic-log.txt"));
+    auto logger = spdlog::get("file_logger");
+    logger->set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
 
     auto settings = Settings(executeable_path);
 

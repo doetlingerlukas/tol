@@ -39,6 +39,9 @@ target_link_libraries(tol PRIVATE sfml-graphics sfml-window sfml-audio sfml-syst
 find_package(fmt CONFIG REQUIRED)
 target_link_libraries(tol PRIVATE fmt::fmt)
 
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
+
 add_custom_target(assets ALL
   COMMAND "${CMAKE_COMMAND}" -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
