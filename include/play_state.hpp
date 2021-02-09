@@ -20,6 +20,7 @@ class PlayState: public sf::Drawable {
 
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
+  sf::Font font;
 
   std::vector<sf::RectangleShape> collision_rects;
 

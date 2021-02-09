@@ -45,7 +45,9 @@ class Game {
 
   bool mouse_pressed;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, Menu& menu) {
+  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music) {
+    const auto state = instance.getState();
+
     switch (event.type) {
       case sf::Event::Closed:
         window.close();
@@ -132,7 +134,7 @@ class Game {
     }
 
     if (!settings.fullscreen() && window_style == sf::Style::Fullscreen) {
-      window_style = window_style = sf::Style::Titlebar | sf::Style::Close;
+      window_style = window_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
       window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
     }
 
@@ -140,7 +142,7 @@ class Game {
   }
 
 public:
-  Game(Settings& settings_) : settings(settings_), instance(GameInstance()) {
+  Game(fs::path dir_, Settings& settings_) : dir(dir_), settings(settings_), instance(GameInstance()) {
     scale = { 2.0, 2.0 };
     resolution_scale = { 1.0, 1.0 };
 
@@ -161,12 +163,10 @@ public:
     scale.x *= resolution_scale.x;
     scale.y *= resolution_scale.y;
 
-    sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
-
     if (settings.fullscreen()) {
       window_style = sf::Style::Fullscreen;
     } else {
-      window_style = sf::Style::Titlebar | sf::Style::Close;
+      window_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
     }
   }
 

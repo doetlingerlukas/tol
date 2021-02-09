@@ -11,9 +11,8 @@ int main(int argc, char **argv) {
   try {
     const auto executeable_path = fs::canonical(argv[0]);
     const auto executeable_dir = executeable_path.parent_path();
-    auto settings = Settings(argv[0]);
 
-    const auto settings = Settings(executeable_path);
+    auto settings = Settings(executeable_path);
 
     Game game(executeable_dir, settings);
     game.run();
