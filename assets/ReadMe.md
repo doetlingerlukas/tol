@@ -3,3 +3,12 @@
 - https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles
 - https://opengameart.org/content/lpc-style-wood-bridges-and-steel-flooring
 - https://opengameart.org/content/lpc-submissions-merged
+- https://opengameart.org/content/lpc-victorian-buildings
+- https://opengameart.org/content/lpc-victorian-town-decorations
+
+# Music
+
+- adrift by airtone
+  (c) copyright 2020 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/airtone/62216
+- forgottenland by airtone
+  (c) copyright 2020 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/airtone/61959

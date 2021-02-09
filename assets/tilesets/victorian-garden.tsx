@@ -1,6 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.3" name="vgard" tilewidth="32" tileheight="32" tilecount="1024" columns="16">
  <image source="victorian-garden.png" trans="ff00ff" width="512" height="2048"/>
+ <tile id="160">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="161">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="162">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="163">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="164">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="165">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="166">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="167">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="168">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="169">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="176">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="177">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="178">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="179">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="180">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="181">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="182">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="183">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="184">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
+ <tile id="185">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="6" y="20" width="20" height="12"/>
+  </objectgroup>
+ </tile>
  <tile id="592">
   <animation>
    <frame tileid="592" duration="300"/>
