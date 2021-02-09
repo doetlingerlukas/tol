@@ -130,12 +130,12 @@ public:
       nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio);
 
       nk_spacing(ctx, 1);
-      
+
       if (nk_button_label(ctx, "SAVE")) {
         game.setSettingsChanged(true);
         game.setState(GameState::MENU);
       }
-      
+
       nk_spacing(ctx, 1);
 
       nk_label(ctx, "V-Sync:", NK_TEXT_LEFT);
@@ -157,13 +157,13 @@ public:
       nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
 
       nk_spacing(ctx, 1);
-      
+
       nk_layout_row_begin(ctx, NK_DYNAMIC, setting_height * scale.y, 2);
       {
         nk_layout_row_push(ctx, 0.3);
         nk_label(ctx, "Volume:", NK_TEXT_LEFT);
         nk_layout_row_push(ctx, 0.5);
-        nk_slider_float(ctx, 0, &settings.volume_level , 1.0f, 0.1f);
+        nk_slider_float(ctx, 0, &settings.volume_level , 1.0f, 0.01f);
       }
       nk_layout_row_end(ctx);
     }
