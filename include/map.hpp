@@ -102,7 +102,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         if (x >= player_texture_tile_from_x && x <= player_texture_tile_to_x &&
             y >= player_texture_tile_from_y && y <= player_texture_tile_to_y &&
             tile.zIndex()) {
-          deferred_tiles.push_back(std::move(tile));
+          deferred_tiles.emplace_back(std::move(tile));
           continue;
         }
 
@@ -131,7 +131,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
             object.update(now);
 
             if (object.intersects(character->getTextureBoundingRect())) {
-              deferred_tiles.push_back(std::move(object));
+              deferred_tiles.emplace_back(std::move(object));
             } else {
               target.draw(object);
             }
