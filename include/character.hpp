@@ -1,9 +1,11 @@
 #pragma once
 
 #include <optional>
-#include <stats.hpp>
+
+#include <SFML/Audio.hpp>
 
 #include <animation.hpp>
+#include <stats.hpp>
 #include <z_indexable.hpp>
 
 enum CharacterDirection {
@@ -42,12 +44,22 @@ class Character: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds now;
   std::chrono::milliseconds last_collision = std::chrono::milliseconds(0);
 
+  sf::SoundBuffer pick_up_sound_buffer;
+  sf::Sound pick_up_sound;
+
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> _stats) : asset_cache(asset_cache_), stats(_stats) {
     auto texture = asset_cache->loadTexture(path);
     sprite.setTexture(*texture);
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 8.f });
+
+    pick_up_sound.setBuffer(pick_up_sound_buffer);
+
+    const auto file = asset_cache->loadFile("music/item-pick-up.ogg");
+    if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
+      throw std::runtime_error("Failed loading sound.");
+    }
   }
 
   sf::FloatRect bounding_box_rect;
@@ -269,8 +281,9 @@ public:
       auto& [id, collectible] = *it;
 
       if (collectible.collides_with(next_bounds)) {
-        std::cout << "Item collected: " << collectible.getName() << std::endl;
         it = collectibles.erase(it);
+        std::cout << "Item collected: " << collectible.getName() << std::endl;
+        pick_up_sound.play();
       } else {
         it++;
       }
