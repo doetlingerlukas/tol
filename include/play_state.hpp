@@ -15,18 +15,17 @@ class PlayState: public sf::Drawable {
   std::shared_ptr<AssetCache> asset_cache;
 
   sf::View map_view;
-  TiledMap* map;
-  Character* player;
+  std::reference_wrapper<TiledMap> map;
+  std::reference_wrapper<Character> player;
 
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
-  sf::Font font;
 
   std::vector<sf::RectangleShape> collision_rects;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     target.setView(map_view);
-    target.draw(*map);
+    target.draw(map);
 
     for (auto shape : collision_rects) {
       shape.setScale(scale);
@@ -39,7 +38,7 @@ class PlayState: public sf::Drawable {
 
     std::stringstream ss;
     ss << "Center Coords: " << center.x << ", " << center.y << "\n";
-    ss << "Player: " << player->getPosition().x << ", " << player->getPosition().y << "\n";
+    ss << "Player: " << getPlayer().getPosition().x << ", " << getPlayer().getPosition().y << "\n";
 
     sf::Text text;
     text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
@@ -53,18 +52,24 @@ class PlayState: public sf::Drawable {
     target.draw(text);
   }
 
+  inline Character& getPlayer() const {
+    return player;
+  }
+
+  inline TiledMap& getMap() const {
+    return map;
+  }
+
 public:
-  PlayState(TiledMap* map_, Character* player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size):
+  PlayState(TiledMap& map_, Character& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size):
     map(map_), player(player_), asset_cache(asset_cache_), scale(scale_) {
 
-    font.loadFromFile((asset_cache_->dir() / "fonts/Gaegu-Regular.ttf").string());
+    map_view.reset({ 0, (getMap().getSize().y - window_size.y) * scale_.y, (float) window_size.x, (float) window_size.y });
 
-    map_view.reset({ 0, (map->getSize().y - window_size.y) * scale_.y, (float) window_size.x, (float) window_size.y });
-
-    const auto spawn = map->getSpawn();
+    const auto spawn = getMap().getSpawn();
     if (spawn) {
       map_view.setCenter({ spawn->x * scale_.x, spawn->y * scale_.y });
-      player_->setPosition(*spawn);
+      player_.setPosition(*spawn);
     }
   }
 
@@ -72,14 +77,13 @@ public:
     const auto window_size = window.getSize();
     map_view.setSize({ static_cast<float>(window_size.x), static_cast<float>(window_size.y) });
 
-    collision_rects = map->collisionTiles(*player);
+    collision_rects = getMap().collisionTiles(player);
 
-    player->move(
+    getPlayer().move(
       (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
       (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-      dt * CHARACTER_MOVE_SPEED, now, collision_rects, map->getSize()
+      dt * CHARACTER_MOVE_SPEED, now, collision_rects, getMap().getCollectibles(), getMap().getSize()
     );
-
 
     if (key_input.up && !key_input.down) {
       direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
@@ -117,8 +121,8 @@ public:
       }
     }
 
-    map_view.setCenter(map->getView(window.getSize().x, window.getSize().y));
-    map->update(map_view, window, now);
+    map_view.setCenter(getMap().getView(window.getSize().x, window.getSize().y));
+    getMap().update(map_view, window, now);
   }
 
 };

@@ -11,6 +11,7 @@
 
 #include <asset_cache.hpp>
 #include <tile.hpp>
+#include <object.hpp>
 #include <animation.hpp>
 #include <character.hpp>
 
@@ -21,6 +22,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   fs::path filename;
 
   std::unique_ptr<tson::Map> map;
+  std::map<int, Object> collectibles;
 
   size_t from_x;
   size_t to_x;
@@ -31,7 +33,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds now;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
-    std::vector<std::variant<Tile, Character>> deferred_tiles;
+    std::vector<std::variant<Tile, Character, Object>> deferred_tiles;
 
     for (auto& layer : map->getLayers()) {
       drawLayer(layer, target, deferred_tiles);
@@ -51,31 +53,34 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
-    switch (layer.getType()) {
+  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
+    if (layer.getName() == "collision") {
+      return;
+    }
 
-    case tson::LayerType::TileLayer:
-      drawTileLayer(layer, target, deferred_tiles);
-      break;
-    case tson::LayerType::ObjectGroup:
-      drawObjectLayer(layer, target);
-      break;
-    case tson::LayerType::ImageLayer:
-      drawImageLayer(layer, target);
-      break;
-    case tson::LayerType::Group:
-      for (auto& l : layer.getLayers()) {
-        drawLayer(l, target, deferred_tiles);
-      }
-      break;
-    default:
-      break;
+    switch (layer.getType()) {
+      case tson::LayerType::TileLayer:
+        drawTileLayer(layer, target, deferred_tiles);
+        break;
+      case tson::LayerType::ObjectGroup:
+        drawObjectLayer(layer, target, deferred_tiles);
+        break;
+      case tson::LayerType::ImageLayer:
+        drawImageLayer(layer, target);
+        break;
+      case tson::LayerType::Group:
+        for (auto& l : layer.getLayers()) {
+          drawLayer(l, target, deferred_tiles);
+        }
+        break;
+      default:
+        break;
     }
   }
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character>>& deferred_tiles) const {
+  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
     const auto player_texture_rect = character->getTextureBoundingRect();
     const auto player_texture_tile_from_x = static_cast<int>(player_texture_rect.left / getTileSize().x);
     const auto player_texture_tile_from_y = static_cast<int>(player_texture_rect.top / getTileSize().y);
@@ -90,14 +95,14 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
           continue;
         }
 
-        auto tile = Tile(&layer, tileObjectP, asset_cache);
+        auto tile = Tile(*tileObjectP, asset_cache);
         tile.setScale(getScale());
         tile.update(now);
 
         if (x >= player_texture_tile_from_x && x <= player_texture_tile_to_x &&
             y >= player_texture_tile_from_y && y <= player_texture_tile_to_y &&
             tile.zIndex()) {
-          deferred_tiles.push_back(std::move(tile));
+          deferred_tiles.emplace_back(std::move(tile));
           continue;
         }
 
@@ -114,41 +119,23 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     target.draw(sprite);
   }
 
-  void drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target) const {
+  void drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
     auto* map = layer.getMap();
     for (auto& obj : layer.getObjects()) {
       switch (obj.getObjectType()) {
         case tson::ObjectType::Object: {
-          auto* tileset = map->getTilesetByGid(obj.getGid());
-          const auto offset = getTileOffset(obj.getGid(), map, tileset);
+          const auto id = obj.getId();
+          if (collectibles.count(id) != 0 && collectibles.at(id).intersects(window_rect)) {
+            auto object = collectibles.at(id);
+            object.setScale(getScale());
+            object.update(now);
 
-          auto texture = asset_cache->loadTexture(tileset->getImagePath());
-          sf::Sprite sprite;
-          sprite.setTexture(*texture);
-          std::string name = obj.getName();
-          sf::Vector2f position = { (float)obj.getPosition().x + getPosition().x, (float)obj.getPosition().y + getPosition().y };
-
-          sf::Vector2f scale = sprite.getScale();
-          float rotation = sprite.getRotation();
-          sf::Vector2f origin{ ((float) map->getTileSize().x) / 2, ((float) map->getTileSize().y) / 2 };
-
-          if (obj.hasFlipFlags(tson::TileFlipFlags::Horizontally))
-            scale.x = -scale.x;
-          if (obj.hasFlipFlags(tson::TileFlipFlags::Vertically))
-            scale.y = -scale.y;
-          if (obj.hasFlipFlags(tson::TileFlipFlags::Diagonally))
-            rotation += 90.f;
-
-          position = { position.x + origin.x, position.y + origin.y };
-          sprite.setOrigin(origin);
-
-          sprite.setTextureRect({ (int)offset.x, (int)offset.y, map->getTileSize().x, map->getTileSize().y });
-          sprite.setPosition({ position.x, position.y });
-
-          sprite.setScale(scale);
-          sprite.setRotation(rotation);
-
-          target.draw(sprite);
+            if (object.intersects(character->getTextureBoundingRect())) {
+              deferred_tiles.emplace_back(std::move(object));
+            } else {
+              target.draw(object);
+            }
+          }
 
           break;
         }
@@ -160,25 +147,6 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  sf::Vector2f getTileOffset(const uint32_t tileId, const tson::Map* map, const tson::Tileset* tileset) const {
-    uint32_t firstId = tileset->getFirstgid();
-    int columns = tileset->getColumns();
-    int rows = tileset->getTileCount() / columns;
-    uint32_t lastId = (tileset->getFirstgid() + tileset->getTileCount()) - 1;
-
-    if (tileId >= firstId && tileId <= lastId) {
-      const size_t baseTilePosition = tileId - firstId;
-
-      const size_t tileModX = (baseTilePosition % columns);
-      const size_t currentRow = (baseTilePosition / columns);
-      const float offsetX = (tileModX != 0) ? ((tileModX) * map->getTileSize().x) : (0 * map->getTileSize().x);
-      const float offsetY = (currentRow < rows - 1) ? (currentRow * map->getTileSize().y) : ((rows - 1) * map->getTileSize().y);
-      return sf::Vector2f(offsetX, offsetY);
-    }
-
-    return { 0.f, 0.f };
-  }
-
   void createTileData(tson::Layer& layer) {
     if (layer.getType() == tson::LayerType::Group) {
       for (auto& nested: layer.getLayers()) {
@@ -187,6 +155,26 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     } else if (layer.getType() == tson::LayerType::TileLayer) {
    		layer.assignTileMap((std::map<uint32_t, tson::Tile*>*)(&map->getTileMap()));
    		layer.createTileData(map->getSize(), map->isInfinite());
+    }
+  }
+
+  void gatherCollectibles(tson::Layer& layer) {
+    if (layer.getType() == tson::LayerType::Group) {
+      for (auto& nested: layer.getLayers()) {
+        gatherCollectibles(nested);
+      }
+    } else if (layer.getType() == tson::LayerType::ObjectGroup) {
+      for (auto& obj : layer.getObjects()) {
+        if (obj.getObjectType() == tson::ObjectType::Object && obj.getType() == "collectible") {
+          auto* tileset = map->getTilesetByGid(obj.getGid());
+
+          collectibles.emplace(
+            std::piecewise_construct,
+            std::make_tuple(obj.getId()),
+            std::make_tuple(std::cref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache)
+          );
+        }
+      }
     }
   }
 
@@ -217,6 +205,8 @@ public:
       if (layer.getType() == tson::LayerType::Group) {
         createTileData(layer);
       }
+
+      gatherCollectibles(layer);
     }
 
     for (const auto& tileset: map->getTilesets()) {
@@ -257,19 +247,34 @@ public:
     return { static_cast<int>(coords.x / factor_x), static_cast<int>(coords.y / factor_y) };
   }
 
+  sf::FloatRect getWindowRect() {
+    return window_rect;
+  }
+
+  sf::FloatRect window_rect;
+
   void update(const sf::View& view, const sf::RenderWindow& window, const std::chrono::milliseconds& now) {
     this->now = now;
 
     const auto window_size = window.getSize();
 
-    auto from = mapCoordsToTile(window.mapPixelToCoords({0, 0}, view));
-    auto to = mapCoordsToTile(window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view));
+    const auto from_coords = window.mapPixelToCoords({0, 0}, view);
+    const auto from_tile = mapCoordsToTile(from_coords);
+    const auto to_coords = window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view);
+    const auto to_tile = mapCoordsToTile(to_coords);
+
+    window_rect = {
+      static_cast<float>(from_coords.x) / getScale().x,
+      static_cast<float>(from_coords.y) / getScale().y,
+      static_cast<float>(to_coords.x - from_coords.x) / getScale().x,
+      static_cast<float>(to_coords.y - from_coords.y) / getScale().y
+    };
 
     // Update culling range.
-    from_x = std::max(0, from.x);
-    to_x = std::max(0, to.x) + 1;
-    from_y = std::max(0, from.y);
-    to_y = std::max(0, to.y) + 1;
+    from_x = std::max(0, from_tile.x);
+    to_x = std::max(0, to_tile.x) + 1;
+    from_y = std::max(0, from_tile.y);
+    to_y = std::max(0, to_tile.y) + 1;
   }
 
   void setPosition(sf::Vector2f position, const sf::RenderTarget& target) {
@@ -320,6 +325,10 @@ public:
     this->character = character;
   }
 
+  std::map<int, Object>& getCollectibles() {
+    return collectibles;
+  }
+
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const {
     std::vector<sf::RectangleShape> shapes;
 
@@ -352,7 +361,7 @@ public:
                 continue;
               }
 
-              auto tile = Tile(&layer, tileObjectP, asset_cache);
+              auto tile = Tile(*tileObjectP, asset_cache);
               tile.setScale(getScale());
               tile.update(now);
 

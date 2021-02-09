@@ -125,7 +125,7 @@ public:
   }
 
   void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-    float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, const sf::Vector2f& map_size) {
+    float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, std::map<int, Object>& collectibles, const sf::Vector2f& map_size) {
     auto position = getPosition();
 
     sf::Vector2f velocity = { 0.f, 0.f };
@@ -263,6 +263,17 @@ public:
     if (next_bounds.top + player_height > map_size.y) {
       next_bounds.top = map_size.y - player_height;
       stop_movement(DOWN);
+    }
+
+    for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
+      auto& [id, collectible] = *it;
+
+      if (collectible.collides_with(next_bounds)) {
+        std::cout << "Item collected: " << collectible.getName() << std::endl;
+        it = collectibles.erase(it);
+      } else {
+        it++;
+      }
     }
 
     setPosition({ next_bounds.left + player_width / 2.f, next_bounds.top + player_height / 2.f });

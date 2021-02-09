@@ -189,7 +189,7 @@ public:
 
     map.addCharacter(&player);
 
-    PlayState play_state(&map, &player, asset_cache, scale, window.getSize());
+    PlayState play_state(map, player, asset_cache, scale, window.getSize());
     KeyInput key_input;
     tol::Music music(fs::path("assets/music"));
     music.play_background();
