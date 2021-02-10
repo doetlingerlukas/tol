@@ -2,29 +2,18 @@
 
 require 'json'
 
-BUILD_DIR = 'build'
+BUILD_DIR = './build'
 
 def mac?
   RUBY_PLATFORM.include?('darwin')
 end
 
 task :deps do
-  sh 'brew', 'install', 'vcpkg' if mac?
-  sh 'vcpkg', 'install', 'fmt'
-  sh 'vcpkg', 'install', 'sfml'
-  sh 'vcpkg', 'install', 'spdlog'
-  sh 'vcpkg', 'install', 'nlohmann-json'
+  sh './deps.sh'
 end
 
 task :build do
-  vcpkg_prefix = if mac?
-    `brew --prefix vcpkg`.chomp
-  else
-    '/usr/share/vcpkg'
-  end
-  toolchain_file = "#{vcpkg_prefix}/libexec/scripts/buildsystems/vcpkg.cmake"
-
-  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '-DCMAKE_BUILD_TYPE=Debug', "-DCMAKE_TOOLCHAIN_FILE=#{toolchain_file}"
+  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '-DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake'
   sh 'cmake', '--build', BUILD_DIR, '-v'
 end
 

@@ -3,25 +3,37 @@
 ## Dependencies
 
 - CMake (https://cmake.org)
-- Ruby & Rake (https://www.ruby-lang.org/)
+- Ruby (https://www.ruby-lang.org/)
 - Tiled (https://www.mapeditor.org)
+- Ninja (https://ninja-build.org)
 - vcpkg (https://docs.microsoft.com/cpp/build/vcpkg)
+
+To install these, run `./deps.sh`.
 
 ## Building
 
-Before building for the first time, install the needed packages using
+Build using
 
 ```sh
-rake deps
+cmake -G Ninja -B ./build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build ./build -v
 ```
 
-and then build using
+or alternatively, simply run
 
 ```sh
 rake build
 ```
 
 ## Running
+
+Start the application using
+
+```sh
+./build/tol
+```
+
+or alternatively, run
 
 ```sh
 rake run
