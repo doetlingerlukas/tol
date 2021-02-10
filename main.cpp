@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     const auto executeable_path = fs::canonical(argv[0]);
     const auto executeable_dir = executeable_path.parent_path();
 
-    spdlog::basic_logger_mt("file_logger", fs::path(executeable_dir / "logs"  / "basic-log.txt"));
+    spdlog::basic_logger_mt("file_logger", fs::path(executeable_dir / "logs"  / "basic-log.txt").string());
     auto logger = spdlog::get("file_logger");
     logger->set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
 
