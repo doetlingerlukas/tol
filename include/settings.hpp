@@ -62,7 +62,7 @@ class Settings {
 public:
   float volume_level;
 
-  Settings(const fs::path exec_path) : settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
+  explicit Settings(const fs::path exec_path) : settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
     loadSettings();
   }
 
@@ -89,5 +89,19 @@ public:
 
   void set_vsync(bool value) {
     vsync_enabled = value;
+  }
+
+  void serialize() const {
+    json settings;
+
+    settings["settings"]["resolution"]["width"] = resolution_width;
+    settings["settings"]["resolution"]["height"] = resolution_height;
+    settings["settings"]["fullscreen"] = is_fullscreen;
+    settings["settings"]["vsync"] = vsync_enabled;
+    settings["settings"]["volume"] = volume_level;
+
+    std::ofstream ofs(settings_path, std::ofstream::out | std::ofstream::trunc);
+    ofs << settings.dump(2);
+    ofs.close();
   }
 };

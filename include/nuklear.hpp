@@ -132,6 +132,7 @@ public:
       nk_spacing(ctx, 1);
 
       if (nk_button_label(ctx, "SAVE")) {
+        settings.serialize();
         game.setSettingsChanged(true);
         game.setState(GameState::MENU);
       }
