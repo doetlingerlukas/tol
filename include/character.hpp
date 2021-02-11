@@ -34,6 +34,7 @@ const int CHARACTER_ANIMATION_FRAMES[6] {
 };
 
 const int TILE_SIZE = 64;
+const int EFFECT_TILE_SIZE = 32;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -46,13 +47,18 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
+  mutable sf::Sprite effect;
+
+  std::optional<sf::IntRect> current_effect;
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> _stats) : asset_cache(asset_cache_), stats(_stats) {
-    auto texture = asset_cache->loadTexture(path);
-    sprite.setTexture(*texture);
+    sprite.setTexture(*asset_cache->loadTexture(path));
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 8.f });
+
+    effect.setTexture(*asset_cache->loadTexture("tilesets/effects.png"));
+    effect.setOrigin({ EFFECT_TILE_SIZE / 2.f, EFFECT_TILE_SIZE / 2.f });
 
     const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
     if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
@@ -104,10 +110,17 @@ public:
     texture_bounding_box.setPosition({texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y});
     texture_bounding_box.setScale(scale);
 
+    if (current_effect) {
+      effect.setTextureRect(*current_effect);
+      effect.setPosition({ getPosition().x * scale.x, (getPosition().y - EFFECT_TILE_SIZE * 1.5f) * scale.y });
+      effect.setScale({ scale.x, scale.y });
+    }
+
     target.draw(shadow);
     target.draw(sprite);
     target.draw(bounding_box);
     target.draw(texture_bounding_box);
+    target.draw(effect);
   }
 
   sf::FloatRect getBoundingRect() const {
@@ -319,5 +332,39 @@ public:
   virtual std::optional<float> zIndex() const {
     const auto& texture_bounding_rect = getTextureBoundingRect();
     return texture_bounding_rect.top + texture_bounding_rect.height;
+  }
+
+  float distanceTo(const Character& other) {
+    const auto a = getPosition();
+    const auto b = other.getPosition();
+
+    return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
+  }
+
+  void setEffectRect(sf::IntRect effect) {
+    current_effect = effect;
+  }
+
+  void resetEffect() {
+    current_effect = std::nullopt;
+  }
+
+  void lookToward(const sf::Vector2f point) {
+    const auto x_dist = std::abs(point.x - getPosition().x);
+    const auto y_dist = std::abs(point.y - getPosition().y);
+
+    if (x_dist >= y_dist) {
+      if (point.x < getPosition().x) {
+        last_direction = LEFT;
+      } else {
+        last_direction = RIGHT;
+      }
+    } else {
+      if (point.y < getPosition().y) {
+        last_direction = UP;
+      } else {
+        last_direction = DOWN;
+      }
+    }
   }
 };

@@ -14,6 +14,7 @@
 #include <object.hpp>
 #include <animation.hpp>
 #include <character.hpp>
+#include <npc.hpp>
 
 class TiledMap: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -29,7 +30,9 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   size_t from_y;
   size_t to_y;
 
-  const Character* character;
+  Character* player;
+  std::vector<Npc> npcs;
+  std::vector<const Character*> characters;
   std::chrono::milliseconds now;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -39,7 +42,9 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
       drawLayer(layer, target, deferred_tiles);
 
       if (layer.getName() == "characters") {
-        deferred_tiles.push_back(*character);
+        for (const auto* character: characters) {
+          deferred_tiles.push_back(*character);
+        }
 
         std::stable_sort(deferred_tiles.begin(), deferred_tiles.end(), [&](auto a, auto b) {
           const auto z_index = [](const auto& o) { return *o.zIndex(); };
@@ -81,11 +86,17 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   mutable std::map<int, Animation> running_animations;
 
   void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
-    const auto player_texture_rect = character->getTextureBoundingRect();
-    const auto player_texture_tile_from_x = static_cast<int>(player_texture_rect.left / getTileSize().x);
-    const auto player_texture_tile_from_y = static_cast<int>(player_texture_rect.top / getTileSize().y);
-    const auto player_texture_tile_to_x = static_cast<int>((player_texture_rect.left + player_texture_rect.width) / getTileSize().x);
-    const auto player_texture_tile_to_y = static_cast<int>((player_texture_rect.top + player_texture_rect.height) / getTileSize().y);
+    std::vector<std::pair<sf::Vector2i, sf::Vector2i>> character_rects;
+
+    for (const auto* character: characters) {
+      const auto texture_rect = character->getTextureBoundingRect();
+      const auto texture_tile_from_x = static_cast<int>(texture_rect.left / getTileSize().x);
+      const auto texture_tile_from_y = static_cast<int>(texture_rect.top / getTileSize().y);
+      const auto texture_tile_to_x = static_cast<int>((texture_rect.left + texture_rect.width) / getTileSize().x);
+      const auto texture_tile_to_y = static_cast<int>((texture_rect.top + texture_rect.height) / getTileSize().y);
+
+      character_rects.emplace_back(sf::Vector2i{texture_tile_from_x, texture_tile_from_y}, sf::Vector2i{texture_tile_to_x, texture_tile_to_y});
+    }
 
     for (size_t x = from_x; x < to_x; x++) {
       for (size_t y = from_y; y < to_y; y++) {
@@ -99,14 +110,15 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
         tile.setScale(getScale());
         tile.update(now);
 
-        if (x >= player_texture_tile_from_x && x <= player_texture_tile_to_x &&
-            y >= player_texture_tile_from_y && y <= player_texture_tile_to_y &&
-            tile.zIndex()) {
+        if (tile.zIndex() && std::any_of(character_rects.begin(), character_rects.end(), [x, y](const auto& r) {
+          const auto& [from, to] = r;
+          return x >= from.x && x <= to.x &&
+                 y >= from.y && y <= to.y;
+         })) {
           deferred_tiles.emplace_back(std::move(tile));
-          continue;
+        } else {
+          target.draw(tile);
         }
-
-        target.draw(tile);
       }
     }
   }
@@ -130,7 +142,9 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
             object.setScale(getScale());
             object.update(now);
 
-            if (object.intersects(character->getTextureBoundingRect())) {
+            if (std::any_of(characters.begin(), characters.end(), [&object](const auto& c) {
+              return object.intersects(c->getTextureBoundingRect());
+            })) {
               deferred_tiles.emplace_back(std::move(object));
             } else {
               target.draw(object);
@@ -213,6 +227,21 @@ public:
       asset_cache->loadTexture(tileset.getImagePath());
     }
 
+    auto* character_layer = map->getLayer("characters");
+    if (character_layer) {
+      for (auto& character: character_layer->getObjects()) {
+        const std::string& texture = std::any_cast<const std::string&>(character.getProp("texture")->getValue());
+        std::cout << "Adding NPC with texture " << texture << std::endl;
+        Npc npc(texture, asset_cache, std::make_shared<Stats>());
+        npc.setPosition({ static_cast<float>(character.getPosition().x), static_cast<float>(character.getPosition().y) });
+        npcs.emplace_back(std::move(npc));
+      }
+    }
+
+    for (const auto& npc: npcs) {
+      characters.push_back(&npc);
+    }
+
     from_x = 0;
     to_x = map->getSize().x;
     from_y = 0;
@@ -277,7 +306,7 @@ public:
 
   sf::Vector2f getView(const float window_width, const float window_height) {
     auto scale = getScale();
-    auto character_position = character->getPosition();
+    auto character_position = player->getPosition();
 
     sf::Vector2f view({ character_position.x * scale.x, character_position.y * scale.y });
 
@@ -300,8 +329,13 @@ public:
     return view;
   }
 
+  void setPlayer(Character* player) {
+    this->player = player;
+    addCharacter(player);
+  }
+
   void addCharacter(const Character* character) {
-    this->character = character;
+    characters.push_back(character);
   }
 
   std::map<int, Object>& getCollectibles() {
@@ -378,5 +412,25 @@ public:
     }
 
     return shapes;
+  }
+
+  void setScale(float factorX, float factorY) {
+    for (auto& npc: npcs) {
+      npc.setScale(factorX, factorY);
+    }
+
+    sf::Transformable::setScale(factorX, factorY);
+  }
+
+  void setScale(const sf::Vector2f factors) {
+    for (auto& npc: npcs) {
+      npc.setScale(factors);
+    }
+
+    sf::Transformable::setScale(factors);
+  }
+
+  std::vector<Npc>& getNpcs() {
+    return npcs;
   }
 };

@@ -122,6 +122,18 @@ public:
       }
     }
 
+    for (auto& npc: getMap().getNpcs()) {
+      const auto dist = getPlayer().distanceTo(npc);
+      const auto tileDiagonal = std::sqrt(std::pow(getMap().getTileSize().x, 2) + std::pow(getMap().getTileSize().y, 2));
+
+      if (dist < tileDiagonal) {
+        npc.lookToward(getPlayer().getPosition());
+        npc.setEffectRect({480, 192, EFFECT_TILE_SIZE, EFFECT_TILE_SIZE});
+      } else {
+        npc.resetEffect();
+      }
+    }
+
     map_view.setCenter(getMap().getView(window.getSize().x, window.getSize().y));
     getMap().update(map_view, window, now);
   }

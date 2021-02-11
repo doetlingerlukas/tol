@@ -5,6 +5,7 @@
 - https://opengameart.org/content/lpc-submissions-merged
 - https://opengameart.org/content/lpc-victorian-buildings
 - https://opengameart.org/content/lpc-victorian-town-decorations
+- https://opengameart.org/content/lpc-items-and-game-effects
 
 # Music & Sounds
 

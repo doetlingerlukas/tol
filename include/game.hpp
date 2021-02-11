@@ -187,7 +187,7 @@ public:
     map.setScale(scale);
     player.setScale(scale);
 
-    map.addCharacter(&player);
+    map.setPlayer(&player);
 
     PlayState play_state(map, player, asset_cache, scale, window.getSize());
     KeyInput key_input;
