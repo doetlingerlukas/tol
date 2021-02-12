@@ -43,7 +43,7 @@ public:
     return ctx;
   }
 
-  void renderMenu(GameInstance& game) const {
+  void renderMenu(GameInstance& game, PlayState& play_state) const {
     const float button_height = 40;
     const int r = 0;
     const int g = 0;
@@ -73,7 +73,7 @@ public:
     if (nk_begin(ctx, "menu", nk_rect(0, 0, size.x, size.y), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = { 0.3, 0.4, 0.3 };
 
-      nk_layout_row_static(ctx, (size.y - (button_height * 4.f + spacing * 5.f) * scale.y) / 2.f, 0, 1);
+      nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
       nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
 
       nk_spacing(ctx, 1);
@@ -83,8 +83,17 @@ public:
 
       nk_spacing(ctx, 1);
 
-      if (nk_button_label(ctx, "LOAD"))
-        fprintf(stdout, "load pressed\n");
+      if (nk_button_label(ctx, "LOAD")) {
+        game.load(play_state);
+        game.setState(GameState::PLAY);
+      }
+
+      nk_spacing(ctx, 1);
+
+      if (nk_button_label(ctx, "SAVE")) {
+        game.save(play_state);
+        game.setState(GameState::PLAY);
+      }
 
       nk_spacing(ctx, 1);
 

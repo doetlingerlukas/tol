@@ -13,21 +13,22 @@ constexpr std::array<std::pair<int, int>, 3> supported_resolutions = {
 
 using json = nlohmann::json;
 
+template <typename T>
+T get_or_else(json structure, std::string field, T default_value) {
+  if (structure.contains(field)) {
+    return structure[field].get<T>();
+  }
+  else {
+    return default_value;
+  }
+}
+
 class Settings {
   int resolution_height;
   int resolution_width;
   bool is_fullscreen;
   bool vsync_enabled;
   fs::path settings_path;
-
-  template <typename T>
-  T get_or_else(json structure, std::string field, T default_value) {
-    if(structure.contains(field)) {
-      return structure[field].get<T>();
-    } else {
-      return default_value;
-    }
-  }
 
   void loadSettings() {
     json settings;

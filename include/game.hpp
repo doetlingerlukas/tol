@@ -143,7 +143,7 @@ class Game {
   }
 
 public:
-  Game(fs::path dir_, Settings& settings_) : dir(dir_), settings(settings_), instance(GameInstance()) {
+  Game(fs::path dir_, Settings& settings_) : dir(dir_), settings(settings_), instance(GameInstance(dir_)) {
     scale = { 2.0, 2.0 };
     resolution_scale = { 1.0, 1.0 };
 
@@ -233,7 +233,7 @@ public:
         break;
       case GameState::MENU:
         window.pushGLStates();
-        nuklear->renderMenu(instance);
+        nuklear->renderMenu(instance, play_state);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
         window.popGLStates();
         break;
