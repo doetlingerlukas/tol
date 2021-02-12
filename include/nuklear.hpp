@@ -68,6 +68,7 @@ public:
     nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
     nk_style_push_color(ctx, &s.button.text_active, nk_rgba(255, 255, 255, 255));
     nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, spacing * scale.y));
+    ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
     /* GUI */
     if (nk_begin(ctx, "menu", nk_rect(0, 0, size.x, size.y), NK_WINDOW_BACKGROUND)) {
@@ -138,6 +139,7 @@ public:
     nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(50, 50, 50, 255)));
     nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
     nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, space * scale.y));
+    ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
     if (nk_begin(ctx, "settings", nk_rect(0, space * scale.y, size.x, size.y), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = { 0.f, 1.f, 0.f };
