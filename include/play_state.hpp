@@ -6,6 +6,7 @@
 #include <map.hpp>
 #include <character.hpp>
 #include <input.hpp>
+#include <play_state.hpp>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
@@ -74,7 +75,9 @@ public:
     }
   }
 
-  void update(KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt) {
+  GameState update(KeyInput& key_input, const sf::RenderWindow& window,
+      const std::chrono::milliseconds& now, float dt, std::optional<std::string>& npc_dialog) {
+    auto state = GameState::PLAY;
     const auto window_size = window.getSize();
     map_view.setSize({ static_cast<float>(window_size.x), static_cast<float>(window_size.y) });
 
@@ -129,6 +132,11 @@ public:
       if (dist < tileDiagonal) {
         npc.lookToward(getPlayer().getPosition());
         npc.setEffectRect({480, 192, EFFECT_TILE_SIZE, EFFECT_TILE_SIZE});
+
+        if (key_input.e) {
+          npc_dialog = npc.getName();
+          state = GameState::DIALOG;
+        }
       } else {
         npc.resetEffect();
       }
@@ -136,6 +144,8 @@ public:
 
     map_view.setCenter(getMap().getView(window.getSize().x, window.getSize().y));
     getMap().update(map_view, window, now);
+
+    return state;
   }
 
   sf::Vector2f get_player_position() const {

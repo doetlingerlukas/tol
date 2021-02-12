@@ -29,6 +29,7 @@ class Nuklear {
   std::shared_ptr<AssetCache> asset_cache;
   sf::Vector2u size;
   sf::Vector2f scale;
+  sf::RenderWindow* window;
   const std::shared_ptr<Stats> stats;
   std::chrono::milliseconds current_time;
   struct nk_context* ctx;
@@ -38,12 +39,22 @@ class Nuklear {
     ctx = nk_sfml_init(window);
     return ctx;
   }
+
+  void push_window_state() const {
+    window->pushGLStates();
+  }
+
+  void pop_window_state() const {
+    nk_sfml_render(NK_ANTI_ALIASING_ON);
+    window->popGLStates();
+  }
 public:
   struct nk_context* getCtx() const {
     return ctx;
   }
 
   void renderMenu(GameInstance& game, PlayState& play_state) const {
+    push_window_state();
     const float button_height = 40;
     const int r = 0;
     const int g = 0;
@@ -117,9 +128,11 @@ public:
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_color(ctx);
+    pop_window_state();
   }
 
   void renderSettings(GameInstance& game, Settings& settings) {
+    push_window_state();
     const float setting_height = 40;
     const float space = 10;
 
@@ -207,9 +220,11 @@ public:
     nk_style_pop_color(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
+    pop_window_state();
   }
 
   void renderHud() {
+    push_window_state();
     const float progressbar_height = 24;
     const float margin = 16;
 
@@ -239,9 +254,11 @@ public:
 
     nk_end(ctx);
     nk_style_pop_style_item(ctx);
+    pop_window_state();
   }
 
   std::pair<json, DialogState> renderResponseDialog(const json& dialog, DialogState dialog_state, const json& init) {
+    push_window_state();
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
@@ -280,6 +297,7 @@ public:
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
+    pop_window_state();
 
     if (!selected) {
       return std::make_pair(dialog, dialog_state);
@@ -293,6 +311,7 @@ public:
   }
 
   std::pair<json, DialogState> renderDialog(const json& lines, DialogState dialog_state) {
+    push_window_state();
     struct nk_style& s = ctx->style;
     nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
@@ -334,6 +353,7 @@ public:
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
     nk_style_pop_style_item(ctx);
+    pop_window_state();
 
     if (response) {
       const auto dialog_type = !dialog_state;
@@ -346,10 +366,8 @@ public:
       return std::make_pair(lines, dialog_state);
   }
 
-  Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* window):
-    size(size_), stats(stats_), asset_cache(asset_cache_) {
-    ctx = init(window);
-  }
+  Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window):
+    size(size_), stats(stats_), asset_cache(asset_cache_), ctx(init(_window)), window(_window) { }
 
   void setSize(sf::Vector2u size) {
     this->size = size;

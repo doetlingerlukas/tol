@@ -229,12 +229,15 @@ public:
 
     auto* character_layer = map->getLayer("characters");
     if (character_layer) {
-      for (auto& character: character_layer->getObjects()) {
+      auto& objects = character_layer->getObjects();
+      for (auto it = objects.begin(); it != objects.end(); it++) {
+        auto& character = *it;
+        int index = std::distance(objects.begin(), it) + 1;
         const std::string& texture = std::any_cast<const std::string&>(character.getProp("texture")->getValue());
         std::cout << "Adding NPC with texture " << texture << std::endl;
-        Npc npc(texture, asset_cache, std::make_shared<Stats>());
+        Npc npc = Npc(texture, asset_cache, std::make_shared<Stats>(), fmt::format("npc{}", index));
         npc.setPosition({ static_cast<float>(character.getPosition().x), static_cast<float>(character.getPosition().y) });
-        npcs.emplace_back(std::move(npc));
+        npcs.push_back(std::move(npc));
       }
     }
 

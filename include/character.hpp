@@ -51,8 +51,11 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::optional<sf::IntRect> current_effect;
 
+  std::string name;
+
 public:
-  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> _stats) : asset_cache(asset_cache_), stats(_stats) {
+  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
+      const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_) {
     sprite.setTexture(*asset_cache->loadTexture(path));
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 8.f });
@@ -71,6 +74,10 @@ public:
   sf::FloatRect bounding_box_rect;
 
   mutable CharacterDirection last_direction = DOWN;
+
+  std::string getName() const {
+    return name;
+  }
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     if (animation) {
