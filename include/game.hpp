@@ -127,17 +127,17 @@ class Game {
     window.setVerticalSyncEnabled(settings.vsync());
     music.set_volume(settings.volume_level);
 
-    const auto [window_width, window_height] = settings.resolution();
+    const auto [width, height] = settings.resolution();
 
     if (settings.fullscreen() && window_style != sf::Style::Fullscreen) {
       window_style = sf::Style::Fullscreen;
-      window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
     }
 
     if (!settings.fullscreen() && window_style == sf::Style::Fullscreen) {
-      window_style = window_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
-      window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
+      window_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
     }
+
+    window.create(sf::VideoMode(width * resolution_scale.x, height * resolution_scale.y), name, window_style);
 
     instance.setSettingsChanged(false);
   }
@@ -171,9 +171,9 @@ public:
   }
 
   void run() {
-    const auto [window_width, window_height] = settings.resolution();
+    const auto [width, height] = settings.resolution();
 
-    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
+    window.create(sf::VideoMode(width * resolution_scale.x, height * resolution_scale.y), name, window_style);
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
 

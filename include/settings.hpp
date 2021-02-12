@@ -4,6 +4,13 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+
+constexpr std::array<std::pair<int, int>, 3> supported_resolutions = {
+  std::make_pair(1920, 1080),
+  std::make_pair(1280, 720),
+  std::make_pair(1200, 800)
+};
+
 using json = nlohmann::json;
 
 class Settings {
@@ -66,8 +73,14 @@ public:
     loadSettings();
   }
 
-  std::tuple<int, int> resolution() const {
-    return std::make_tuple(resolution_width, resolution_height);
+  std::pair<int, int> resolution() const {
+    return std::make_pair(resolution_width, resolution_height);
+  }
+
+  void set_resolution(std::tuple<int, int> res) {
+    const auto [width, height] = res;
+    resolution_width = width;
+    resolution_height = height;
   }
 
   void set_resolution(sf::VideoMode video_mode) {

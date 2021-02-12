@@ -113,6 +113,13 @@ public:
     const float setting_height = 40;
     const float space = 10;
 
+    auto res_to_string = [](std::pair<int, int> res) {
+      const auto [width, height] = res;
+      return std::to_string(width) + " x " + std::to_string(height);
+    };
+
+    static int selected_res = 0;
+
     struct nk_style& s = ctx->style;
 
     const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
@@ -136,7 +143,22 @@ public:
         game.setSettingsChanged(true);
         game.setState(GameState::MENU);
       }
+      nk_spacing(ctx, 1);
 
+      nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
+      nk_label(ctx, "Resolution:", NK_TEXT_LEFT);
+      if (nk_combo_begin_label(ctx, res_to_string(supported_resolutions[selected_res]).c_str(), nk_vec2(nk_widget_width(ctx), 200))) {
+        int i;
+        nk_layout_row_dynamic(ctx, setting_height * scale.y, 1);
+        for (i = 0; i < supported_resolutions.size(); ++i)
+          if (nk_combo_item_label(ctx, res_to_string(supported_resolutions[i]).c_str(), NK_TEXT_LEFT)) {
+            selected_res = i;
+            settings.set_resolution(supported_resolutions[i]);
+          }
+        nk_combo_end(ctx);
+      }
+
+      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio);
       nk_spacing(ctx, 1);
 
       nk_label(ctx, "V-Sync:", NK_TEXT_LEFT);
