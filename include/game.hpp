@@ -31,6 +31,7 @@
 #include <dialog.hpp>
 #include <music.hpp>
 #include <game_state.hpp>
+#include <game_instance.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -105,6 +106,8 @@ class Game {
       case sf::Keyboard::S:
         key_input.s = event.type == sf::Event::KeyPressed;
         break;
+      case sf::Keyboard::E:
+        key_input.e = event.type == sf::Event::KeyPressed;
       case sf::Keyboard::Enter:
         break;
       case sf::Keyboard::M:
@@ -127,7 +130,7 @@ class Game {
     window.setVerticalSyncEnabled(settings.vsync());
     music.set_volume(settings.volume_level);
 
-    const auto [width, height] = settings.resolution();
+    const auto [window_width, window_height] = settings.resolution();
 
     if (settings.fullscreen() && window_style != sf::Style::Fullscreen) {
       window_style = sf::Style::Fullscreen;
@@ -137,7 +140,7 @@ class Game {
       window_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
     }
 
-    window.create(sf::VideoMode(width * resolution_scale.x, height * resolution_scale.y), name, window_style);
+    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
 
     instance.setSettingsChanged(false);
   }
@@ -171,9 +174,9 @@ public:
   }
 
   void run() {
-    const auto [width, height] = settings.resolution();
+    const auto [window_width, window_height] = settings.resolution();
 
-    window.create(sf::VideoMode(width * resolution_scale.x, height * resolution_scale.y), name, window_style);
+    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
 
@@ -182,12 +185,13 @@ public:
     const std::shared_ptr<Stats> stats = std::make_shared<Stats>();
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
-    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats);
+    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
 
     map.setScale(scale);
     player.setScale(scale);
+    player.initPlayerSounds();
 
-    map.addCharacter(&player);
+    map.setPlayer(&player);
 
     PlayState play_state(map, player, asset_cache, scale, window.getSize());
     KeyInput key_input;
@@ -206,6 +210,8 @@ public:
     stats->health().subscribe([]() {
       std::exit(0);
     });
+
+    std::optional<std::string> last_npc_dialog;
 
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
@@ -232,35 +238,28 @@ public:
         window.close();
         break;
       case GameState::MENU:
-        window.pushGLStates();
         nuklear->renderMenu(instance, play_state);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
-        window.popGLStates();
         break;
       case GameState::PLAY:
       case GameState::QUEST:
       case GameState::FIGHT:
-        play_state.update(key_input, window, now, dt);
+        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog));
         window.draw(play_state);
 
-        window.pushGLStates();
         nuklear->renderHud();
         nk_sfml_render(NK_ANTI_ALIASING_ON);
-        window.popGLStates();
         break;
       case GameState::DIALOG:
         window.draw(play_state);
 
-        window.pushGLStates();
-        instance.setState(dialog.show("npc1"));
+        if (last_npc_dialog)
+          instance.setState(dialog.show("npc1"));
         nk_sfml_render(NK_ANTI_ALIASING_ON);
-        window.popGLStates();
         break;
       case GameState::SETTINGS:
-        window.pushGLStates();
         nuklear->renderSettings(instance, settings);
         nk_sfml_render(NK_ANTI_ALIASING_ON);
-        window.popGLStates();
         break;
       default:
         break;
