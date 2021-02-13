@@ -5,11 +5,13 @@
 #include <future>
 #include <iostream>
 
-class StatsEvents {
-  virtual void subscribe(std::function<void()> func) = 0;
+template<typename T>
+class StatsProps {
+  virtual void increase(T value) = 0;
+  virtual T get() = 0;
 };
 
-class Health : public StatsEvents {
+class Health : public StatsProps<size_t> {
 private:
   size_t health = 100;
   std::mutex health_mutex;
@@ -19,15 +21,19 @@ private:
   std::function<void()> callback;
 
 public:
-  void subscribe(std::function<void()> func) override {
+  void subscribe(std::function<void()> func) {
     callback = func;
   }
 
-  size_t get() {
+  void increase(size_t value) override {
+    health = std::clamp<size_t>(0, 100, health + value);
+  }
+
+  size_t get() override {
     return health;
   }
 
-  void decrement(size_t value) {
+  void decrease(size_t value) {
     if (health == 0 || health == value) {
       health = 0;
       callback();
@@ -70,13 +76,43 @@ public:
   }
 };
 
+class Strength : public StatsProps<size_t> {
+  int _strength = 10;
+
+  void increase(size_t value) override { }
+
+  size_t get() override {
+    return _strength;
+  }
+};
+
+class Speed : public StatsProps<size_t> {
+  int _speed = 10;
+
+  void increase(size_t value) override { }
+
+  size_t get() override {
+    return _speed;
+  }
+};
+
 class Stats {
 private:
   Health _health = Health();
+  Strength _strength = Strength();
+  Speed _speed = Speed();
 
 public:
   Health& health() {
     return _health;
+  }
+
+  Strength& strength() {
+    return _strength;
+  }
+
+  Speed speed() {
+    return _speed;
   }
 
   Stats() { }
