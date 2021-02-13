@@ -38,7 +38,6 @@ const int EFFECT_TILE_SIZE = 32;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
-  std::shared_ptr<Stats> stats;
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
@@ -50,12 +49,14 @@ class Character: public sf::Drawable, public sf::Transformable {
   std::optional<sf::IntRect> current_effect;
 
   std::string name;
-  std::function<void()> pickup_callback;
+  std::function<void(const std::string&)> pickup_callback;
 
 protected:
-  void registerPickup(std::function<void()> callback) {
+  void registerPickup(std::function<void(const std::string&)> callback) {
     pickup_callback = callback;
   }
+
+  std::shared_ptr<Stats> stats;
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
@@ -197,7 +198,7 @@ public:
       const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_collision);
 
       if(td.count() > 250)
-        stats->health().decrement(10);
+        stats->health().decrease(10);
 
       this->last_collision = now;
     };
@@ -301,7 +302,7 @@ public:
         std::cout << "Item collected: " << collectible.getName() << std::endl;
 
         if (pickup_callback != nullptr)
-          pickup_callback();
+          pickup_callback(collectible.getName());
 
         it = collectibles.erase(it);
       } else {

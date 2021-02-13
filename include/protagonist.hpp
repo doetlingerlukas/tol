@@ -1,12 +1,25 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
+#include <map>
 
 #include <character.hpp>
 
 class Protagonist: public Character {
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
+
+  std::map<std::string, std::function<void()>> collectibles {
+    {"lemon", [&]() {
+      stats->health().increase(30);
+    }},
+    {"strawberry", [&]() {
+      stats->health().increase(10);
+    }},
+    {"melon", [&]() {
+      stats->health().increase(50);
+    }}
+  };
 
 public:
   Protagonist(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache,
@@ -19,8 +32,14 @@ public:
 
     pick_up_sound.setBuffer(pick_up_sound_buffer);
 
-    registerPickup([&]() {
+    registerPickup([&](const std::string& collectible) {
       pick_up_sound.play();
+
+      auto found = collectibles.find(collectible);
+
+      if (found != collectibles.end()) {
+        found->second();
+      }
     });
   }
 };
