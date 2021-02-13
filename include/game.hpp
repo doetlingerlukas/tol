@@ -206,13 +206,7 @@ public:
     music.play_background();
 
     Info info(asset_cache);
-    auto loost_generator = [](int n) {
-      std::ostringstream os;
-      for (int i = 0; i < n; i++)
-        os << "loost ";
-      return os.str();
-    };
-    info.display_info(loost_generator(10), std::chrono::seconds(10));
+    info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
 
     sf::Clock clock;
     float dt = 0.0;

@@ -19,18 +19,16 @@ class Info : public sf::Drawable, public sf::Transformable {
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     if (display_time.count() > 0) {
       sf::Vector2f target_size({ (float)target.getSize().x, (float)target.getSize().y });
-      sf::Vector2f info_box_size({ target_size.x * 0.35f, target_size.y * 0.125f });
+      sf::Vector2f info_box_size({ target_size.x * 0.35f, 0 });
       sf::Vector2f info_box_pos({ target_size.x - info_box_size.x - 5, 5 });
 
       sf::RectangleShape info_box;
-      info_box.setSize(info_box_size);
-      info_box.setFillColor(sf::Color(0, 0, 0, 100));
+      info_box.setFillColor(sf::Color(0, 0, 0, 175));
       info_box.setOutlineColor(sf::Color::Magenta);
       info_box.setOutlineThickness(2.f);
       info_box.setPosition(info_box_pos);
-      target.draw(info_box);
 
-      sf::Vector2f text_start_pos({ info_box_pos.x + 5, info_box_pos.y + 5 });
+      sf::Vector2f text_start_pos({ info_box_pos.x + 5, info_box_pos.y + 2 });
       auto max_line_width = info_box_size.x - 10;
 
       sf::Text text;
@@ -41,13 +39,17 @@ class Info : public sf::Drawable, public sf::Transformable {
       std::vector<sf::Text> lines;
       lines.push_back(text);
       for (auto& word : words) {
-        if (lines.back().getGlobalBounds().width + word.size() * 4 > max_line_width) {
+        if (lines.back().getGlobalBounds().width + word.size() * 14 > max_line_width) {
           lines.push_back(text);
-          lines.back().setPosition({ text_start_pos.x, text_start_pos.y + 20 * lines.size() - 1 });
+          lines.back().setPosition({ text_start_pos.x, text_start_pos.y + text.getCharacterSize() * (lines.size() - 1) });
         }
-        auto current = lines.back().getString();
+        std::string current = lines.back().getString();
         lines.back().setString(current + " " + word);
       }
+
+      info_box_size.y = text.getCharacterSize() * (lines.size() + 1);
+      info_box.setSize(info_box_size);
+      target.draw(info_box);
 
       for (auto& line : lines) {
         target.draw(line);
@@ -60,7 +62,7 @@ public:
 
   void display_info(const std::string& text_, std::chrono::seconds duration) {
     display_time = std::chrono::milliseconds(duration);
-    
+
     std::istringstream iss(text_);
     words = std::vector<std::string>({ std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{} });
   }
