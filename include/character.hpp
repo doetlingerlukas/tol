@@ -45,13 +45,17 @@ class Character: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds now;
   std::chrono::milliseconds last_collision = std::chrono::milliseconds(0);
 
-  sf::SoundBuffer pick_up_sound_buffer;
-  sf::Sound pick_up_sound;
   mutable sf::Sprite effect;
 
   std::optional<sf::IntRect> current_effect;
 
   std::string name;
+  std::function<void()> pickup_callback;
+
+protected:
+  void registerPickup(std::function<void()> callback) {
+    pickup_callback = callback;
+  }
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
@@ -70,16 +74,6 @@ public:
 
   std::string getName() const {
     return name;
-  }
-
-  void initPlayerSounds() {
-    const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
-
-    if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
-      throw std::runtime_error("Failed loading sound.");
-    }
-
-    pick_up_sound.setBuffer(pick_up_sound_buffer);
   }
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -305,7 +299,10 @@ public:
 
       if (collectible.collides_with(next_bounds)) {
         std::cout << "Item collected: " << collectible.getName() << std::endl;
-        pick_up_sound.play();
+
+        if (pickup_callback != nullptr)
+          pickup_callback();
+
         it = collectibles.erase(it);
       } else {
         it++;
