@@ -2010,13 +2010,13 @@
 </data>
  </layer>
  <objectgroup id="34" name="characters">
-  <object id="303" name="Detlef de Loost" type="npc" x="864" y="2038">
+  <object id="303" name="npc1" type="npc" x="864" y="2038">
    <properties>
     <property name="texture" value="tilesets/character-whitebeard.png"/>
    </properties>
    <point/>
   </object>
-  <object id="304" name="Detlef de Loost" type="npc" x="622.5" y="2676.5">
+  <object id="304" name="npc2" type="npc" x="622.5" y="2676.5">
    <properties>
     <property name="texture" value="tilesets/character-whitebeard.png"/>
    </properties>
