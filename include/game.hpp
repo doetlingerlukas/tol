@@ -239,7 +239,6 @@ public:
         break;
       case GameState::MENU:
         nuklear->renderMenu(instance, play_state);
-        nk_sfml_render(NK_ANTI_ALIASING_ON);
         break;
       case GameState::PLAY:
       case GameState::QUEST:
@@ -248,18 +247,15 @@ public:
         window.draw(play_state);
 
         nuklear->renderHud();
-        nk_sfml_render(NK_ANTI_ALIASING_ON);
         break;
       case GameState::DIALOG:
         window.draw(play_state);
 
         if (last_npc_dialog)
           instance.setState(dialog.show("npc1"));
-        nk_sfml_render(NK_ANTI_ALIASING_ON);
         break;
       case GameState::SETTINGS:
         nuklear->renderSettings(instance, settings);
-        nk_sfml_render(NK_ANTI_ALIASING_ON);
         break;
       default:
         break;
