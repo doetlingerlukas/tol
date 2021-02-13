@@ -195,7 +195,7 @@ public:
 
     PlayState play_state(map, player, asset_cache, scale, window.getSize());
     KeyInput key_input;
-    tol::Music music(fs::path("assets/music"));
+    tol::Music music(fs::path("assets/music"), settings.volume_level);
     music.play_background();
 
     sf::Clock clock;

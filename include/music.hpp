@@ -13,9 +13,9 @@ class Music {
   std::filesystem::path dir;
 
 public:
-  Music(std::filesystem::path dir_) : dir(dir_) {
+  explicit Music(const std::filesystem::path& dir_, float volume) : dir(dir_) {
     background.setLoop(true);
-    background.setVolume(10.f);
+    background.setVolume(volume);
   }
 
   void play_background() {
