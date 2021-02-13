@@ -43,7 +43,7 @@ public:
     return ctx;
   }
 
-  void renderMenu(GameInstance& game) const {
+  void renderMenu(GameInstance& game, PlayState& play_state) const {
     const float button_height = 40;
     const int r = 0;
     const int g = 0;
@@ -68,12 +68,13 @@ public:
     nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
     nk_style_push_color(ctx, &s.button.text_active, nk_rgba(255, 255, 255, 255));
     nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, spacing * scale.y));
+    ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
     /* GUI */
     if (nk_begin(ctx, "menu", nk_rect(0, 0, size.x, size.y), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = { 0.3, 0.4, 0.3 };
 
-      nk_layout_row_static(ctx, (size.y - (button_height * 4.f + spacing * 5.f) * scale.y) / 2.f, 0, 1);
+      nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
       nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
 
       nk_spacing(ctx, 1);
@@ -83,8 +84,17 @@ public:
 
       nk_spacing(ctx, 1);
 
-      if (nk_button_label(ctx, "LOAD"))
-        fprintf(stdout, "load pressed\n");
+      if (nk_button_label(ctx, "LOAD")) {
+        game.load(play_state);
+        game.setState(GameState::PLAY);
+      }
+
+      nk_spacing(ctx, 1);
+
+      if (nk_button_label(ctx, "SAVE")) {
+        game.save(play_state);
+        game.setState(GameState::PLAY);
+      }
 
       nk_spacing(ctx, 1);
 
@@ -113,6 +123,13 @@ public:
     const float setting_height = 40;
     const float space = 10;
 
+    auto res_to_string = [](std::pair<int, int> res) {
+      const auto [width, height] = res;
+      return std::to_string(width) + " x " + std::to_string(height);
+    };
+
+    static int selected_res = 0;
+
     struct nk_style& s = ctx->style;
 
     const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
@@ -122,6 +139,7 @@ public:
     nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(50, 50, 50, 255)));
     nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
     nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, space * scale.y));
+    ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
     if (nk_begin(ctx, "settings", nk_rect(0, space * scale.y, size.x, size.y), NK_WINDOW_BACKGROUND)) {
       static const float ratio[] = { 0.f, 1.f, 0.f };
@@ -132,10 +150,26 @@ public:
       nk_spacing(ctx, 1);
 
       if (nk_button_label(ctx, "SAVE")) {
+        settings.serialize();
         game.setSettingsChanged(true);
         game.setState(GameState::MENU);
       }
+      nk_spacing(ctx, 1);
 
+      nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
+      nk_label(ctx, "Resolution:", NK_TEXT_LEFT);
+      if (nk_combo_begin_label(ctx, res_to_string(supported_resolutions[selected_res]).c_str(), nk_vec2(nk_widget_width(ctx), 200))) {
+        int i;
+        nk_layout_row_dynamic(ctx, setting_height * scale.y, 1);
+        for (i = 0; i < supported_resolutions.size(); ++i)
+          if (nk_combo_item_label(ctx, res_to_string(supported_resolutions[i]).c_str(), NK_TEXT_LEFT)) {
+            selected_res = i;
+            settings.set_resolution(supported_resolutions[i]);
+          }
+        nk_combo_end(ctx);
+      }
+
+      nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio);
       nk_spacing(ctx, 1);
 
       nk_label(ctx, "V-Sync:", NK_TEXT_LEFT);

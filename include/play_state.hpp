@@ -126,4 +126,11 @@ public:
     getMap().update(map_view, window, now);
   }
 
+  sf::Vector2f get_player_position() const {
+    return getPlayer().getPosition();
+  }
+
+  void set_player_position(sf::Vector2f pos) {
+    getPlayer().setPosition(pos);
+  }
 };
