@@ -188,6 +188,7 @@ public:
 
     map.setScale(scale);
     player.setScale(scale);
+    player.initPlayerSounds();
 
     map.setPlayer(&player);
 

@@ -62,13 +62,6 @@ public:
 
     effect.setTexture(*asset_cache->loadTexture("tilesets/effects.png"));
     effect.setOrigin({ EFFECT_TILE_SIZE / 2.f, EFFECT_TILE_SIZE / 2.f });
-
-    const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
-    if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
-      throw std::runtime_error("Failed loading sound.");
-    }
-
-    pick_up_sound.setBuffer(pick_up_sound_buffer);
   }
 
   sf::FloatRect bounding_box_rect;
@@ -77,6 +70,16 @@ public:
 
   std::string getName() const {
     return name;
+  }
+
+  void initPlayerSounds() {
+    const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
+
+    if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
+      throw std::runtime_error("Failed loading sound.");
+    }
+
+    pick_up_sound.setBuffer(pick_up_sound_buffer);
   }
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
