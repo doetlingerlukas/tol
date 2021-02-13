@@ -32,6 +32,7 @@
 #include <music.hpp>
 #include <game_state.hpp>
 #include <game_instance.hpp>
+#include <overlay/info.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -204,6 +205,15 @@ public:
     tol::Music music(fs::path("assets/music"), settings.volume_level);
     music.play_background();
 
+    Info info(asset_cache);
+    auto loost_generator = [](int n) {
+      std::ostringstream os;
+      for (int i = 0; i < n; i++)
+        os << "loost ";
+      return os.str();
+    };
+    info.display_info(loost_generator(10), std::chrono::seconds(10));
+
     sf::Clock clock;
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
@@ -251,6 +261,9 @@ public:
       case GameState::FIGHT:
         instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog));
         window.draw(play_state);
+
+        info.update_time(std::chrono::milliseconds(millis));
+        window.draw(info);
 
         nuklear->renderHud();
         break;
