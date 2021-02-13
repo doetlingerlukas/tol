@@ -22,6 +22,7 @@
 #include <nlohmann/json.hpp>
 #include <game_state.hpp>
 #include <settings.hpp>
+#include <game_instance.hpp>
 
 using json = nlohmann::json;
 

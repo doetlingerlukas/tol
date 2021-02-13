@@ -6,7 +6,7 @@
 #include <map.hpp>
 #include <character.hpp>
 #include <input.hpp>
-#include <play_state.hpp>
+#include <game_state.hpp>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;

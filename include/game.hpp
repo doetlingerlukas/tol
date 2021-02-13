@@ -31,6 +31,7 @@
 #include <dialog.hpp>
 #include <music.hpp>
 #include <game_state.hpp>
+#include <game_instance.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -230,6 +231,7 @@ public:
       }
 
       window.clear();
+      window.resetGLStates();
 
       switch (instance.getState()) {
       case GameState::QUIT:
