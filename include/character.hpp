@@ -158,22 +158,24 @@ public:
     float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, std::map<int, Object>& collectibles, const sf::Vector2f& map_size) {
     auto position = getPosition();
 
+    auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
+
     sf::Vector2f velocity = { 0.f, 0.f };
 
     if (x_direction == RIGHT) {
-      velocity.x += 1.0 * speed;
+      velocity.x += speed_adjusted;
     }
 
     if (x_direction == LEFT) {
-      velocity.x -= 1.0 * speed;
+      velocity.x -= speed_adjusted;
     }
 
     if (y_direction == UP) {
-      velocity.y -= 1.0 * speed;
+      velocity.y -= speed_adjusted;
     }
 
     if (y_direction == DOWN) {
-      velocity.y += 1.0 * speed;
+      velocity.y += speed_adjusted;
     }
 
     auto stop_movement = [this, &x_direction, &y_direction, now](CharacterDirection direction) {

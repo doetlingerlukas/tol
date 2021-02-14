@@ -12,12 +12,24 @@ class Protagonist: public Character {
   std::map<std::string, std::function<void()>> collectibles {
     {"lemon", [&]() {
       stats->health().increase(30);
+      stats->get();
     }},
     {"strawberry", [&]() {
-      stats->health().increase(10);
+      auto& experience = stats->experience();
+      experience.increase(400);
+      stats->get();
+    }},
+    {"orange", [&]() {
+      stats->strength().increase(1);
+      stats->get();
     }},
     {"melon", [&]() {
       stats->health().increase(50);
+      stats->get();
+    }},
+    {"pear", [&]() {
+      stats->speed().increase(20);
+      stats->get();
     }}
   };
 

@@ -4,11 +4,17 @@
 #include <mutex>
 #include <future>
 #include <iostream>
+#include <map>
 
 template<typename T>
 class StatsProps {
   virtual void increase(T value) = 0;
-  virtual T get() = 0;
+  virtual T get() const = 0;
+  virtual std::ostream& print(std::ostream& print) const = 0;
+
+  friend std::ostream& operator<< (std::ostream& stream, const StatsProps& stats) {
+    return stats.print(stream);
+  }
 };
 
 class Health : public StatsProps<size_t> {
@@ -25,11 +31,11 @@ public:
     callback = func;
   }
 
-  void increase(size_t value) override {
+  virtual void increase(size_t value) override {
     health = std::clamp<size_t>(0, 100, health + value);
   }
 
-  size_t get() override {
+  virtual size_t get() const override {
     return health;
   }
 
@@ -74,25 +80,85 @@ public:
     exit_signal.set_value();
     regen_thread.join();
   }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "health: " << health << "\n";
+    return out;
+  }
 };
 
+
 class Strength : public StatsProps<size_t> {
-  int _strength = 10;
+  int strength = 10;
 
-  void increase(size_t value) override { }
+public:
+  void increase(size_t value) override {
+    strength += value;
+  }
 
-  size_t get() override {
-    return _strength;
+  virtual size_t get() const override {
+    return strength;
+  }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "strength: " << strength << "\n";
+    return out;
   }
 };
 
 class Speed : public StatsProps<size_t> {
-  int _speed = 10;
+  int speed = 10;
 
-  void increase(size_t value) override { }
+public:
+  void increase(size_t value) override {
+    speed += value;
+  }
 
-  size_t get() override {
-    return _speed;
+  virtual size_t get() const override {
+    return speed;
+  }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "speed: " << speed << "\n";
+    return out;
+  }
+};
+
+class Experience : public StatsProps<size_t> {
+  size_t experience = 0;
+  size_t level = 1;
+
+  std::map<size_t, size_t> xp_bracket {
+    {0, 1}, {100, 2}, {280, 3},
+    {500, 4}, {870, 5}, {1300, 6},
+    {2000, 7}, {3000, 8}, {4500, 9},
+    {6600, 10}
+  };
+
+public:
+  void increase(size_t value) override {
+    experience += value;
+
+    for(auto& [xp, lvl]: xp_bracket) {
+      if(xp > experience) {
+        break;
+      }
+
+      level = lvl;
+    }
+  }
+
+  size_t get() const override {
+    return experience;
+  }
+
+  virtual size_t getLevel() const {
+    return level;
+  }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "experience: " << experience << ", level: " << level << "\n";
+    return out;
   }
 };
 
@@ -101,6 +167,7 @@ private:
   Health _health = Health();
   Strength _strength = Strength();
   Speed _speed = Speed();
+  Experience _experience = Experience();
 
 public:
   Health& health() {
@@ -111,8 +178,19 @@ public:
     return _strength;
   }
 
-  Speed speed() {
+  Speed& speed() {
     return _speed;
+  }
+
+  Experience& experience() {
+    return _experience;
+  }
+
+  void get() {
+    std::cout << _health;
+    std::cout << _strength;
+    std::cout << _speed;
+    std::cout << _experience;
   }
 
   Stats() { }
