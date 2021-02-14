@@ -367,8 +367,8 @@ public:
     create_collision_shapes = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
       switch (layer.getType()) {
         case tson::LayerType::TileLayer:
-          for (size_t x = std::max(0, player_tile_x - 1); x < std::min(max_x, player_tile_x + 2); x++) {
-            for (size_t y = std::max(0, player_tile_y - 1); y < std::min(max_y, player_tile_y + 2); y++) {
+          for (size_t x = std::max(0, player_tile_x - 2); x < std::min(max_x, player_tile_x + 3); x++) {
+            for (size_t y = std::max(0, player_tile_y - 2); y < std::min(max_y, player_tile_y + 3); y++) {
               const auto* tileObjectP = layer.getTileObject(x, y);
 
               if (!tileObjectP) {
