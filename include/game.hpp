@@ -182,7 +182,14 @@ public:
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
-    const std::shared_ptr<Stats> stats = std::make_shared<Stats>();
+    json protagonist_stats = {
+      { "strength", 10 },
+      { "speed",  10 },
+      { "health", 100 },
+      { "level",  1 }
+    };
+
+    const std::shared_ptr<Stats> stats = std::make_shared<Stats>(std::move(protagonist_stats));
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
     Protagonist player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");

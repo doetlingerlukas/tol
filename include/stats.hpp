@@ -5,6 +5,9 @@
 #include <future>
 #include <iostream>
 #include <map>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 template<typename T>
 class StatsProps {
@@ -51,7 +54,7 @@ public:
 
   Health(const Health &h) { }
 
-  Health() : future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
+  Health(size_t health_) : health (health_), future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
     while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
       bool damage_received = false;
 
@@ -92,6 +95,8 @@ class Strength : public StatsProps<size_t> {
   int strength = 10;
 
 public:
+  Strength(size_t strength_) : strength(strength_) { }
+
   void increase(size_t value) override {
     strength += value;
   }
@@ -110,6 +115,8 @@ class Speed : public StatsProps<size_t> {
   int speed = 10;
 
 public:
+  Speed(size_t speed_) : speed(speed_) { }
+
   void increase(size_t value) override {
     speed += value;
   }
@@ -136,6 +143,8 @@ class Experience : public StatsProps<size_t> {
   };
 
 public:
+  Experience(size_t lvl) : level(lvl) { }
+
   void increase(size_t value) override {
     experience += value;
 
@@ -164,12 +173,20 @@ public:
 
 class Stats {
 private:
-  Health _health = Health();
-  Strength _strength = Strength();
-  Speed _speed = Speed();
-  Experience _experience = Experience();
+  Health _health;
+  Strength _strength;
+  Speed _speed;
+  Experience _experience;
 
 public:
+  Stats(const json& stats):
+    _health(Health(stats["health"].get<size_t>())),
+    _strength(Strength(stats["strength"].get<size_t>())),
+    _speed(Speed(stats["speed"].get<size_t>())),
+    _experience(Experience(stats["level"].get<size_t>())) {
+
+  }
+
   Health& health() {
     return _health;
   }
@@ -192,7 +209,5 @@ public:
     std::cout << _speed;
     std::cout << _experience;
   }
-
-  Stats() { }
 };
 
