@@ -63,7 +63,7 @@ public:
       const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_) {
     sprite.setTexture(*asset_cache->loadTexture(path));
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
-    sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 8.f });
+    sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
 
     effect.setTexture(*asset_cache->loadTexture("tilesets/effects.png"));
     effect.setOrigin({ EFFECT_TILE_SIZE / 2.f, EFFECT_TILE_SIZE / 2.f });
@@ -88,10 +88,10 @@ public:
     sprite.setPosition({ getPosition().x * scale.x, getPosition().y * scale.y });
     sprite.setScale(scale);
 
-    const auto shadow_ratio = 2.f;
+    const auto shadow_ratio = 2.6f;
 
     sf::CircleShape shadow;
-    shadow.setRadius(TILE_SIZE / 4.f);
+    shadow.setRadius(TILE_SIZE / 5.f);
     shadow.setFillColor(sf::Color(0, 0, 0, 80));
     shadow.setPosition(sprite.getPosition());
     shadow.setOrigin({ shadow.getRadius(), shadow.getRadius() });
