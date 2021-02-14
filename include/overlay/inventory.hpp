@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <vector>
+#include <iostream>
 
 #include <asset_cache.hpp>
 
@@ -11,19 +13,49 @@ class Inventory : public sf::Drawable, public sf::Transformable {
 
   std::vector<std::string> elements;
 
+  // Sets the size of the inventory (size x size).
+  const int size;
+
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     sf::Vector2f target_size({ (float)target.getSize().x, (float)target.getSize().y });
-    sf::Vector2f inventory_size({ target_size.x * 0.7f, target_size.y * 0.7f });
-    sf::Vector2f inventory_pos({ target_size.x * 0.15f, target_size.y * 0.2f });
+    sf::FloatRect inventory(target_size.x * 0.01f, target_size.y * 0.025f, target_size.x * 0.98f, target_size.y * 0.95f);
+    sf::FloatRect detail(inventory.left, inventory.top, inventory.width * 0.29f, inventory.height);
+    sf::FloatRect objects(detail.left + inventory.width * 0.3f, inventory.top, inventory.width * 0.7f, inventory.height);
 
-    sf::RectangleShape inventory;
-    inventory.setFillColor(sf::Color(0, 0, 0, 175));
-    inventory.setSize(inventory_size);
-    inventory.setOutlineColor(sf::Color::Blue);
-    inventory.setOutlineThickness(2.f);
-    inventory.setPosition(inventory_pos);
+    sf::RectangleShape detail_box;
+    detail_box.setFillColor(sf::Color(0, 0, 0, 175));
+    detail_box.setOutlineColor(sf::Color::Blue);
+    detail_box.setOutlineThickness(2.f);
+    detail_box.setSize({ detail.width, detail.height });
+    detail_box.setPosition({ detail.left, detail.top });
 
-    target.draw(inventory);
+    sf::RectangleShape objects_box;
+    objects_box.setFillColor(sf::Color(0, 0, 0, 175));
+    objects_box.setOutlineColor(sf::Color::Blue);
+    objects_box.setOutlineThickness(2.f);
+    objects_box.setSize({ objects.width, objects.height });
+    objects_box.setPosition({ objects.left, objects.top });
+
+    target.draw(detail_box);
+    target.draw(objects_box);
+
+    sf::Vector2f margin({ objects.width * 0.02f, objects.height * 0.02f });
+    sf::Vector2f object_size({ (objects.width - (size + 1) * margin.x) / size , (objects.height - (size + 1) * margin.y) / size });
+
+    std::vector<sf::RectangleShape> objects_to_render;
+    for (auto i = 0; i < elements.size(); i++) {
+      auto offset_x = i % size;
+      auto offset_y = i / size;
+      sf::RectangleShape object;
+      objects_box.setFillColor(sf::Color::Black);
+      object.setSize(object_size);
+      object.setPosition({ margin.x + objects.left + offset_x * (object_size.x + margin.x), margin.y + objects.top + offset_y * margin.y });
+      objects_to_render.push_back(object);
+    }
+
+    for (auto& object : objects_to_render) {
+      target.draw(object);
+    }
 
     sf::Text text;
     text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
@@ -31,7 +63,7 @@ class Inventory : public sf::Drawable, public sf::Transformable {
   }
 
 public:
-  explicit Inventory(const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_) {
+  explicit Inventory(const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_), size(5) {
     elements = { "test1", "test2", "test3" };
   }
 };

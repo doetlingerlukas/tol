@@ -118,6 +118,9 @@ class Game {
       case sf::Keyboard::I:
         instance.setState(GameState::INVENTORY);
         break;
+      case sf::Keyboard::P:
+        instance.setState(GameState::PLAY);
+        break;
       default:
         break;
       }
@@ -260,8 +263,6 @@ public:
         window.draw(play_state);
 
         window.draw(inventory);
-
-        nuklear->renderHud();
         break;
       case GameState::PLAY:
       case GameState::QUEST:
