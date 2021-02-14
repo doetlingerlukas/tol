@@ -183,9 +183,7 @@ public:
     _health(Health(stats["health"].get<size_t>())),
     _strength(Strength(stats["strength"].get<size_t>())),
     _speed(Speed(stats["speed"].get<size_t>())),
-    _experience(Experience(stats["level"].get<size_t>())) {
-
-  }
+    _experience(Experience(stats["level"].get<size_t>())) { }
 
   Health& health() {
     return _health;
