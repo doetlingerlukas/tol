@@ -33,6 +33,7 @@
 #include <game_state.hpp>
 #include <game_instance.hpp>
 #include <overlay/info.hpp>
+#include <overlay/inventory.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -113,6 +114,9 @@ class Game {
         break;
       case sf::Keyboard::M:
         music.stop_background();
+        break;
+      case sf::Keyboard::I:
+        instance.setState(GameState::INVENTORY);
         break;
       default:
         break;
@@ -208,6 +212,8 @@ public:
     Info info(asset_cache);
     info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
 
+    Inventory inventory(asset_cache);
+
     sf::Clock clock;
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
@@ -249,6 +255,13 @@ public:
         break;
       case GameState::MENU:
         nuklear->renderMenu(instance, play_state);
+        break;
+      case GameState::INVENTORY:
+        window.draw(play_state);
+
+        window.draw(inventory);
+
+        nuklear->renderHud();
         break;
       case GameState::PLAY:
       case GameState::QUEST:
