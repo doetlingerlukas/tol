@@ -1,6 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.3" name="victorian-streets" tilewidth="32" tileheight="32" tilecount="1536" columns="16">
  <image source="victorian-streets.png" trans="000000" width="512" height="3072"/>
+ <tile id="416">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="417">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="418">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="419">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="420">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="421">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="422">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="423">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="424">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="432">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="433">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="434">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="435">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="436">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="437">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="438">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="439">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="440">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="448">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="449">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="450">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="451">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
  <tile id="1024">
   <properties>
    <property name="y" type="int" value="3"/>
@@ -376,5 +486,55 @@
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="22" width="32" height="6"/>
   </objectgroup>
+ </tile>
+ <tile id="1445">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="1446">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="1459">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="1460">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="1461">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="1462">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="1475">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="1476">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="1477">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="1478">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
  </tile>
 </tileset>
