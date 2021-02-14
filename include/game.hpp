@@ -22,7 +22,7 @@
 
 #include <map.hpp>
 #include <string>
-#include <character.hpp>
+#include <protagonist.hpp>
 #include <settings.hpp>
 #include <input.hpp>
 #include <play_state.hpp>
@@ -182,14 +182,20 @@ public:
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
-    const std::shared_ptr<Stats> stats = std::make_shared<Stats>();
+    json protagonist_stats = {
+      { "strength", 10 },
+      { "speed",  10 },
+      { "health", 100 },
+      { "level",  1 }
+    };
+
+    const std::shared_ptr<Stats> stats = std::make_shared<Stats>(std::move(protagonist_stats));
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
-    Character player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
+    Protagonist player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
 
     map.setScale(scale);
     player.setScale(scale);
-    player.initPlayerSounds();
 
     map.setPlayer(&player);
 

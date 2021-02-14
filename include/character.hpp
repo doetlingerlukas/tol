@@ -38,20 +38,25 @@ const int EFFECT_TILE_SIZE = 32;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
-  std::shared_ptr<Stats> stats;
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
   std::chrono::milliseconds now;
   std::chrono::milliseconds last_collision = std::chrono::milliseconds(0);
 
-  sf::SoundBuffer pick_up_sound_buffer;
-  sf::Sound pick_up_sound;
   mutable sf::Sprite effect;
 
   std::optional<sf::IntRect> current_effect;
 
   std::string name;
+  std::function<void(const std::string&)> pickup_callback;
+
+protected:
+  void registerPickup(std::function<void(const std::string&)> callback) {
+    pickup_callback = callback;
+  }
+
+  std::shared_ptr<Stats> stats;
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
@@ -70,16 +75,6 @@ public:
 
   std::string getName() const {
     return name;
-  }
-
-  void initPlayerSounds() {
-    const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
-
-    if (!pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
-      throw std::runtime_error("Failed loading sound.");
-    }
-
-    pick_up_sound.setBuffer(pick_up_sound_buffer);
   }
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -163,22 +158,24 @@ public:
     float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, std::map<int, Object>& collectibles, const sf::Vector2f& map_size) {
     auto position = getPosition();
 
+    auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
+
     sf::Vector2f velocity = { 0.f, 0.f };
 
     if (x_direction == RIGHT) {
-      velocity.x += 1.0 * speed;
+      velocity.x += speed_adjusted;
     }
 
     if (x_direction == LEFT) {
-      velocity.x -= 1.0 * speed;
+      velocity.x -= speed_adjusted;
     }
 
     if (y_direction == UP) {
-      velocity.y -= 1.0 * speed;
+      velocity.y -= speed_adjusted;
     }
 
     if (y_direction == DOWN) {
-      velocity.y += 1.0 * speed;
+      velocity.y += speed_adjusted;
     }
 
     auto stop_movement = [this, &x_direction, &y_direction, now](CharacterDirection direction) {
@@ -203,7 +200,7 @@ public:
       const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_collision);
 
       if(td.count() > 250)
-        stats->health().decrement(10);
+        stats->health().decrease(10);
 
       this->last_collision = now;
     };
@@ -305,7 +302,10 @@ public:
 
       if (collectible.collides_with(next_bounds)) {
         std::cout << "Item collected: " << collectible.getName() << std::endl;
-        pick_up_sound.play();
+
+        if (pickup_callback != nullptr)
+          pickup_callback(collectible.getName());
+
         it = collectibles.erase(it);
       } else {
         it++;

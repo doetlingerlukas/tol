@@ -5,7 +5,10 @@
 #include <nlohmann/json.hpp>
 
 
-constexpr std::array<std::pair<int, int>, 3> supported_resolutions = {
+constexpr std::array<std::pair<int, int>, 6> supported_resolutions = {
+  std::make_pair(3840, 1600),
+  std::make_pair(3440, 1440),
+  std::make_pair(2560, 1440),
   std::make_pair(1920, 1080),
   std::make_pair(1280, 720),
   std::make_pair(1200, 800)
@@ -41,23 +44,23 @@ class Settings {
     auto& settings_field = settings["settings"];
     auto& resolution = settings_field["resolution"];
 
-    const int width = get_or_else<int>(resolution, "width", 1200);
+    const int width = get_or_else(resolution, "width", 1200);
     resolution["width"] = width;
     resolution_width = width;
 
-    const int height = get_or_else<int>(resolution, "height", 800);
+    const int height = get_or_else(resolution, "height", 800);
     resolution["height"] = height;
     resolution_height = height;
 
-    const bool fullscreen = get_or_else<bool>(settings_field, "fullscreen", false);
+    const bool fullscreen = get_or_else(settings_field, "fullscreen", false);
     settings_field["fullscreen"] = fullscreen;
     is_fullscreen = fullscreen;
 
-    const bool vsync = get_or_else<bool>(settings_field, "vsync", false);
+    const bool vsync = get_or_else(settings_field, "vsync", false);
     settings_field["vsync"] = vsync;
     vsync_enabled = vsync;
 
-    const float volume = get_or_else<float>(settings_field, "volume", 0.1f);
+    const float volume = get_or_else(settings_field, "volume", 0.1f);
     settings_field["volume"] = volume;
     volume_level = volume;
 

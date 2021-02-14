@@ -4,12 +4,23 @@
 #include <mutex>
 #include <future>
 #include <iostream>
+#include <map>
+#include <nlohmann/json.hpp>
 
-class StatsEvents {
-  virtual void subscribe(std::function<void()> func) = 0;
+using json = nlohmann::json;
+
+template<typename T>
+class StatsProps {
+  virtual void increase(T value) = 0;
+  virtual T get() const = 0;
+  virtual std::ostream& print(std::ostream& print) const = 0;
+
+  friend std::ostream& operator<< (std::ostream& stream, const StatsProps& stats) {
+    return stats.print(stream);
+  }
 };
 
-class Health : public StatsEvents {
+class Health : public StatsProps<size_t> {
 private:
   size_t health = 100;
   std::mutex health_mutex;
@@ -19,15 +30,19 @@ private:
   std::function<void()> callback;
 
 public:
-  void subscribe(std::function<void()> func) override {
+  void subscribe(std::function<void()> func) {
     callback = func;
   }
 
-  size_t get() {
+  virtual void increase(size_t value) override {
+    health = std::clamp<size_t>(0, 100, health + value);
+  }
+
+  virtual size_t get() const override {
     return health;
   }
 
-  void decrement(size_t value) {
+  void decrease(size_t value) {
     if (health == 0 || health == value) {
       health = 0;
       callback();
@@ -39,7 +54,7 @@ public:
 
   Health(const Health &h) { }
 
-  Health() : future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
+  Health(size_t health_) : health (health_), future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
     while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
       bool damage_received = false;
 
@@ -68,17 +83,129 @@ public:
     exit_signal.set_value();
     regen_thread.join();
   }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "health: " << health << "\n";
+    return out;
+  }
+};
+
+
+class Strength : public StatsProps<size_t> {
+  int strength = 10;
+
+public:
+  Strength(size_t strength_) : strength(strength_) { }
+
+  void increase(size_t value) override {
+    strength += value;
+  }
+
+  virtual size_t get() const override {
+    return strength;
+  }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "strength: " << strength << "\n";
+    return out;
+  }
+};
+
+class Speed : public StatsProps<size_t> {
+  int speed = 10;
+
+public:
+  Speed(size_t speed_) : speed(speed_) { }
+
+  void increase(size_t value) override {
+    speed += value;
+  }
+
+  virtual size_t get() const override {
+    return speed;
+  }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "speed: " << speed << "\n";
+    return out;
+  }
+};
+
+class Experience : public StatsProps<size_t> {
+  size_t experience = 0;
+  size_t level = 1;
+
+  std::map<size_t, size_t> xp_bracket {
+    {0, 1}, {100, 2}, {280, 3},
+    {500, 4}, {870, 5}, {1300, 6},
+    {2000, 7}, {3000, 8}, {4500, 9},
+    {6600, 10}
+  };
+
+public:
+  Experience(size_t lvl) : level(lvl) { }
+
+  void increase(size_t value) override {
+    experience += value;
+
+    for(auto& [xp, lvl]: xp_bracket) {
+      if(xp > experience) {
+        break;
+      }
+
+      level = lvl;
+    }
+  }
+
+  size_t get() const override {
+    return experience;
+  }
+
+  virtual size_t getLevel() const {
+    return level;
+  }
+
+  virtual std::ostream& print(std::ostream& out) const override {
+    out << "experience: " << experience << ", level: " << level << "\n";
+    return out;
+  }
 };
 
 class Stats {
 private:
-  Health _health = Health();
+  Health _health;
+  Strength _strength;
+  Speed _speed;
+  Experience _experience;
 
 public:
+  Stats(const json& stats):
+    _health(Health(stats["health"].get<size_t>())),
+    _strength(Strength(stats["strength"].get<size_t>())),
+    _speed(Speed(stats["speed"].get<size_t>())),
+    _experience(Experience(stats["level"].get<size_t>())) { }
+
   Health& health() {
     return _health;
   }
 
-  Stats() { }
+  Strength& strength() {
+    return _strength;
+  }
+
+  Speed& speed() {
+    return _speed;
+  }
+
+  Experience& experience() {
+    return _experience;
+  }
+
+  void get() {
+    std::cout << _health;
+    std::cout << _strength;
+    std::cout << _speed;
+    std::cout << _experience;
+  }
 };
 

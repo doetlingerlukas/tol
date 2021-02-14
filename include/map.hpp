@@ -233,7 +233,7 @@ public:
       for (auto& character: character_layer->getObjects()) {
         const std::string& texture = std::any_cast<const std::string&>(character.getProp("texture")->getValue());
         fmt::print("Adding NPC with texture: {} and name: {}\n", texture, character.getName());
-        Npc npc = Npc(texture, asset_cache, std::make_shared<Stats>(), character.getName());
+        Npc npc = Npc(texture, asset_cache, character.getName());
         npc.setPosition({ static_cast<float>(character.getPosition().x), static_cast<float>(character.getPosition().y) });
         npcs.push_back(std::move(npc));
       }
