@@ -7,6 +7,7 @@
 #include <animation.hpp>
 #include <stats.hpp>
 #include <z_indexable.hpp>
+#include <inventory.hpp>
 
 enum CharacterDirection {
   UP = 0,
@@ -38,6 +39,7 @@ const int EFFECT_TILE_SIZE = 32;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
+  Inventory inventory;
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
@@ -60,7 +62,7 @@ protected:
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
-      const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_) {
+      const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_), inventory(Inventory(32)) {
     sprite.setTexture(*asset_cache->loadTexture(path));
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
@@ -77,6 +79,9 @@ public:
     return name;
   }
 
+  std::vector<std::pair<std::string, Object>> getInventoryElements() const {
+    return inventory.getElements();
+  }
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     if (animation) {
       sprite.setTextureRect(animation->getDrawingRect(now));
@@ -302,6 +307,7 @@ public:
 
       if (collectible.collides_with(next_bounds)) {
         std::cout << "Item collected: " << collectible.getName() << std::endl;
+        inventory.add(make_pair(collectible.getName(), collectible));
 
         if (pickup_callback != nullptr)
           pickup_callback(collectible.getName());

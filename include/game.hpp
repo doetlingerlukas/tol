@@ -33,7 +33,7 @@
 #include <game_state.hpp>
 #include <game_instance.hpp>
 #include <overlay/info.hpp>
-#include <overlay/inventory.hpp>
+#include <overlay/inventory_overlay.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -215,7 +215,7 @@ public:
     Info info(asset_cache);
     info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
 
-    Inventory inventory(asset_cache);
+    InventoryOverlay inventory_overlay(asset_cache);
 
     sf::Clock clock;
     float dt = 0.0;
@@ -262,8 +262,8 @@ public:
       case GameState::INVENTORY:
         window.draw(play_state);
 
-        inventory.update_elements(map.getCollectibles());
-        window.draw(inventory);
+        inventory_overlay.update_elements(player.getInventoryElements());
+        window.draw(inventory_overlay);
         break;
       case GameState::PLAY:
       case GameState::QUEST:
