@@ -262,6 +262,7 @@ public:
       case GameState::INVENTORY:
         window.draw(play_state);
 
+        inventory.update_elements(map.getCollectibles());
         window.draw(inventory);
         break;
       case GameState::PLAY:

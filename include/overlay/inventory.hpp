@@ -6,12 +6,13 @@
 #include <iostream>
 
 #include <asset_cache.hpp>
+#include <object.hpp>
 
 
 class Inventory : public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
 
-  std::vector<std::string> elements;
+  std::map<int, Object> elements;
 
   // Sets the size of the inventory (size x size).
   const int size;
@@ -42,19 +43,21 @@ class Inventory : public sf::Drawable, public sf::Transformable {
     sf::Vector2f margin({ objects.width * 0.02f, objects.height * 0.02f });
     sf::Vector2f object_size({ (objects.width - (size + 1) * margin.x) / size , (objects.height - (size + 1) * margin.y) / size });
 
-    std::vector<sf::RectangleShape> objects_to_render;
-    for (auto i = 0; i < elements.size(); i++) {
+    auto i = 0;
+    for (auto [key, element] : elements) {
       auto offset_x = i % size;
       auto offset_y = i / size;
-      sf::RectangleShape object;
-      objects_box.setFillColor(sf::Color::Black);
-      object.setSize(object_size);
-      object.setPosition({ margin.x + objects.left + offset_x * (object_size.x + margin.x), margin.y + objects.top + offset_y * margin.y });
-      objects_to_render.push_back(object);
-    }
+      sf::RectangleShape bounding_box;
+      bounding_box.setFillColor(sf::Color(0, 0, 0, 220));
+      bounding_box.setSize(object_size);
+      bounding_box.setOutlineColor(sf::Color::Blue);
+      bounding_box.setOutlineThickness(2.f);
+      bounding_box.setPosition({ margin.x + objects.left + offset_x * (object_size.x + margin.x), margin.y + objects.top + offset_y * (object_size.y + margin.y) });
+      target.draw(bounding_box);
 
-    for (auto& object : objects_to_render) {
-      target.draw(object);
+      element.setPosition({ margin.x + objects.left + offset_x * (object_size.x + margin.x), margin.y + objects.top + offset_y * (object_size.y + margin.y) });
+      target.draw(element);
+      i++;
     }
 
     sf::Text text;
@@ -63,7 +66,9 @@ class Inventory : public sf::Drawable, public sf::Transformable {
   }
 
 public:
-  explicit Inventory(const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_), size(5) {
-    elements = { "test1", "test2", "test3" };
+  explicit Inventory(const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_), size(5) {}
+
+  void update_elements(std::map<int, Object> elements_) {
+    elements = elements_;
   }
 };
