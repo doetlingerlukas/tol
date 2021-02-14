@@ -21,6 +21,26 @@
    <property name="y" type="int" value="0"/>
   </properties>
  </tile>
+ <tile id="246">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="251">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="262">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="267">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="268">
   <properties>
    <property name="y" type="int" value="0"/>
