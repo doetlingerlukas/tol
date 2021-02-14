@@ -1,6 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.3" name="vgard" tilewidth="32" tileheight="32" tilecount="1024" columns="16">
  <image source="victorian-garden.png" trans="ff00ff" width="512" height="2048"/>
+ <tile id="74">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="75">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="76">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="90">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="91">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="92">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="106">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="107">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="108">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="122">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="123">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="124">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="138">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="139">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="140">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="160">
   <properties>
    <property name="y" type="int" value="0"/>
