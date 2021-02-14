@@ -55,7 +55,9 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       bounding_box.setPosition({ margin.x + objects.left + offset_x * (object_size.x + margin.x), margin.y + objects.top + offset_y * (object_size.y + margin.y) });
       target.draw(bounding_box);
 
-      element.setPosition({ margin.x + objects.left + offset_x * (object_size.x + margin.x), margin.y + objects.top + offset_y * (object_size.y + margin.y) });
+      element.setScale({ 4.f, 4.f });
+      element.setPosition({ (margin.x + objects.left + offset_x * (object_size.x + margin.x)) / 4.f,
+        (margin.y + objects.top + offset_y * (object_size.y + margin.y)) / 4.f });
       target.draw(element);
       i++;
     }
