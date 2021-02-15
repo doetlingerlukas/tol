@@ -4,7 +4,7 @@
 #include <fmt/core.h>
 
 #include <map.hpp>
-#include <character.hpp>
+#include <protagonist.hpp>
 #include <input.hpp>
 #include <game_state.hpp>
 
@@ -18,7 +18,7 @@ class PlayState: public sf::Drawable {
 
   sf::View map_view;
   std::reference_wrapper<TiledMap> map;
-  std::reference_wrapper<Character> player;
+  std::reference_wrapper<Protagonist> player;
 
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
@@ -54,7 +54,7 @@ class PlayState: public sf::Drawable {
     target.draw(text);
   }
 
-  inline Character& getPlayer() const {
+  inline Protagonist& getPlayer() const {
     return player;
   }
 
@@ -63,7 +63,7 @@ class PlayState: public sf::Drawable {
   }
 
 public:
-  PlayState(TiledMap& map_, Character& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size):
+  PlayState(TiledMap& map_, Protagonist& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size):
     map(map_), player(player_), asset_cache(asset_cache_), scale(scale_) {
 
     map_view.reset({ 0, (getMap().getSize().y - window_size.y) * scale_.y, (float) window_size.x, (float) window_size.y });

@@ -19,7 +19,7 @@ class GameInstance {
   const fs::path saves_dir;
 
 public:
-  explicit GameInstance(const fs::path exec_dir) :
+  explicit GameInstance(const fs::path& exec_dir) :
     state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
 
   void setState(GameState new_state) {

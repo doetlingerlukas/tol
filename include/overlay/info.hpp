@@ -33,7 +33,7 @@ class Info : public sf::Drawable, public sf::Transformable {
 
       sf::Text text;
       text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
-      text.setColor(sf::Color::White);
+      text.setFillColor(sf::Color::White);
       text.setPosition(text_start_pos);
 
       std::vector<sf::Text> lines;

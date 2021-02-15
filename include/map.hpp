@@ -15,6 +15,7 @@
 #include <animation.hpp>
 #include <character.hpp>
 #include <npc.hpp>
+#include <protagonist.hpp>
 
 class TiledMap: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -30,7 +31,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   size_t from_y;
   size_t to_y;
 
-  Character* player;
+  Protagonist* player;
   std::vector<Npc> npcs;
   std::vector<const Character*> characters;
   std::chrono::milliseconds now;
@@ -330,7 +331,7 @@ public:
     return view;
   }
 
-  void setPlayer(Character* player) {
+  void setPlayer(Protagonist* player) {
     this->player = player;
     addCharacter(player);
   }

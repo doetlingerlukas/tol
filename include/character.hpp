@@ -39,7 +39,6 @@ const int EFFECT_TILE_SIZE = 32;
 
 class Character: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
-  Inventory inventory;
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
@@ -51,18 +50,13 @@ class Character: public sf::Drawable, public sf::Transformable {
   std::optional<sf::IntRect> current_effect;
 
   std::string name;
-  std::function<void(const std::string&)> pickup_callback;
 
 protected:
-  void registerPickup(std::function<void(const std::string&)> callback) {
-    pickup_callback = callback;
-  }
-
   std::shared_ptr<Stats> stats;
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
-      const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_), inventory(Inventory(32)) {
+      const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_) {
     sprite.setTexture(*asset_cache->loadTexture(path));
     sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
     sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
@@ -79,9 +73,6 @@ public:
     return name;
   }
 
-  std::vector<std::pair<std::string, Object>> getInventoryElements() const {
-    return inventory.getElements();
-  }
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     if (animation) {
       sprite.setTextureRect(animation->getDrawingRect(now));
@@ -159,11 +150,13 @@ public:
     };
   }
 
-  void move(std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-    float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, std::map<int, Object>& collectibles, const sf::Vector2f& map_size) {
-    auto position = getPosition();
+  void move(
+    std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
+    float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, const sf::Vector2f& map_size
+  ) {
+    const auto position = getPosition();
 
-    auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
+    const auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
 
     sf::Vector2f velocity = { 0.f, 0.f };
 
@@ -183,7 +176,7 @@ public:
       velocity.y += speed_adjusted;
     }
 
-    auto stop_movement = [this, &x_direction, &y_direction, now](CharacterDirection direction) {
+    const auto stop_movement = [this, &x_direction, &y_direction, now](CharacterDirection direction) {
       if (direction == LEFT || direction == RIGHT) {
         if (x_direction == direction) {
           x_direction = std::nullopt;
@@ -300,22 +293,6 @@ public:
     if (next_bounds.top + player_height > map_size.y) {
       next_bounds.top = map_size.y - player_height;
       stop_movement(DOWN);
-    }
-
-    for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
-      auto& [id, collectible] = *it;
-
-      if (collectible.collides_with(next_bounds)) {
-        std::cout << "Item collected: " << collectible.getName() << std::endl;
-        inventory.add(make_pair(collectible.getName(), collectible));
-
-        if (pickup_callback != nullptr)
-          pickup_callback(collectible.getName());
-
-        it = collectibles.erase(it);
-      } else {
-        it++;
-      }
     }
 
     setPosition({ next_bounds.left + player_width / 2.f, next_bounds.top + player_height / 2.f });

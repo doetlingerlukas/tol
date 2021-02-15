@@ -6,7 +6,7 @@
 class Npc: public Character {
  using json = nlohmann::json;
 
-  json npc_stats(const std::string& name) {
+  json npc_stats(const std::string& name) const {
     json stats(json::object({
       { "npc1", {
         { "strength", 10 },
