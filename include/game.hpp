@@ -98,6 +98,9 @@ class Game {
           }
         }
         break;
+      case sf::Keyboard::Enter:
+        key_input.enter = event.type == sf::Event::KeyPressed;
+        break;
       case sf::Keyboard::Right:
         key_input.right = event.type == sf::Event::KeyPressed;
         break;
@@ -124,8 +127,6 @@ class Game {
         break;
       case sf::Keyboard::E:
         key_input.e = event.type == sf::Event::KeyPressed;
-      case sf::Keyboard::Enter:
-        break;
       case sf::Keyboard::M:
         music.stop_background();
         break;

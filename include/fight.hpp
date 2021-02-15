@@ -65,13 +65,19 @@ public:
         menu.up();
         last_input = now;
       }
-    }
-
-    if(input.down) {
+    } else if(input.down) {
       if(td.count() > 120) {
         menu.down();
         last_input = now;
       }
+    } else if(input.enter) {
+      if(td.count() > 120) {
+        menu.enter(input.enter);
+        last_input = now;
+      }
+    } else {
+      menu.enter(false);
     }
+
   }
 };
