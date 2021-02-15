@@ -215,6 +215,7 @@ public:
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
+    // load from saved stats
     json protagonist_stats = {
       { "strength", 10 },
       { "speed",  10 },
@@ -256,7 +257,7 @@ public:
 
     std::optional<std::string> last_npc_dialog;
 
-    Fight fight(asset_cache, settings.resolution());
+    Fight fight(asset_cache, player, settings.resolution());
 
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();

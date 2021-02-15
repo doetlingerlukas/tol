@@ -2,8 +2,10 @@
 
 #include "menu.hpp"
 #include "input.hpp"
+#include "protagonist.hpp"
 
 class Fight: public sf::Drawable, public sf::Transformable {
+  const Character& player;
   std::shared_ptr<AssetCache> asset_cache;
   Menu menu;
   std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
@@ -50,8 +52,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
   }
 
 public:
-  Fight(const std::shared_ptr<AssetCache> asset_cache_, const std::pair<int, int>& resolution) :
-      asset_cache(asset_cache_), menu(init_menu(resolution)) {
+  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_, const std::pair<int, int>& resolution) :
+      player(player_), asset_cache(asset_cache_), menu(init_menu(resolution)) {
     menu.add_item("ATTACK 1", [&]() { });
     menu.add_item("ATTACK 2", [&]() { });
     menu.add_item("ATTACK 3", [&]() { });
@@ -59,6 +61,7 @@ public:
 
   void with(const KeyInput& input, std::chrono::milliseconds now) {
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
+    const auto stats = player.getStats();
 
     if(input.up) {
       if(td.count() > 120) {
