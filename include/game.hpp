@@ -257,7 +257,7 @@ public:
 
     std::optional<std::string> last_npc_dialog;
 
-    Fight fight(asset_cache, player, settings.resolution());
+    Fight fight(asset_cache, player);
 
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
