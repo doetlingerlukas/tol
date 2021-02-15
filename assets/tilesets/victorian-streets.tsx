@@ -1,6 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.3" name="victorian-streets" tilewidth="32" tileheight="32" tilecount="1536" columns="16">
  <image source="victorian-streets.png" trans="000000" width="512" height="3072"/>
+ <tile id="32">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="33">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="34">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="35">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="36">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="37">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="48">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="49">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="50">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="51">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="52">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="53">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="64">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="65">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="66">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="67">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="68">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="80">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="81">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="82">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="416">
   <properties>
    <property name="y" type="int" value="1"/>

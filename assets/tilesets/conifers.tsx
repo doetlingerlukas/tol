@@ -4,11 +4,31 @@
  <terraintypes>
   <terrain name="forest" tile="35"/>
  </terraintypes>
- <tile id="0" terrain="0,0,0,"/>
- <tile id="1" terrain="0,0,,0"/>
- <tile id="2" terrain=",,,0"/>
- <tile id="3" terrain=",,0,0"/>
- <tile id="4" terrain=",,0,"/>
+ <tile id="0" terrain="0,0,0,">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="1" terrain="0,0,,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="2" terrain=",,,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="4" y="9" width="28" height="23"/>
+  </objectgroup>
+ </tile>
+ <tile id="3" terrain=",,0,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="9" width="32" height="23"/>
+  </objectgroup>
+ </tile>
+ <tile id="4" terrain=",,0,">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="9" width="28" height="23"/>
+  </objectgroup>
+ </tile>
  <tile id="7">
   <properties>
    <property name="y" type="int" value="4"/>
@@ -94,11 +114,31 @@
    <property name="y" type="int" value="5"/>
   </properties>
  </tile>
- <tile id="32" terrain="0,,0,0"/>
- <tile id="33" terrain=",0,0,0"/>
- <tile id="34" terrain=",0,,0"/>
- <tile id="35" terrain="0,0,0,0"/>
- <tile id="36" terrain="0,,0,"/>
+ <tile id="32" terrain="0,,0,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="33" terrain=",0,0,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="34" terrain=",0,,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="4" y="0" width="28" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="35" terrain="0,0,0,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="36" terrain="0,,0,">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="28" height="32"/>
+  </objectgroup>
+ </tile>
  <tile id="39">
   <properties>
    <property name="y" type="int" value="3"/>
@@ -184,12 +224,32 @@
    <property name="y" type="int" value="4"/>
   </properties>
  </tile>
- <tile id="64" terrain="0,,,0"/>
+ <tile id="64" terrain="0,,,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
  <tile id="65" terrain=",0,0,"/>
- <tile id="66" terrain=",0,,"/>
- <tile id="67" terrain="0,0,,"/>
- <tile id="68" terrain="0,,,"/>
- <tile id="69" terrain="0,0,0,0"/>
+ <tile id="66" terrain=",0,,">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="4" y="0" width="28" height="28"/>
+  </objectgroup>
+ </tile>
+ <tile id="67" terrain="0,0,,">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="28"/>
+  </objectgroup>
+ </tile>
+ <tile id="68" terrain="0,,,">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="28" height="28"/>
+  </objectgroup>
+ </tile>
+ <tile id="69" terrain="0,0,0,0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="32" height="32"/>
+  </objectgroup>
+ </tile>
  <tile id="71">
   <properties>
    <property name="y" type="int" value="2"/>
