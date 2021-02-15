@@ -255,7 +255,7 @@ public:
 
     std::optional<std::string> last_npc_dialog;
 
-    Fight fight(asset_cache);
+    Fight fight(asset_cache, settings.resolution());
 
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
@@ -290,6 +290,7 @@ public:
         window.draw(inventory_overlay);
         break;
       case GameState::FIGHT:
+        fight.with(key_input, now);
         window.draw(fight);
         break;
       case GameState::PLAY:
