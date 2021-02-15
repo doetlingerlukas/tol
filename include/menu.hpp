@@ -2,6 +2,8 @@
 
 #include <functional>
 
+#include "shared.hpp"
+
 class MenuItem: public sf::Drawable {
   std::shared_ptr<AssetCache> asset_cache;
 
@@ -16,10 +18,6 @@ class MenuItem: public sf::Drawable {
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     target.draw(text);
   }
-
-  inline static std::function<int(float, float)> scale_ultra = [](const float x, const float y) constexpr {
-    return (x / (x / y)) * 1.77777777778;
-  };
 
 public:
   MenuItem(std::string title, std::function<void()> callback, const std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2i& location,
@@ -45,8 +43,8 @@ public:
       text.setFillColor(sf::Color(200, 200, 200, 255));
     }
 
-    const int resize_x = MenuItem::scale_ultra(x, y);
-    const auto ultra_offset = ((x / static_cast<float>(resize_x)) - 1.0f) < std::numeric_limits<float>::epsilon() ? 0.0f : 300.0f;
+    const int resize_x = scale_ultra(x, y);
+    const auto ultra_offset = scale_pos(0.0f, x, resize_x, 300.0f);
     const auto offset_x = x - resize_x + static_cast<float>(menu_location.x) - ultra_offset;
     const int offset_y = y - menu_location.y;
 

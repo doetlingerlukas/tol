@@ -5,6 +5,7 @@
 #include "menu.hpp"
 #include "input.hpp"
 #include "protagonist.hpp"
+#include "shared.hpp"
 
 class Fight: public sf::Drawable, public sf::Transformable {
   const Character& player;
@@ -13,14 +14,6 @@ class Fight: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
 
   const int TILE_SIZE = 64;
-
-  inline static std::function<int(float, float)> scale_ultra = [](const float x, const float y) constexpr {
-    return (x / (x / y)) * 1.77777777778;
-  };
-
-  inline static std::function<float(float, int, int, float)> scale_pos = [](const float scalar, const float actual_res, const int resize_res, const float adjusted_offset) constexpr {
-    return ((actual_res / resize_res) - 1.0f) < std::numeric_limits<float>::epsilon() ? scalar : adjusted_offset;
-  };
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
@@ -31,7 +24,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     const int scale_factor = 5;
 
-    const int resize_x = Fight::scale_ultra(target.getSize().x, target.getSize().y);
+    const int resize_x = scale_ultra(target.getSize().x, target.getSize().y);
 
     sf::Sprite player_sprite;
     player_sprite.setTexture(*asset_cache->loadTexture("tilesets/character-whitebeard.png"));
