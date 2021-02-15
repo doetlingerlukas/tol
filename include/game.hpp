@@ -34,6 +34,7 @@
 #include <game_instance.hpp>
 #include <overlay/info.hpp>
 #include <overlay/inventory_overlay.hpp>
+#include <fight.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -77,8 +78,11 @@ class Game {
     case sf::Event::KeyPressed:
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
-        case sf::Keyboard::Q:
+      case sf::Keyboard::Q:
         instance.setState(GameState::DIALOG);
+        break;
+      case sf::Keyboard::F:
+        instance.setState(GameState::FIGHT);
         break;
       case sf::Keyboard::Escape:
         if (event.type == sf::Event::KeyPressed) {
@@ -251,6 +255,8 @@ public:
 
     std::optional<std::string> last_npc_dialog;
 
+    Fight fight(asset_cache);
+
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
       const auto dt = millis / 1000.f;
@@ -283,10 +289,12 @@ public:
 
         window.draw(inventory_overlay);
         break;
+      case GameState::FIGHT:
+        window.draw(fight);
+        break;
       case GameState::PLAY:
       case GameState::QUEST:
-      case GameState::FIGHT:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog, info));
+        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog));
         window.draw(play_state);
 
         info.update_time(std::chrono::milliseconds(millis));

@@ -33,7 +33,7 @@ public:
         text.setFillColor(sf::Color(50, 200, 100, 255));
       }
     } else {
-        text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
+      text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
       text.setFillColor(sf::Color(200, 200, 200, 255));
     }
 
