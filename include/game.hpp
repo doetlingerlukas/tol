@@ -32,6 +32,8 @@
 #include <music.hpp>
 #include <game_state.hpp>
 #include <game_instance.hpp>
+#include <overlay/info.hpp>
+#include <overlay/inventory_overlay.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -112,6 +114,12 @@ class Game {
         break;
       case sf::Keyboard::M:
         music.stop_background();
+        break;
+      case sf::Keyboard::I:
+        instance.setState(GameState::INVENTORY);
+        break;
+      case sf::Keyboard::P:
+        instance.setState(GameState::PLAY);
         break;
       default:
         break;
@@ -204,6 +212,11 @@ public:
     tol::Music music(fs::path("assets/music"), settings.volume_level);
     music.play_background();
 
+    Info info(asset_cache);
+    info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
+
+    InventoryOverlay inventory_overlay(asset_cache);
+
     sf::Clock clock;
     float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
@@ -246,11 +259,20 @@ public:
       case GameState::MENU:
         nuklear->renderMenu(instance, play_state);
         break;
+      case GameState::INVENTORY:
+        window.draw(play_state);
+
+        inventory_overlay.update_elements(player.getInventoryElements());
+        window.draw(inventory_overlay);
+        break;
       case GameState::PLAY:
       case GameState::QUEST:
       case GameState::FIGHT:
         instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog));
         window.draw(play_state);
+
+        info.update_time(std::chrono::milliseconds(millis));
+        window.draw(info);
 
         nuklear->renderHud();
         break;

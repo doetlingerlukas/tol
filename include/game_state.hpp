@@ -5,6 +5,7 @@ enum class GameState {
   DIALOG,
   FIGHT,
   QUEST,
+  INVENTORY,
   MENU,
   SETTINGS,
   QUIT
