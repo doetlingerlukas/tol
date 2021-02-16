@@ -57,5 +57,5 @@ public:
 
   bool talked_to(const std::string& npc_name);
 
-  GameState talk_to(const std::string& npc_name);
+  void talk_to(const std::string& npc_name);
 };

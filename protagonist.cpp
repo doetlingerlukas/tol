@@ -49,6 +49,6 @@ bool Protagonist::talked_to(const std::string& npc_name) {
   return talked_to_npcs.count(npc_name) > 0;
 }
 
-GameState Protagonist::talk_to(const std::string& npc_name) {
+void Protagonist::talk_to(const std::string& npc_name) {
   talked_to_npcs.insert(npc_name);
 }
