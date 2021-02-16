@@ -4,10 +4,6 @@ require 'json'
 
 BUILD_DIR = './build'
 
-def mac?
-  RUBY_PLATFORM.include?('darwin')
-end
-
 task :deps do
   sh './deps.sh'
 end

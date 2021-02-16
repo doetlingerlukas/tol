@@ -7,6 +7,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(BuildType)
 include(CxxOptions)
 
+message(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
+
 add_executable(tol)
 target_sources(tol
   PRIVATE
@@ -29,7 +31,12 @@ target_sources(tol
 target_include_directories(tol SYSTEM PRIVATE external)
 target_include_directories(tol PRIVATE include)
 
+set(LINUX FALSE)
 if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
+if(${LINUX})
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL)
   target_link_libraries(tol PRIVATE OpenGL::GL)
@@ -65,7 +72,7 @@ add_custom_target(assets ALL
 add_dependencies(tol assets)
 
 # Don't compile map on Linux CI since it needs a GUI.
-if(NOT ((UNIX AND NOT APPLE) AND (DEFINED $ENV{CI})))
+if(NOT DEFINED ENV{CI} OR NOT ${LINUX})
   file(GLOB_RECURSE MAP_DEPENDENCIES "${CMAKE_CURRENT_SOURCE_DIR}/assets" "*.tmx")
   set(MAP_TMX "${CMAKE_CURRENT_SOURCE_DIR}/assets/map.tmx")
   set(MAP_JSON "${CMAKE_CURRENT_BINARY_DIR}/assets/map.json")
