@@ -125,7 +125,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
 
 public:
   explicit InventoryOverlay(const std::shared_ptr<AssetCache> asset_cache_, Inventory& inventory_)
-    : asset_cache(asset_cache_), selected(0), inventory(inventory_) {}
+    : asset_cache(asset_cache_), inventory(inventory_), selected(0) {}
 
   inline Inventory& getInventory() const {
     return inventory;
