@@ -22,8 +22,6 @@ void Health::decrease(size_t value) {
   health = health - value;
 }
 
-Health::Health(const Health &h) { }
-
 Health::Health(size_t health_) : health (health_), future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
   while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
     bool damage_received = false;

@@ -38,7 +38,7 @@ public:
 
   void decrease(size_t value);
 
-  Health(const Health &h);
+  Health(const Health& h) = delete;
 
   Health(size_t health_);
 
