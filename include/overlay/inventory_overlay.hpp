@@ -76,9 +76,16 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       i++;
     }
 
-    sf::Text text;
-    text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
-    text.setFillColor(sf::Color::White);
+    if (elements.size() > 0) {
+      auto& [name, element] = elements.at(selected);
+
+      sf::Text text;
+      text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
+      text.setColor(sf::Color::White);
+      text.setString(name);
+      text.setPosition({ detail.left + margin.x, detail.top + margin.y });
+      target.draw(text);
+    }
   }
 
 public:
