@@ -8,13 +8,21 @@
 #include "shared.hpp"
 #include "map.hpp"
 
+enum class Turn {
+  PLAYER,
+  ENEMY
+};
+
 class Fight: public sf::Drawable, public sf::Transformable {
   const Character& player;
   const Character* npc = nullptr;
+  Turn fight_turn = Turn::PLAYER;
 
   std::shared_ptr<AssetCache> asset_cache;
   Menu menu;
+  std::chrono::milliseconds now = std::chrono::milliseconds(0);
   std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
+  std::chrono::milliseconds last_turn = std::chrono::milliseconds(0);
 
   const int TILE_SIZE = 64;
 
@@ -146,14 +154,17 @@ public:
     const auto& attacks = player.getAttacks();
 
     for (const auto& attack : attacks) {
-      menu.add_item(attack.getName(), [attacks, this](int idx) {
+      menu.add_item(attack.getName(), [attacks, this](int idx) mutable {
         auto damage = attacks[idx].getDamage();
         npc->getStats()->health().decrease(damage);
+        fight_turn = Turn::ENEMY;
+        last_turn = this->now;
       });
     }
   }
 
-  void with(const KeyInput& input, std::chrono::milliseconds now, const std::optional<std::string>& npc_interact, const TiledMap& map) {
+  void with(const KeyInput& input, std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, const TiledMap& map) {
+    now = now_;
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
 
     if(npc_interact && npc == nullptr) {
@@ -168,24 +179,32 @@ public:
 
     assert(npc != nullptr);
 
-    if(input.up) {
-      if(td.count() > 120) {
-        menu.up();
-        last_input = now;
-      }
-    } else if(input.down) {
-      if(td.count() > 120) {
-        menu.down();
-        last_input = now;
-      }
-    } else if(input.enter) {
-      if(td.count() > 120) {
-        menu.enter(input.enter);
-        last_input = now;
+    if(fight_turn == Turn::PLAYER) {
+      if(input.up) {
+        if(td.count() > 120) {
+          menu.up();
+          last_input = now;
+        }
+      } else if(input.down) {
+        if(td.count() > 120) {
+          menu.down();
+          last_input = now;
+        }
+      } else if(input.enter) {
+        if(td.count() > 120) {
+          menu.enter(input.enter);
+          last_input = now;
+        }
+      } else {
+        menu.enter(false);
       }
     } else {
-      menu.enter(false);
-    }
+      const auto td_turn = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_turn);
 
+      if(td_turn.count() > 1000) {
+        fight_turn = Turn::PLAYER;
+        player.getStats()->health().decrease(10);
+      }
+    }
   }
 };
