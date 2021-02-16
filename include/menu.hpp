@@ -9,7 +9,7 @@ class MenuItem: public sf::Drawable {
 
   int character_scalar;
   std::string title;
-  std::function<void()> callback_;
+  std::function<void(int)> callback_;
   sf::Vector2i menu_location;
 
 
@@ -20,7 +20,7 @@ class MenuItem: public sf::Drawable {
   }
 
 public:
-  MenuItem(std::string title, std::function<void()> callback, const std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2i& location,
+  MenuItem(std::string title, std::function<void(int)> callback, const std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2i& location,
       int character_scalar_) : character_scalar(character_scalar_), title(title), callback_(callback), asset_cache(asset_cache_), menu_location(location) {
     text.setString(title);
   }
@@ -51,8 +51,8 @@ public:
     text.setPosition({ offset_x, offset_y + static_cast<float>(index * character_size) });
   }
 
-  inline void callback() const {
-    callback_();
+  inline void callback(int idx) const {
+    callback_(idx);
   }
 
   inline sf::FloatRect global_bounds() const {
@@ -104,7 +104,7 @@ public:
     }
   }
 
-  void add_item(std::string title, std::function<void()> callback) {
+  void add_item(std::string title, std::function<void(int)> callback) {
     MenuItem item(title, callback, asset_cache, menu_location, character_scalar);
     items.push_back(item);
   }
@@ -114,7 +114,7 @@ public:
     enter_pressed = pressed;
 
     if (was_pressed && !pressed) {
-      items[current_item].callback();
+      items[current_item].callback(current_item);
     }
   }
 
@@ -127,7 +127,7 @@ public:
       mouse_current_item_pressed = pressed;
 
       if (was_pressed && !pressed) {
-        items[current_item].callback();
+        items[current_item].callback(current_item);
       }
     } else {
       mouse_current_item_pressed = false;

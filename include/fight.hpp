@@ -10,7 +10,7 @@
 
 class Fight: public sf::Drawable, public sf::Transformable {
   const Character& player;
-  const Character* npc;
+  const Character* npc = nullptr;
 
   std::shared_ptr<AssetCache> asset_cache;
   Menu menu;
@@ -146,13 +146,15 @@ public:
     const auto& attacks = player.getAttacks();
 
     for (const auto& attack : attacks) {
-      menu.add_item(attack.getName(), [&]() { });
+      menu.add_item(attack.getName(), [attacks, this](int idx) {
+        auto damage = attacks[idx].getDamage();
+        npc->getStats()->health().decrease(damage);
+      });
     }
   }
 
   void with(const KeyInput& input, std::chrono::milliseconds now, const std::optional<std::string>& npc_interact, const TiledMap& map) {
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
-    const auto stats = player.getStats();
 
     if(npc_interact && npc == nullptr) {
       const auto& characters = map.getCharacters();
@@ -163,6 +165,8 @@ public:
       if(res != std::end(characters))
         npc = *res;
     }
+
+    assert(npc != nullptr);
 
     if(input.up) {
       if(td.count() > 120) {
