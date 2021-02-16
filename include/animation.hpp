@@ -2,6 +2,9 @@
 
 #include <chrono>
 
+#include <SFML/Graphics.hpp>
+#include <tileson.hpp>
+
 class Animation {
   std::chrono::milliseconds total_time = std::chrono::milliseconds(0);
   std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;

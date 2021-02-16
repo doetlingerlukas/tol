@@ -2,8 +2,11 @@
 
 #include <fstream>
 #include <iostream>
+
+#include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
 
+namespace fs = std::filesystem;
 
 constexpr std::array<std::pair<int, int>, 6> supported_resolutions = {
   std::make_pair(3840, 1600),
@@ -33,92 +36,26 @@ class Settings {
   bool vsync_enabled;
   fs::path settings_path;
 
-  void loadSettings() {
-    json settings;
-
-    if (fs::exists(settings_path)) {
-      std::ifstream ifs(settings_path);
-      settings = json::parse(ifs);
-    }
-
-    auto& settings_field = settings["settings"];
-    auto& resolution = settings_field["resolution"];
-
-    const int width = get_or_else(resolution, "width", 1200);
-    resolution["width"] = width;
-    resolution_width = width;
-
-    const int height = get_or_else(resolution, "height", 800);
-    resolution["height"] = height;
-    resolution_height = height;
-
-    const bool fullscreen = get_or_else(settings_field, "fullscreen", false);
-    settings_field["fullscreen"] = fullscreen;
-    is_fullscreen = fullscreen;
-
-    const bool vsync = get_or_else(settings_field, "vsync", false);
-    settings_field["vsync"] = vsync;
-    vsync_enabled = vsync;
-
-    const float volume = get_or_else(settings_field, "volume", 0.1f);
-    settings_field["volume"] = volume;
-    volume_level = volume;
-
-    std::cout << std::setw(2) << settings << std::endl;
-
-    std::ofstream out(settings_path);
-    out << std::setw(2) << settings << std::endl;
-  }
+  void loadSettings();
 
 public:
   float volume_level;
 
-  explicit Settings(const fs::path exec_path) : settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
-    loadSettings();
-  }
+  explicit Settings(const fs::path exec_path);
 
-  std::pair<int, int> resolution() const {
-    return std::make_pair(resolution_width, resolution_height);
-  }
+  std::pair<int, int> resolution() const;
 
-  void set_resolution(std::tuple<int, int> res) {
-    const auto [width, height] = res;
-    resolution_width = width;
-    resolution_height = height;
-  }
+  void set_resolution(std::tuple<int, int> res);
 
-  void set_resolution(sf::VideoMode video_mode) {
-    resolution_width = video_mode.width;
-    resolution_height = video_mode.height;
-  }
+  void set_resolution(sf::VideoMode video_mode);
 
-  bool fullscreen() const {
-    return is_fullscreen;
-  }
+  bool fullscreen() const;
 
-  bool vsync() const {
-    return vsync_enabled;
-  }
+  bool vsync() const;
 
-  void set_fullscreen(bool value) {
-    is_fullscreen = value;
-  }
+  void set_fullscreen(bool value);
 
-  void set_vsync(bool value) {
-    vsync_enabled = value;
-  }
+  void set_vsync(bool value);
 
-  void serialize() const {
-    json settings;
-
-    settings["settings"]["resolution"]["width"] = resolution_width;
-    settings["settings"]["resolution"]["height"] = resolution_height;
-    settings["settings"]["fullscreen"] = is_fullscreen;
-    settings["settings"]["vsync"] = vsync_enabled;
-    settings["settings"]["volume"] = volume_level;
-
-    std::ofstream ofs(settings_path, std::ofstream::out | std::ofstream::trunc);
-    ofs << settings.dump(2);
-    ofs.close();
-  }
+  void serialize() const;
 };

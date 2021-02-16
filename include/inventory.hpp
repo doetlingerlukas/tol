@@ -5,7 +5,6 @@
 
 #include <object.hpp>
 
-
 class Inventory {
   int max_size;
   std::vector<std::pair<std::string, Object>> elements;

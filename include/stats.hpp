@@ -30,64 +30,21 @@ private:
   std::function<void()> callback;
 
 public:
-  void subscribe(std::function<void()> func) {
-    callback = func;
-  }
+  void subscribe(std::function<void()> func);
 
-  virtual void increase(size_t value) override {
-    health = std::clamp<size_t>(0, 100, health + value);
-  }
+  virtual void increase(size_t value) override;
 
-  virtual size_t get() const override {
-    return health;
-  }
+  virtual size_t get() const override;
 
-  void decrease(size_t value) {
-    if (health == 0 || health == value) {
-      health = 0;
-      callback();
-      return;
-    }
+  void decrease(size_t value);
 
-    health = health - value;
-  }
+  Health(const Health &h);
 
-  Health(const Health &h) { }
+  Health(size_t health_);
 
-  Health(size_t health_) : health (health_), future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
-    while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
-      bool damage_received = false;
+  ~Health();
 
-      while(health == 100 && future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      }
-
-      auto health_before = health;
-      for(int i = 0; i < 14; i++) {
-        if (future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout || health_before != health) {
-          damage_received = true;
-          break;
-        } else {
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        }
-      }
-
-      if (!damage_received && health < 100) {
-        std::lock_guard<std::mutex> guard(health_mutex);
-        health += 2;
-      }
-    }
-  }, std::move(future_obj)) { }
-
-  ~Health() {
-    exit_signal.set_value();
-    regen_thread.join();
-  }
-
-  virtual std::ostream& print(std::ostream& out) const override {
-    out << "health: " << health << "\n";
-    return out;
-  }
+  virtual std::ostream& print(std::ostream& out) const override;
 };
 
 
@@ -95,40 +52,26 @@ class Strength : public StatsProps<size_t> {
   int strength = 10;
 
 public:
-  Strength(size_t strength_) : strength(strength_) { }
+  Strength(size_t strength_);
 
-  void increase(size_t value) override {
-    strength += value;
-  }
+  void increase(size_t value) override;
 
-  virtual size_t get() const override {
-    return strength;
-  }
+  virtual size_t get() const override;
 
-  virtual std::ostream& print(std::ostream& out) const override {
-    out << "strength: " << strength << "\n";
-    return out;
-  }
+  virtual std::ostream& print(std::ostream& out) const override;
 };
 
 class Speed : public StatsProps<size_t> {
   int speed = 10;
 
 public:
-  Speed(size_t speed_) : speed(speed_) { }
+  Speed(size_t speed_);
 
-  void increase(size_t value) override {
-    speed += value;
-  }
+  void increase(size_t value) override;
 
-  virtual size_t get() const override {
-    return speed;
-  }
+  virtual size_t get() const override;
 
-  virtual std::ostream& print(std::ostream& out) const override {
-    out << "speed: " << speed << "\n";
-    return out;
-  }
+  virtual std::ostream& print(std::ostream& out) const override;
 };
 
 class Experience : public StatsProps<size_t> {
@@ -143,32 +86,15 @@ class Experience : public StatsProps<size_t> {
   };
 
 public:
-  Experience(size_t lvl) : level(lvl) { }
+  Experience(size_t lvl);
 
-  void increase(size_t value) override {
-    experience += value;
+  void increase(size_t value) override;
 
-    for(auto& [xp, lvl]: xp_bracket) {
-      if(xp > experience) {
-        break;
-      }
+  size_t get() const override;
 
-      level = lvl;
-    }
-  }
+  virtual size_t getLevel() const;
 
-  size_t get() const override {
-    return experience;
-  }
-
-  virtual size_t getLevel() const {
-    return level;
-  }
-
-  virtual std::ostream& print(std::ostream& out) const override {
-    out << "experience: " << experience << ", level: " << level << "\n";
-    return out;
-  }
+  virtual std::ostream& print(std::ostream& out) const override;
 };
 
 class Stats {
@@ -179,33 +105,16 @@ private:
   Experience _experience;
 
 public:
-  Stats(const json& stats):
-    _health(Health(stats["health"].get<size_t>())),
-    _strength(Strength(stats["strength"].get<size_t>())),
-    _speed(Speed(stats["speed"].get<size_t>())),
-    _experience(Experience(stats["level"].get<size_t>())) { }
+  Stats(const json& stats);
 
-  Health& health() {
-    return _health;
-  }
+  Health& health();
 
-  Strength& strength() {
-    return _strength;
-  }
+  Strength& strength();
 
-  Speed& speed() {
-    return _speed;
-  }
+  Speed& speed();
 
-  Experience& experience() {
-    return _experience;
-  }
+  Experience& experience();
 
-  void get() {
-    std::cout << _health;
-    std::cout << _strength;
-    std::cout << _speed;
-    std::cout << _experience;
-  }
+  void get();
 };
 

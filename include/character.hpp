@@ -51,6 +51,10 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::string name;
 
+  sf::FloatRect bounding_box_rect;
+
+  mutable CharacterDirection last_direction = DOWN;
+
 protected:
   std::shared_ptr<Stats> stats;
 
@@ -64,10 +68,6 @@ public:
     effect.setTexture(*asset_cache->loadTexture("tilesets/effects.png"));
     effect.setOrigin({ EFFECT_TILE_SIZE / 2.f, EFFECT_TILE_SIZE / 2.f });
   }
-
-  sf::FloatRect bounding_box_rect;
-
-  mutable CharacterDirection last_direction = DOWN;
 
   std::string getName() const {
     return name;

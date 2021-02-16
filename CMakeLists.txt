@@ -9,6 +9,19 @@ add_executable(tol)
 target_sources(tol
   PRIVATE
     main.cpp
+    map.cpp
+    play_state.cpp
+    tile.cpp
+    object.cpp
+    asset_cache.cpp
+    nuklear.cpp
+    dialog_state.cpp
+    game_instance.cpp
+    settings.cpp
+    stats.cpp
+    character.cpp
+    npc.cpp
+    protagonist.cpp
 )
 
 target_include_directories(tol PRIVATE include)

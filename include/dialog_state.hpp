@@ -1,22 +1,12 @@
 #pragma once
 
+#include <string>
+
 enum class DialogState {
   QUESTION,
   RESPONSE
 };
 
-extern std::string stateAsString(DialogState state) {
-  switch(state) {
-    case DialogState::QUESTION:
-      return "question";
-    case DialogState::RESPONSE:
-      return "response";
-  }
+std::string stateAsString(DialogState state);
 
-  return "question";
-}
-
-extern DialogState operator!(DialogState state) {
-  return state == DialogState::QUESTION ? DialogState::RESPONSE : DialogState::QUESTION;
-}
-
+DialogState operator!(DialogState state);
