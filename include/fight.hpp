@@ -142,9 +142,12 @@ class Fight: public sf::Drawable, public sf::Transformable {
 public:
   Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_) :
       player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
-    menu.add_item("ATTACK 1", [&]() { });
-    menu.add_item("ATTACK 2", [&]() { });
-    menu.add_item("ATTACK 3", [&]() { });
+
+    const auto& attacks = player.getAttacks();
+
+    for (const auto& attack : attacks) {
+      menu.add_item(attack.getName(), [&]() { });
+    }
   }
 
   void with(const KeyInput& input, std::chrono::milliseconds now, const std::optional<std::string>& npc_interact, const TiledMap& map) {
