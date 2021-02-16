@@ -51,15 +51,6 @@ class Fight: public sf::Drawable, public sf::Transformable {
     health_fill.setSize({ 440.0f * (health / 100.0f), 30.0f });
     health_fill.setPosition({ target.getSize().x - resize_x + scale_pos(health_bar_off, target.getSize().x, resize_x, -150.0f), target.getSize().y - 150.0f });
 
-    if (health > 40 && health < 70) {
-      health_fill.setFillColor(sf::Color(255, 165, 0, 255));
-    } else if (health >= 70) {
-      health_fill.setFillColor(sf::Color(36, 109, 36, 255));
-    } else {
-      health_fill.setFillColor(sf::Color(255, 0, 0, 255));
-    }
-
-    target.draw(health_fill);
 
     const int character_size = 22;
     sf::Text player_health_percent;
@@ -75,15 +66,75 @@ class Fight: public sf::Drawable, public sf::Transformable {
       target.getSize().y - 152.0f
     });
 
-    target.draw(player_health_percent);
 
     sf::Sprite enemy;
+
+    const auto enemy_health = npc->getStats()->health().get();
 
     enemy.setTexture(*asset_cache->loadTexture(npc->getCharacterTexture()));
     enemy.setTextureRect(sf::IntRect{ TILE_SIZE, TILE_SIZE * 5, TILE_SIZE, TILE_SIZE });
     enemy.setPosition({ resize_x - scale_pos(400.0f, target.getSize().x, resize_x, 0.0f), 100.0f });
     enemy.setScale({ scale_factor, scale_factor });
     target.draw(enemy);
+
+    sf::RectangleShape health_enemy_background;
+    health_enemy_background.setSize({ health_bar_size, 30.0f });
+    health_enemy_background.setPosition({ resize_x - scale_pos(400.0f + health_bar_off, target.getSize().x, resize_x, 150.0f), 100.0f });
+    health_enemy_background.setFillColor(sf::Color(255, 232, 225, 100));
+    target.draw(health_enemy_background);
+
+    sf::RectangleShape health_enemy_fill;
+    health_enemy_fill.setSize({ health_bar_size * (enemy_health / 100.0f), 30.0f });
+    health_enemy_fill.setPosition({ resize_x - scale_pos(400.0f + health_bar_off, target.getSize().x, resize_x, 150.0f), 100.0f });
+
+    if (health > 40 && health < 70) {
+      health_fill.setFillColor(sf::Color(255, 165, 0, 255));
+      health_enemy_fill.setFillColor(sf::Color(255, 165, 0, 255));
+    } else if (health >= 70) {
+      health_fill.setFillColor(sf::Color(36, 109, 36, 255));
+      health_enemy_fill.setFillColor(sf::Color(36, 109, 36, 255));
+    } else {
+      health_fill.setFillColor(sf::Color(255, 0, 0, 255));
+      health_enemy_fill.setFillColor(sf::Color(255, 0, 0, 255));
+    }
+
+    target.draw(health_fill);
+    target.draw(health_enemy_fill);
+
+    sf::Text enemy_health_percent;
+    enemy_health_percent.setCharacterSize(character_size);
+    enemy_health_percent.setFillColor(sf::Color::White);
+    enemy_health_percent.setString(fmt::format("{}", enemy_health));
+    const int enemy_health_percent_size = enemy_health_percent.getGlobalBounds().width * 4;
+    enemy_health_percent.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+
+    enemy_health_percent.setPosition({
+      resize_x - scale_pos(400 / 2 + health_bar_off, target.getSize().x, resize_x, -55.0f),
+      98.0f
+    });
+
+    target.draw(enemy_health_percent);
+
+    sf::Text enemy_name;
+    enemy_name.setCharacterSize(40);
+    enemy_name.setFillColor(sf::Color::White);
+    enemy_name.setString(npc->getName());
+    enemy_name.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+    enemy_name.setPosition({ resize_x - scale_pos(400.0f + health_bar_off, target.getSize().x, resize_x, 150.0f), 20.0f });
+    target.draw(enemy_name);
+
+    const auto enemy_level_text = fmt::format("Level: {}", npc->getStats()->experience().getLevel());
+
+    sf::Text enemy_level;
+    enemy_level.setCharacterSize(40);
+    enemy_level.setFillColor(sf::Color::White);
+    enemy_level.setString(enemy_level_text);
+    enemy_level.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+    const int enemy_text_size = enemy_level.getGlobalBounds().width;
+    enemy_level.setPosition({ resize_x - scale_pos(enemy_text_size * 2, target.getSize().x, resize_x, -enemy_text_size), 20.0f });
+
+    target.draw(enemy_level);
+    target.draw(player_health_percent);
 
     target.draw(menu);
   }
