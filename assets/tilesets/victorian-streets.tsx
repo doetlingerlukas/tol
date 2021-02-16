@@ -253,6 +253,9 @@
   <properties>
    <property name="y" type="int" value="3"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="12" y="88" width="8" height="8"/>
+  </objectgroup>
  </tile>
  <tile id="1041">
   <properties>
@@ -348,6 +351,9 @@
   <properties>
    <property name="y" type="int" value="3"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="12" y="64" width="8" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="1084">
   <properties>

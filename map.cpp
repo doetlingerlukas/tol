@@ -318,8 +318,8 @@ std::vector<Collision> TiledMap::collisions_around(const sf::FloatRect& bounds) 
   create_collisions = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
     switch (layer.getType()) {
       case tson::LayerType::TileLayer:
-        for (size_t x = std::max(0, from_tile_x - 2); x < static_cast<size_t>(std::min(max_x, to_tile_x + 3)); x++) {
-          for (size_t y = std::max(0, from_tile_y - 2); y < static_cast<size_t>(std::min(max_y, to_tile_y + 3)); y++) {
+        for (size_t x = std::max(0, from_tile_x - 3); x < static_cast<size_t>(std::min(max_x, to_tile_x + 4)); x++) {
+          for (size_t y = std::max(0, from_tile_y - 3); y < static_cast<size_t>(std::min(max_y, to_tile_y + 4)); y++) {
             const auto* tileObjectP = layer.getTileObject(x, y);
 
             if (!tileObjectP) {
