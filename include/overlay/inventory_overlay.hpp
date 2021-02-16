@@ -76,15 +76,47 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       i++;
     }
 
+    const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
+    const auto display_text = [&target, &font](const std::string& text_, sf::Vector2f pos) {
+      sf::Text text;
+      text.setFont(font);
+      text.setFillColor(sf::Color::White);
+      text.setString(text_);
+      text.setPosition(pos);
+      target.draw(text);
+    };
+
     if (elements.size() > 0) {
       auto& [name, element] = elements.at(selected);
 
+      sf::Vector2f info_pos({ detail.left + margin.x / 2, detail.top + margin.y / 2 });
+      auto max_line_width = detail.width - margin.x;
+
+      display_text("<C> use item", { info_pos.x, detail.top + detail.height - 4 * margin.y });
+      display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
+
+      std::istringstream iss(name);
+      const std::vector<std::string> words({ std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{} });
+
       sf::Text text;
-      text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
+      text.setFont(font);
       text.setFillColor(sf::Color::White);
-      text.setString(name);
-      text.setPosition({ detail.left + margin.x, detail.top + margin.y });
-      target.draw(text);
+      text.setPosition(info_pos);
+
+      std::vector<sf::Text> lines;
+      lines.push_back(text);
+      for (auto& word : words) {
+        if (lines.back().getGlobalBounds().width + word.size() * 14 > max_line_width) {
+          lines.push_back(text);
+          lines.back().setPosition({ info_pos.x, info_pos.y + text.getCharacterSize() * (lines.size() - 1) });
+        }
+        std::string current = lines.back().getString();
+        lines.back().setString(current + " " + word);
+      }
+
+      for (auto& line : lines) {
+        target.draw(line);
+      }
     }
   }
 
