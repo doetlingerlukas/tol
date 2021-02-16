@@ -65,7 +65,7 @@ add_custom_target(assets ALL
 add_dependencies(tol assets)
 
 # Don't compile map on Linux CI since it needs a GUI.
-if(NOT (UNIX AND NOT APPLE) AND (DEFINED $ENV{CI}))
+if(NOT ((UNIX AND NOT APPLE) AND (DEFINED $ENV{CI})))
   file(GLOB_RECURSE MAP_DEPENDENCIES "${CMAKE_CURRENT_SOURCE_DIR}/assets" "*.tmx")
   set(MAP_TMX "${CMAKE_CURRENT_SOURCE_DIR}/assets/map.tmx")
   set(MAP_JSON "${CMAKE_CURRENT_BINARY_DIR}/assets/map.json")
