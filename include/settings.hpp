@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 #include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
