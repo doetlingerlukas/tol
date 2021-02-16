@@ -1,0 +1,13 @@
+BasedOnStyle: LLVM
+AccessModifierOffset: 0
+AlignEscapedNewlines: DontAlign
+AllowShortFunctionsOnASingleLine: Empty
+IndentCaseLabels: true
+ColumnLimit: 120
+FixNamespaceComments: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+PointerAlignment: Left
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
+SpaceBeforeRangeBasedForLoopColon: false
+Cpp11BracedListStyle: false
