@@ -268,7 +268,7 @@ public:
       case GameState::PLAY:
       case GameState::QUEST:
       case GameState::FIGHT:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog));
+        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog, info));
         window.draw(play_state);
 
         info.update_time(std::chrono::milliseconds(millis));
@@ -279,8 +279,11 @@ public:
       case GameState::DIALOG:
         window.draw(play_state);
 
-        if (last_npc_dialog)
-          instance.setState(dialog.show("npc1"));
+        if (last_npc_dialog) {
+          const auto npc_name = "npc1";
+          instance.setState(dialog.show(npc_name));
+          player.talk_to(npc_name);
+        }
         break;
       case GameState::SETTINGS:
         nuklear->renderSettings(instance, settings);

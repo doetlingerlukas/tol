@@ -5,6 +5,7 @@
 #include <map>
 
 #include <character.hpp>
+#include <game_state.hpp>
 
 class Protagonist: public Character {
   Inventory inventory;
@@ -42,13 +43,19 @@ class Protagonist: public Character {
     { "level",  1 }
   };
 
+  std::set<std::string> talked_to_npcs;
+
 public:
   Protagonist(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats, const std::string& name);
 
   std::vector<sf::RectangleShape> move(
     std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-    float speed, std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles, const sf::Vector2f& map_size
+    float speed, std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles, const sf::Vector2f& map_size, Info& info
   );
 
   std::vector<std::pair<std::string, Object>> getInventoryElements() const;
+
+  bool talked_to(const std::string& npc_name);
+
+  GameState talk_to(const std::string& npc_name);
 };

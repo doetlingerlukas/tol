@@ -13,9 +13,9 @@ Protagonist::Protagonist(const fs::path& path, const std::shared_ptr<AssetCache>
 
 std::vector<sf::RectangleShape> Protagonist::move(
   std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-  float speed, std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles, const sf::Vector2f& map_size
+  float speed, std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles, const sf::Vector2f& map_size, Info& info
 ) {
-  const auto shapes = Character::move(x_direction, y_direction, speed, now, play_state, map_size);
+  const auto shapes = Character::move(x_direction, y_direction, speed, now, play_state, map_size, info);
 
   const auto bounds = getBoundingRect();
   for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
@@ -43,4 +43,12 @@ std::vector<sf::RectangleShape> Protagonist::move(
 
 std::vector<std::pair<std::string, Object>> Protagonist::getInventoryElements() const {
   return inventory.getElements();
+}
+
+bool Protagonist::talked_to(const std::string& npc_name) {
+  return talked_to_npcs.count(npc_name) > 0;
+}
+
+GameState Protagonist::talk_to(const std::string& npc_name) {
+  talked_to_npcs.insert(npc_name);
 }

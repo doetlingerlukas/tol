@@ -305,7 +305,7 @@ std::map<int, Object>& TiledMap::getCollectibles() {
   return collectibles;
 }
 
-std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds, const PlayState& play_state) const {
+std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds, const PlayState& play_state, Info& info) const {
   std::vector<sf::FloatRect> rects;
 
   const auto from_tile_x = static_cast<int>(bounds.left / getTileSize().x);
@@ -340,18 +340,25 @@ std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds,
       case tson::LayerType::ObjectGroup:
         for (auto& obj : layer.getObjects()) {
           if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
-
-            const auto condition = obj.getProp("unlock_condition");
-            if (condition && play_state.check_unlock_condition(std::any_cast<const std::string&>(condition->getValue()))) {
-              continue;
-            }
-
             sf::FloatRect object_rect = {
               static_cast<float>(obj.getPosition().x),
               static_cast<float>(obj.getPosition().y),
               static_cast<float>(obj.getSize().x),
               static_cast<float>(obj.getSize().y),
             };
+
+            const auto condition = obj.getProp("unlock_condition");
+            if (condition) {
+              if (play_state.check_unlock_condition(std::any_cast<const std::string&>(condition->getValue()))) {
+                continue;
+              } else if (object_rect.intersects(bounds)) {
+                const auto message = obj.getProp("unlock_hint");
+                if (message) {
+                  info.display_info(std::any_cast<const std::string&>(message->getValue()), std::chrono::seconds(10));
+                }
+              }
+            }
+
             rects.push_back(object_rect);
           }
         }

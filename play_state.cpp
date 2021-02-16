@@ -42,7 +42,7 @@ PlayState::PlayState(TiledMap& map_, Protagonist& player_, std::shared_ptr<Asset
 }
 
 GameState PlayState::update(KeyInput& key_input, const sf::RenderWindow& window,
-    const std::chrono::milliseconds& now, float dt, std::optional<std::string>& npc_dialog) {
+    const std::chrono::milliseconds& now, float dt, std::optional<std::string>& npc_dialog, Info& info) {
   auto state = GameState::PLAY;
   const auto window_size = window.getSize();
   map_view.setSize({ static_cast<float>(window_size.x), static_cast<float>(window_size.y) });
@@ -50,7 +50,7 @@ GameState PlayState::update(KeyInput& key_input, const sf::RenderWindow& window,
   collision_shapes = std::move(getPlayer().move(
     (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
     (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-    dt * CHARACTER_MOVE_SPEED, now, *this, getMap().getCollectibles(), getMap().getSize()
+    dt * CHARACTER_MOVE_SPEED, now, *this, getMap().getCollectibles(), getMap().getSize(), info
   ));
 
   if (key_input.up && !key_input.down) {
@@ -115,6 +115,8 @@ GameState PlayState::update(KeyInput& key_input, const sf::RenderWindow& window,
 bool PlayState::check_unlock_condition(const std::string& condition_name) const {
   if (condition_name == "bridge_gate") {
     return getPlayer().getInventoryElements().size() >= 3;
+  } else if (condition_name == "city_gate") {
+    return getPlayer().talked_to("npc1");
   }
 
   return false;

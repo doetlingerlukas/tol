@@ -94,22 +94,8 @@ sf::FloatRect Character::getTextureBoundingRect() const {
 
 std::vector<sf::RectangleShape> Character::move(
   std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-  float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size
+  float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info
 ) {
-  const auto collision_rects = play_state.getMap().collisionTiles(getBoundingRect(), play_state);
-
-  std::vector<sf::RectangleShape> shapes;
-
-  auto create_collision_shape = [&shapes] (const sf::FloatRect& rect) {
-    sf::RectangleShape shape({ rect.width, rect.height });
-    shape.setFillColor(sf::Color::Transparent);
-    shape.setOutlineColor(sf::Color::Red);
-
-    shape.setOutlineThickness(0.5f);
-    shape.setPosition({ rect.left, rect.top });
-    return shape;
-  };
-
   const auto position = getPosition();
 
   const auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
@@ -173,6 +159,20 @@ std::vector<sf::RectangleShape> Character::move(
   const auto player_bottom = player_top + player_height;
 
   const auto td2 = now - this->now;
+
+  const auto collision_rects = play_state.getMap().collisionTiles(next_bounds, play_state, info);
+
+  std::vector<sf::RectangleShape> shapes;
+
+  auto create_collision_shape = [&shapes] (const sf::FloatRect& rect) {
+    sf::RectangleShape shape({ rect.width, rect.height });
+    shape.setFillColor(sf::Color::Transparent);
+    shape.setOutlineColor(sf::Color::Red);
+
+    shape.setOutlineThickness(0.5f);
+    shape.setPosition({ rect.left, rect.top });
+    return shape;
+  };
 
   for (auto& obstacle_bounds : collision_rects) {
     auto shape = create_collision_shape(obstacle_bounds);

@@ -17,6 +17,7 @@
 #include <character.hpp>
 #include <npc.hpp>
 #include <protagonist.hpp>
+#include <overlay/info.hpp>
 
 class PlayState;
 
@@ -82,7 +83,7 @@ public:
 
   std::map<int, Object>& getCollectibles();
 
-  std::vector<sf::FloatRect> collisionTiles(const sf::FloatRect& player, const PlayState& play_state) const;
+  std::vector<sf::FloatRect> collisionTiles(const sf::FloatRect& player, const PlayState& play_state, Info& info) const;
 
   void setScale(float factorX, float factorY);
 

@@ -9,6 +9,7 @@
 #include <stats.hpp>
 #include <z_indexable.hpp>
 #include <inventory.hpp>
+#include <overlay/info.hpp>
 
 class PlayState;
 
@@ -75,7 +76,7 @@ public:
 
   std::vector<sf::RectangleShape> move(
     std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-    float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size
+    float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info
   );
 
   virtual std::optional<float> zIndex() const;
