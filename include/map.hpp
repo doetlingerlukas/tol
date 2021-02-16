@@ -1,4 +1,5 @@
 #pragma once
+#define _MAP_HPP_
 
 #include <variant>
 #include <algorithm>
@@ -16,6 +17,8 @@
 #include <character.hpp>
 #include <npc.hpp>
 #include <protagonist.hpp>
+
+class PlayState;
 
 class TiledMap: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -59,7 +62,7 @@ public:
 
   sf::Vector2i mapCoordsToTile(const sf::Vector2f& coords);
 
-  sf::FloatRect getWindowRect() {
+  inline sf::FloatRect getWindowRect() {
     return window_rect;
   }
 
@@ -79,7 +82,7 @@ public:
 
   std::map<int, Object>& getCollectibles();
 
-  std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
+  std::vector<sf::FloatRect> collisionTiles(const sf::FloatRect& player, const PlayState& play_state) const;
 
   void setScale(float factorX, float factorY);
 
@@ -87,3 +90,7 @@ public:
 
   std::vector<Npc>& getNpcs();
 };
+
+#ifndef _PLAY_STATE_HPP_
+#include <play_state.hpp>
+#endif

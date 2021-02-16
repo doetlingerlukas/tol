@@ -1,4 +1,5 @@
 #pragma once
+#define _PROTAGONIST_HPP_
 
 #include <SFML/Audio.hpp>
 #include <map>
@@ -44,9 +45,9 @@ class Protagonist: public Character {
 public:
   Protagonist(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats, const std::string& name);
 
-  void move(
+  std::vector<sf::RectangleShape> move(
     std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-    float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, std::map<int, Object>& collectibles, const sf::Vector2f& map_size
+    float speed, std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles, const sf::Vector2f& map_size
   );
 
   std::vector<std::pair<std::string, Object>> getInventoryElements() const;

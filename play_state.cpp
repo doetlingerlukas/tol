@@ -4,7 +4,7 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   target.setView(map_view);
   target.draw(map);
 
-  for (auto shape : collision_rects) {
+  for (auto shape : collision_shapes) {
     shape.setScale(scale);
     auto position = shape.getPosition();
     shape.setPosition({ position.x * scale.x, position.y * scale.y });
@@ -47,13 +47,11 @@ GameState PlayState::update(KeyInput& key_input, const sf::RenderWindow& window,
   const auto window_size = window.getSize();
   map_view.setSize({ static_cast<float>(window_size.x), static_cast<float>(window_size.y) });
 
-  collision_rects = getMap().collisionTiles(player);
-
-  getPlayer().move(
+  collision_shapes = std::move(getPlayer().move(
     (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
     (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-    dt * CHARACTER_MOVE_SPEED, now, collision_rects, getMap().getCollectibles(), getMap().getSize()
-  );
+    dt * CHARACTER_MOVE_SPEED, now, *this, getMap().getCollectibles(), getMap().getSize()
+  ));
 
   if (key_input.up && !key_input.down) {
     direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
@@ -114,3 +112,10 @@ GameState PlayState::update(KeyInput& key_input, const sf::RenderWindow& window,
   return state;
 }
 
+bool PlayState::check_unlock_condition(const std::string& condition_name) const {
+  if (condition_name == "bridge_gate") {
+    return getPlayer().getInventoryElements().size() >= 3;
+  }
+
+  return false;
+}

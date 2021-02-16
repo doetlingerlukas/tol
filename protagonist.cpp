@@ -11,11 +11,11 @@ Protagonist::Protagonist(const fs::path& path, const std::shared_ptr<AssetCache>
   }
 }
 
-void Protagonist::move(
+std::vector<sf::RectangleShape> Protagonist::move(
   std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-  float speed, std::chrono::milliseconds now, std::vector<sf::RectangleShape>& collision_rects, std::map<int, Object>& collectibles, const sf::Vector2f& map_size
+  float speed, std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles, const sf::Vector2f& map_size
 ) {
-  Character::move(x_direction, y_direction, speed, now, collision_rects, map_size);
+  const auto shapes = Character::move(x_direction, y_direction, speed, now, play_state, map_size);
 
   const auto bounds = getBoundingRect();
   for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
@@ -37,6 +37,8 @@ void Protagonist::move(
       it++;
     }
   }
+
+  return shapes;
 }
 
 std::vector<std::pair<std::string, Object>> Protagonist::getInventoryElements() const {

@@ -62,4 +62,3 @@ public:
 
   void setScale(sf::Vector2f scale);
 };
-

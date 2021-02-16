@@ -305,32 +305,22 @@ std::map<int, Object>& TiledMap::getCollectibles() {
   return collectibles;
 }
 
-std::vector<sf::RectangleShape> TiledMap::collisionTiles(const Character& player) const {
-  std::vector<sf::RectangleShape> shapes;
+std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds, const PlayState& play_state) const {
+  std::vector<sf::FloatRect> rects;
 
-  const auto player_pos = player.getPosition();
-
-  const auto player_tile_x = static_cast<int>(player_pos.x / getTileSize().x);
-  const auto player_tile_y = static_cast<int>(player_pos.y / getTileSize().y);
+  const auto from_tile_x = static_cast<int>(bounds.left / getTileSize().x);
+  const auto from_tile_y = static_cast<int>(bounds.top / getTileSize().y);
+  const auto to_tile_x = static_cast<int>((bounds.left + bounds.width) / getTileSize().x);
+  const auto to_tile_y = static_cast<int>((bounds.top + bounds.height) / getTileSize().y);
 
   const auto [max_x, max_y] = map->getSize();
 
-  auto create_collision_shape = [&player, &shapes] (const sf::FloatRect& rect) {
-    sf::RectangleShape shape({ rect.width, rect.height });
-    shape.setFillColor(sf::Color::Transparent);
-    shape.setOutlineColor(sf::Color::Red);
-
-    shape.setOutlineThickness(0.5f);
-    shape.setPosition({ rect.left, rect.top });
-    shapes.push_back(shape);
-  };
-
-  std::function<void(tson::Layer&)> create_collision_shapes;
-  create_collision_shapes = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
+  std::function<void(tson::Layer&)> create_collision_rects;
+  create_collision_rects = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
     switch (layer.getType()) {
       case tson::LayerType::TileLayer:
-        for (size_t x = std::max(0, player_tile_x - 2); x < std::min(max_x, player_tile_x + 3); x++) {
-          for (size_t y = std::max(0, player_tile_y - 2); y < std::min(max_y, player_tile_y + 3); y++) {
+        for (size_t x = std::max(0, from_tile_x - 2); x < std::min(max_x, to_tile_x + 3); x++) {
+          for (size_t y = std::max(0, from_tile_y - 2); y < std::min(max_y, to_tile_y + 3); y++) {
             const auto* tileObjectP = layer.getTileObject(x, y);
 
             if (!tileObjectP) {
@@ -342,7 +332,7 @@ std::vector<sf::RectangleShape> TiledMap::collisionTiles(const Character& player
             tile.update(now);
 
             for (auto& collision_rect: tile.getCollisionRects()) {
-              create_collision_shape(collision_rect);
+              rects.emplace_back(collision_rect);
             }
           }
         }
@@ -350,19 +340,25 @@ std::vector<sf::RectangleShape> TiledMap::collisionTiles(const Character& player
       case tson::LayerType::ObjectGroup:
         for (auto& obj : layer.getObjects()) {
           if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
+
+            const auto condition = obj.getProp("unlock_condition");
+            if (condition && play_state.check_unlock_condition(std::any_cast<const std::string&>(condition->getValue()))) {
+              continue;
+            }
+
             sf::FloatRect object_rect = {
               static_cast<float>(obj.getPosition().x),
               static_cast<float>(obj.getPosition().y),
               static_cast<float>(obj.getSize().x),
               static_cast<float>(obj.getSize().y),
             };
-            create_collision_shape(object_rect);
+            rects.push_back(object_rect);
           }
         }
         break;
       case tson::LayerType::Group:
         for (auto& layer: layer.getLayers()) {
-          create_collision_shapes(layer);
+          create_collision_rects(layer);
         }
         break;
       default:
@@ -371,10 +367,10 @@ std::vector<sf::RectangleShape> TiledMap::collisionTiles(const Character& player
   };
 
   for (auto& layer: map->getLayers()) {
-    create_collision_shapes(layer);
+    create_collision_rects(layer);
   }
 
-  return shapes;
+  return rects;
 }
 
 void TiledMap::setScale(float factorX, float factorY) {

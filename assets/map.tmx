@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="48" nextobjectid="305">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="48" nextobjectid="307">
  <editorsettings>
   <export target="map.json" format="json"/>
  </editorsettings>
@@ -3391,6 +3391,12 @@
   <object id="270" type="collision" x="638" y="2185" width="2" height="110"/>
   <object id="299" type="collision" x="608" y="1408" width="1" height="32"/>
   <object id="300" type="collision" x="703" y="1408" width="1" height="32"/>
+  <object id="306" name="Bridge Gate" type="collision" x="608" y="2287" width="32" height="8">
+   <properties>
+    <property name="unlock_condition" value="bridge_gate"/>
+    <property name="unlock_hint" value="Maybe I should gather some before crossing this bridge?"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="25" name="collision" width="100" height="100" opacity="0.75">
   <data encoding="csv">
