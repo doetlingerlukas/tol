@@ -1,9 +1,13 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.17)
 
-project(tol)
+project(tol VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+include(BuildType)
+include(CxxOptions)
+
+message(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
 add_executable(tol)
 target_sources(tol
@@ -24,10 +28,20 @@ target_sources(tol
     protagonist.cpp
 )
 
-target_include_directories(tol PRIVATE include)
-target_include_directories(tol PRIVATE external)
+if (MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.14)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /experimental:external /external:W0 ")
+    set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "/external:I ")
+endif()
 
+target_include_directories(tol SYSTEM PRIVATE external)
+target_include_directories(tol PRIVATE include)
+
+set(LINUX FALSE)
 if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
+if(${LINUX})
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL)
   target_link_libraries(tol PRIVATE OpenGL::GL)
@@ -62,16 +76,19 @@ add_custom_target(assets ALL
 )
 add_dependencies(tol assets)
 
-file(GLOB_RECURSE MAP_DEPENDENCIES "${CMAKE_CURRENT_SOURCE_DIR}/assets" "*.tmx")
-set(MAP_TMX "${CMAKE_CURRENT_SOURCE_DIR}/assets/map.tmx")
-set(MAP_JSON "${CMAKE_CURRENT_BINARY_DIR}/assets/map.json")
-add_custom_command(
-  DEPENDS "${MAP_DEPENDENCIES}"
-  OUTPUT "${MAP_JSON}"
-  COMMAND tiled --minimize --embed-tilesets --export-map "${MAP_TMX}" "${MAP_JSON}"
-  COMMAND ruby "${CMAKE_CURRENT_SOURCE_DIR}/fix-map-indices.rb" "${MAP_JSON}"
-)
-add_custom_target(map ALL
-  DEPENDS "${MAP_JSON}"
-)
-add_dependencies(tol map)
+# Don't compile map on Linux CI since it needs a GUI.
+if(NOT DEFINED ENV{CI} OR NOT ${LINUX})
+  file(GLOB_RECURSE MAP_DEPENDENCIES "${CMAKE_CURRENT_SOURCE_DIR}/assets" "*.tmx")
+  set(MAP_TMX "${CMAKE_CURRENT_SOURCE_DIR}/assets/map.tmx")
+  set(MAP_JSON "${CMAKE_CURRENT_BINARY_DIR}/assets/map.json")
+  add_custom_command(
+    DEPENDS "${MAP_DEPENDENCIES}"
+    OUTPUT "${MAP_JSON}"
+    COMMAND tiled --minimize --embed-tilesets --export-map "${MAP_TMX}" "${MAP_JSON}"
+    COMMAND ruby "${CMAKE_CURRENT_SOURCE_DIR}/fix-map-indices.rb" "${MAP_JSON}"
+  )
+  add_custom_target(map ALL
+    DEPENDS "${MAP_JSON}"
+  )
+  add_dependencies(tol map)
+endif()

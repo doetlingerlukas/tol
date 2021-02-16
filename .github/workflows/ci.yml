@@ -1,0 +1,24 @@
+name: CI
+
+on: push
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+          - os: ubuntu-latest
+            CC: gcc-10
+            CXX: g++-10
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo rm /usr/local/bin/vcpkg && ! which vcpkg
+      - run: ./deps.sh
+      - run: |
+          cmake -G Ninja -B ./build -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake --build ./build -v
+        env:
+          CC: ${{ matrix.CC }}
+          CXX: ${{ matrix.CXX }}

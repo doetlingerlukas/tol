@@ -22,8 +22,6 @@ void Health::decrease(size_t value) {
   health = health - value;
 }
 
-Health::Health(const Health &h) { }
-
 Health::Health(size_t health_) : health (health_), future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
   while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
     bool damage_received = false;
@@ -60,10 +58,10 @@ std::ostream& Health::print(std::ostream& out) const {
 }
 
 
-Strength::Strength(size_t strength_) : strength(strength_) { }
+Strength::Strength(size_t strength_) : strength(static_cast<int>(strength_)) { }
 
 void Strength::increase(size_t value) {
-  strength += value;
+  strength += static_cast<int>(value);
 }
 
 size_t Strength::get() const {
@@ -89,10 +87,10 @@ void Experience::increase(size_t value) {
   }
 }
 
-Speed::Speed(size_t speed_) : speed(speed_) { }
+Speed::Speed(size_t speed_) : speed(static_cast<int>(speed_)) { }
 
 void Speed::increase(size_t value) {
-  speed += value;
+  speed += static_cast<int>(value);
 }
 
 size_t Speed::get() const {

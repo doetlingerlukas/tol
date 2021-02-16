@@ -1,0 +1,26 @@
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS False)
+set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+    message(FATAL_ERROR "GCC 10 or higher is required")
+  endif()
+endif()
+
+if(MSVC)
+  add_compile_options(/permissive-)
+else()
+  add_compile_options(-pedantic)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(MSVC)
+    add_compile_options(/W3 /WX)
+    # Ignores type conversion warning caused by tileson.hpp
+    add_compile_options(/wd4267 /wd4244)
+  else()
+    add_compile_options(-Wall -Werror)
+  endif()
+endif()

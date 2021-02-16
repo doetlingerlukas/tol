@@ -8,6 +8,7 @@
 #include <input.hpp>
 #include <game_state.hpp>
 #include <overlay/info.hpp>
+#include <optional>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
