@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <optional>
 
 #include <asset_cache.hpp>
 #include <object.hpp>
@@ -19,7 +20,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
   sf::Vector2f mouse_location;
   bool mouse_pressed;
 
-  mutable int selected;
+  mutable std::optional<int> selected;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     auto elements = getInventory().getElements();
@@ -89,8 +90,8 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       target.draw(text);
     };
 
-    if (elements.size() > 0) {
-      auto& [name, element] = elements.at(selected);
+    if (elements.size() > 0 && selected) {
+      auto& [name, element] = elements.at(*selected);
 
       sf::Vector2f info_pos({ detail.left + margin.x / 2, detail.top + margin.y / 2 });
       auto max_line_width = detail.width - margin.x;
@@ -125,7 +126,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
 
 public:
   explicit InventoryOverlay(const std::shared_ptr<AssetCache> asset_cache_, Inventory& inventory_)
-    : asset_cache(asset_cache_), inventory(inventory_), selected(0) {}
+    : asset_cache(asset_cache_), inventory(inventory_) {}
 
   inline Inventory& getInventory() const {
     return inventory;
@@ -137,15 +138,27 @@ public:
   }
 
   void drop_selected() {
-    if (getInventory().element_available(selected)) {
-      getInventory().remove(selected);
+    if (selected) {
+      getInventory().remove(*selected);
+      select_next();
     }
   }
 
   void use_selected() {
-    if (getInventory().element_available(selected)) {
-      std::cout << "Item used." << std::endl;
-      getInventory().remove(selected);
+    if (selected) {
+      const auto [name, item] = getInventory().remove(*selected);
+      std::cout << "Item used: " << name << std::endl;
+      select_next();
+    }
+  }
+
+  void select_next() {
+    if (*selected < getInventory().size()) {
+      return;
+    } else if (*selected > 0) {
+      (*selected)--;
+    } else {
+      selected = std::nullopt;
     }
   }
 };

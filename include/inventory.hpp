@@ -29,16 +29,7 @@ public:
     return false;
   }
 
-  void remove(size_t index) {
-    if (!elements.empty() && index < elements.size()) {
-      elements.erase(elements.cbegin() + index);
-    }
-  }
-
-  bool element_available(size_t index) {
-    if (!elements.empty() && index < elements.size()) {
-      return true;
-    }
-    return false;
+  std::pair<std::string, Object> remove(size_t index) {
+    return *elements.erase(elements.cbegin() + index);
   }
 };
