@@ -17,7 +17,9 @@ endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if(MSVC)
-    add_compile_options(/W4 /WX)
+    add_compile_options(/W3 /WX)
+    # Ignores type conversion warning caused by tileson.hpp
+    add_compile_options(/wd4267)
   else()
     add_compile_options(-Wall -Werror)
   endif()
