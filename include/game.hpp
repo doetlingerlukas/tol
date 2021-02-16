@@ -81,8 +81,18 @@ class Game {
         instance.setState(GameState::DIALOG);
         break;
       case sf::Keyboard::Escape:
-        instance.setState(GameState::MENU);
-        window.setKeyRepeatEnabled(true);
+        if (event.type == sf::Event::KeyPressed) {
+          switch (instance.getState()) {
+            case GameState::DIALOG:
+            case GameState::INVENTORY:
+              instance.setState(GameState::PLAY);
+              break;
+            default:
+              instance.setState(GameState::MENU);
+              window.setKeyRepeatEnabled(true);
+              break;
+          }
+        }
         break;
       case sf::Keyboard::Right:
         key_input.right = event.type == sf::Event::KeyPressed;
