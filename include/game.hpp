@@ -255,7 +255,7 @@ public:
       std::exit(0);
     });
 
-    std::optional<std::string> last_npc_dialog;
+    std::optional<std::string> last_npc_interaction;
 
     Fight fight(asset_cache, player);
 
@@ -292,12 +292,12 @@ public:
         window.draw(inventory_overlay);
         break;
       case GameState::FIGHT:
-        fight.with(key_input, now);
+        fight.with(key_input, now, last_npc_interaction, map);
         window.draw(fight);
         break;
       case GameState::PLAY:
       case GameState::QUEST:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog));
+        instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction));
         window.draw(play_state);
 
         info.update_time(std::chrono::milliseconds(millis));
@@ -308,10 +308,9 @@ public:
       case GameState::DIALOG:
         window.draw(play_state);
 
-        if (last_npc_dialog) {
-          const auto npc_name = "npc1";
-          instance.setState(dialog.show(npc_name));
-          player.talk_to(npc_name);
+        if (last_npc_interaction) {
+          instance.setState(dialog.show(*last_npc_interaction));
+          player.talk_to(*last_npc_interaction);
         }
         break;
       case GameState::SETTINGS:

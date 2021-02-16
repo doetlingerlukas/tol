@@ -53,6 +53,7 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::optional<sf::IntRect> current_effect;
 
+  fs::path character_texture;
   std::string name;
 
   sf::FloatRect bounding_box_rect;

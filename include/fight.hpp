@@ -1,14 +1,17 @@
 #pragma once
 
-#include <cmath>
+#include <algorithm>
 
 #include "menu.hpp"
 #include "input.hpp"
 #include "protagonist.hpp"
 #include "shared.hpp"
+#include "map.hpp"
 
 class Fight: public sf::Drawable, public sf::Transformable {
   const Character& player;
+  const Character* npc;
+
   std::shared_ptr<AssetCache> asset_cache;
   Menu menu;
   std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
@@ -27,7 +30,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     const int resize_x = scale_ultra(target.getSize().x, target.getSize().y);
 
     sf::Sprite player_sprite;
-    player_sprite.setTexture(*asset_cache->loadTexture("tilesets/character-whitebeard.png"));
+    player_sprite.setTexture(*asset_cache->loadTexture(player.getCharacterTexture()));
     player_sprite.setTextureRect(sf::IntRect{ TILE_SIZE, TILE_SIZE * 3, TILE_SIZE, TILE_SIZE });
     player_sprite.setPosition({ target.getSize().x - resize_x + scale_pos(100.0f, target.getSize().x, resize_x, -200.0f), target.getSize().y - (100.0f * scale_factor) });
     player_sprite.setScale({ scale_factor, scale_factor });
@@ -76,7 +79,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     sf::Sprite enemy;
 
-    enemy.setTexture(*asset_cache->loadTexture("tilesets/character-whitebeard.png"));
+    enemy.setTexture(*asset_cache->loadTexture(npc->getCharacterTexture()));
     enemy.setTextureRect(sf::IntRect{ TILE_SIZE, TILE_SIZE * 5, TILE_SIZE, TILE_SIZE });
     enemy.setPosition({ resize_x - scale_pos(400.0f, target.getSize().x, resize_x, 0.0f), 100.0f });
     enemy.setScale({ scale_factor, scale_factor });
@@ -93,9 +96,19 @@ public:
     menu.add_item("ATTACK 3", [&]() { });
   }
 
-  void with(const KeyInput& input, std::chrono::milliseconds now) {
+  void with(const KeyInput& input, std::chrono::milliseconds now, const std::optional<std::string>& npc_interact, const TiledMap& map) {
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
     const auto stats = player.getStats();
+
+    if(npc_interact && npc == nullptr) {
+      const auto& characters = map.getCharacters();
+      const auto& res = std::find_if(characters.cbegin(), characters.cend(), [&npc_interact](const auto& c) {
+        return c->getName() == *npc_interact;
+      });
+
+      if(res != std::end(characters))
+        npc = *res;
+    }
 
     if(input.up) {
       if(td.count() > 120) {
