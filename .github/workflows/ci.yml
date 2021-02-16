@@ -17,7 +17,7 @@ jobs:
       - run: sudo rm /usr/local/bin/vcpkg && ! which vcpkg
       - run: ./deps.sh
       - run: |
-          cmake -G Ninja -B ./build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake -G Ninja -B ./build -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build ./build -v
         env:
           CC: ${{ matrix.CC }}
