@@ -56,13 +56,13 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       auto rect = element.getBoundingRect();
       sf::Vector2f bounding_size({ rect.width * scale.x, rect.height * scale.y });
       sf::RectangleShape bounding_box(bounding_size);
-      bounding_box.setPosition({ objects.left + margin.x + w, objects.top + margin.y + h });
-      if (bounding_box.getGlobalBounds().contains(mouse_location) && mouse_pressed) {
-        selected = i;
-      }
       if (margin.x + w + bounding_size.x + margin.x > objects.width) {
         h += margin.y + bounding_size.y;
         w = 0;
+      }
+      bounding_box.setPosition({ objects.left + margin.x + w, objects.top + margin.y + h });
+      if (bounding_box.getGlobalBounds().contains(mouse_location) && mouse_pressed) {
+        selected = i;
       }
       bounding_box.setFillColor(sf::Color(0, 0, 0, 220));
       bounding_box.setOutlineColor(i == selected ? sf::Color::White : sf::Color::Black);
@@ -81,7 +81,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
 
       sf::Text text;
       text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
-      text.setColor(sf::Color::White);
+      text.setFillColor(sf::Color::White);
       text.setString(name);
       text.setPosition({ detail.left + margin.x, detail.top + margin.y });
       target.draw(text);
