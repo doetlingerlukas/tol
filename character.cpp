@@ -160,11 +160,11 @@ std::vector<sf::RectangleShape> Character::move(
 
   const auto td2 = now - this->now;
 
-  const auto collision_rects = play_state.getMap().collisionTiles(next_bounds, play_state, info);
+  const auto collisions = play_state.getMap().collisions_around(next_bounds);
 
   std::vector<sf::RectangleShape> shapes;
 
-  auto create_collision_shape = [&shapes] (const sf::FloatRect& rect) {
+  auto create_collision_shape = [](const sf::FloatRect& rect) {
     sf::RectangleShape shape({ rect.width, rect.height });
     shape.setFillColor(sf::Color::Transparent);
     shape.setOutlineColor(sf::Color::Red);
@@ -174,16 +174,22 @@ std::vector<sf::RectangleShape> Character::move(
     return shape;
   };
 
-  for (auto& obstacle_bounds : collision_rects) {
-    auto shape = create_collision_shape(obstacle_bounds);
+  for (auto& collision : collisions) {
+    auto shape = create_collision_shape(collision.bounds);
 
-    if (obstacle_bounds.intersects(next_bounds)) {
+    if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition)) {
+      shape.setOutlineColor(sf::Color::Green);
+    } else if (collision.bounds.intersects(next_bounds)) {
+      if (collision.unlock_hint) {
+        info.display_info(*collision.unlock_hint, std::chrono::seconds(10));
+      }
+
       shape.setFillColor(sf::Color(255, 0, 0, 100));
 
-      const auto obstacle_left = obstacle_bounds.left;
-      const auto obstacle_right = obstacle_left + obstacle_bounds.width;
-      const auto obstacle_top = obstacle_bounds.top;
-      const auto obstacle_bottom = obstacle_top + obstacle_bounds.height;
+      const auto obstacle_left = collision.bounds.left;
+      const auto obstacle_right = obstacle_left + collision.bounds.width;
+      const auto obstacle_top = collision.bounds.top;
+      const auto obstacle_bottom = obstacle_top + collision.bounds.height;
 
       // Left collision
       if (
@@ -230,7 +236,7 @@ std::vector<sf::RectangleShape> Character::move(
       }
     }
 
-    shapes.push_back(shape);
+    shapes.emplace_back(std::move(shape));
   }
 
   // Restrict movement outside the map

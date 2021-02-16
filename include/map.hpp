@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <fstream>
+#include <optional>
 #include <nlohmann/json.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -20,6 +21,12 @@
 #include <overlay/info.hpp>
 
 class PlayState;
+
+struct Collision {
+  sf::FloatRect bounds;
+  std::optional<std::reference_wrapper<const std::string>> unlock_condition;
+  std::optional<std::reference_wrapper<const std::string>> unlock_hint;
+};
 
 class TiledMap: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -83,7 +90,7 @@ public:
 
   std::map<int, Object>& getCollectibles();
 
-  std::vector<sf::FloatRect> collisionTiles(const sf::FloatRect& player, const PlayState& play_state, Info& info) const;
+  std::vector<Collision> collisions_around(const sf::FloatRect& player) const;
 
   void setScale(float factorX, float factorY);
 

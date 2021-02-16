@@ -305,8 +305,8 @@ std::map<int, Object>& TiledMap::getCollectibles() {
   return collectibles;
 }
 
-std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds, const PlayState& play_state, Info& info) const {
-  std::vector<sf::FloatRect> rects;
+std::vector<Collision> TiledMap::collisions_around(const sf::FloatRect& bounds) const {
+  std::vector<Collision> collisions;
 
   const auto from_tile_x = static_cast<int>(bounds.left / getTileSize().x);
   const auto from_tile_y = static_cast<int>(bounds.top / getTileSize().y);
@@ -315,8 +315,8 @@ std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds,
 
   const auto [max_x, max_y] = map->getSize();
 
-  std::function<void(tson::Layer&)> create_collision_rects;
-  create_collision_rects = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
+  std::function<void(tson::Layer&)> create_collisions;
+  create_collisions = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
     switch (layer.getType()) {
       case tson::LayerType::TileLayer:
         for (size_t x = std::max(0, from_tile_x - 2); x < std::min(max_x, to_tile_x + 3); x++) {
@@ -332,7 +332,9 @@ std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds,
             tile.update(now);
 
             for (auto& collision_rect: tile.getCollisionRects()) {
-              rects.emplace_back(collision_rect);
+              Collision collision;
+              collision.bounds = collision_rect;
+              collisions.emplace_back(std::move(collision));
             }
           }
         }
@@ -340,7 +342,8 @@ std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds,
       case tson::LayerType::ObjectGroup:
         for (auto& obj : layer.getObjects()) {
           if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
-            sf::FloatRect object_rect = {
+            Collision collision;
+            collision.bounds = {
               static_cast<float>(obj.getPosition().x),
               static_cast<float>(obj.getPosition().y),
               static_cast<float>(obj.getSize().x),
@@ -349,23 +352,21 @@ std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds,
 
             const auto condition = obj.getProp("unlock_condition");
             if (condition) {
-              if (play_state.check_unlock_condition(std::any_cast<const std::string&>(condition->getValue()))) {
-                continue;
-              } else if (object_rect.intersects(bounds)) {
-                const auto message = obj.getProp("unlock_hint");
-                if (message) {
-                  info.display_info(std::any_cast<const std::string&>(message->getValue()), std::chrono::seconds(10));
-                }
+              collision.unlock_condition = std::any_cast<const std::string&>(condition->getValue());
+
+              const auto message = obj.getProp("unlock_hint");
+              if (message) {
+                collision.unlock_hint = std::any_cast<const std::string&>(message->getValue());
               }
             }
 
-            rects.push_back(object_rect);
+            collisions.emplace_back(std::move(collision));
           }
         }
         break;
       case tson::LayerType::Group:
         for (auto& layer: layer.getLayers()) {
-          create_collision_rects(layer);
+          create_collisions(layer);
         }
         break;
       default:
@@ -374,10 +375,10 @@ std::vector<sf::FloatRect> TiledMap::collisionTiles(const sf::FloatRect& bounds,
   };
 
   for (auto& layer: map->getLayers()) {
-    create_collision_rects(layer);
+    create_collisions(layer);
   }
 
-  return rects;
+  return collisions;
 }
 
 void TiledMap::setScale(float factorX, float factorY) {
