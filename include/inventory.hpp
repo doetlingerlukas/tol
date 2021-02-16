@@ -28,4 +28,17 @@ public:
 
     return false;
   }
+
+  void remove(int index) {
+    if (!elements.empty() && index < elements.size()) {
+      elements.erase(elements.cbegin() + index);
+    }
+  }
+
+  bool element_available(int index) {
+    if (!elements.empty() && index < elements.size()) {
+      return true;
+    }
+    return false;
+  }
 };

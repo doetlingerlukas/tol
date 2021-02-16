@@ -49,7 +49,7 @@ class Game {
 
   bool mouse_pressed;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music) {
+  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music, InventoryOverlay& inventory_overlay) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -63,11 +63,11 @@ class Game {
         break;
       case sf::Event::MouseButtonPressed:
       case sf::Event::MouseButtonReleased:
-        if (state == GameState::MENU) {
+        if (state == GameState::INVENTORY) {
           mouse_pressed = event.type == sf::Event::MouseButtonPressed;
 
           if (event.mouseButton.button == sf::Mouse::Button::Left) {
-            //menu.mouse({ event.mouseButton.x, event.mouseButton.y }, mouse_pressed);
+            inventory_overlay.mouse({ (float) event.mouseButton.x, (float) event.mouseButton.y }, mouse_pressed);
           }
         } else {
           mouse_pressed = false;
@@ -120,6 +120,16 @@ class Game {
         break;
       case sf::Keyboard::P:
         instance.setState(GameState::PLAY);
+        break;
+      case sf::Keyboard::X:
+        if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+          inventory_overlay.drop_selected();
+        }
+        break;
+      case sf::Keyboard::C:
+        if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+          inventory_overlay.use_selected();
+        }
         break;
       default:
         break;
@@ -215,7 +225,7 @@ public:
     Info info(asset_cache);
     info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
 
-    InventoryOverlay inventory_overlay(asset_cache);
+    InventoryOverlay inventory_overlay(asset_cache, player.getInventory());
 
     sf::Clock clock;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
@@ -239,7 +249,7 @@ public:
       sf::Event event;
       nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
-        handle_event(event, key_input, music);
+        handle_event(event, key_input, music, inventory_overlay);
       }
       nk_input_end(nuklear->getCtx());
 
@@ -261,7 +271,6 @@ public:
       case GameState::INVENTORY:
         window.draw(play_state);
 
-        inventory_overlay.update_elements(player.getInventoryElements());
         window.draw(inventory_overlay);
         break;
       case GameState::PLAY:
