@@ -47,7 +47,7 @@ class Info : public sf::Drawable, public sf::Transformable {
         lines.back().setString(current + " " + word);
       }
 
-      info_box_size.y = text.getCharacterSize() * (lines.size() + 1);
+      info_box_size.y = static_cast<int>(text.getCharacterSize() * (lines.size() + 1));
       info_box.setSize(info_box_size);
       target.draw(info_box);
 

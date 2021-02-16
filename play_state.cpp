@@ -19,7 +19,7 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
   sf::Text text;
   text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
-  text.setCharacterSize(16 * scale.y);
+  text.setCharacterSize(static_cast<unsigned int>(16 * scale.y));
   text.setFillColor(sf::Color::White);
   text.setOutlineColor(sf::Color::Black);
   text.setOutlineThickness(1);

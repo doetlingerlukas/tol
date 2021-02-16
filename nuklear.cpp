@@ -42,8 +42,8 @@ void Nuklear::renderMenu(GameInstance& game, PlayState& play_state) const {
   ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
   /* GUI */
-  if (nk_begin(ctx, "menu", nk_rect(0, 0, size.x, size.y), NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = { 0.3, 0.4, 0.3 };
+  if (nk_begin(ctx, "menu", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
+    static const float ratio[] = { 0.3f, 0.4f, 0.3f };
 
     nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
     nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
@@ -114,7 +114,7 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
   nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, space * scale.y));
   ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
-  if (nk_begin(ctx, "settings", nk_rect(0, space * scale.y, size.x, size.y), NK_WINDOW_BACKGROUND)) {
+  if (nk_begin(ctx, "settings", nk_rect(0, space * scale.y, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
     static const float ratio[] = { 0.f, 1.f, 0.f };
     static const float button_ratio[] = { 0.f, 0.25f, 0.f };
 
@@ -166,7 +166,7 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
 
     nk_layout_row_begin(ctx, NK_DYNAMIC, setting_height * scale.y, 2);
     {
-      nk_layout_row_push(ctx, 0.3);
+      nk_layout_row_push(ctx, 0.3f);
       nk_label(ctx, "Volume:", NK_TEXT_LEFT);
       nk_layout_row_push(ctx, 0.5);
       nk_slider_float(ctx, 0, &settings.volume_level , 1.0f, 0.01f);
@@ -190,10 +190,10 @@ void Nuklear::renderHud() {
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
 
-  if (nk_begin(ctx, "hud", nk_rect(size.x * 0.6, size.y - (progressbar_height + margin) * scale.y, size.x * 0.4, (progressbar_height + margin) * scale.y), NK_WINDOW_BACKGROUND)) {
+  if (nk_begin(ctx, "hud", nk_rect(size.x * 0.6f, size.y - (progressbar_height + margin) * scale.y, size.x * 0.4f, (progressbar_height + margin) * scale.y), NK_WINDOW_BACKGROUND)) {
     nk_size currentHealth = stats->health().get();
 
-    nk_layout_row_static(ctx, progressbar_height * scale.y, size.x * 0.4 - margin * scale.x, 1);
+    nk_layout_row_static(ctx, progressbar_height * scale.y, size.x * 0.4f - margin * static_cast<float>(scale.x), 1);
 
     ctx->style.progress.normal = nk_style_item_color(nk_rgba(225, 232, 225, 100));
 
@@ -221,9 +221,9 @@ std::pair<json, DialogState> Nuklear::renderResponseDialog(const json& dialog, D
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
-  const float dialog_height = size.y * 0.10;
-  const float dialog_height_offset = size.y - dialog_height - size.y * 0.05;
-  const float dialog_width = size.x * 0.8;
+  const float dialog_height = size.y * 0.10f;
+  const float dialog_height_offset = size.y - dialog_height - size.y * 0.05f;
+  const float dialog_width = size.x * 0.8f;
   const float dialog_width_offset = (size.x - dialog_width) / 2;
 
   nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
@@ -273,10 +273,10 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
-  const float dialog_height = size.y * (lines.size() + 1) * 0.06;
-  const float dialog_height_offset = size.y - dialog_height - size.y * 0.05;
-  const float dialog_element_height = size.y * 0.05;
-  const float dialog_width = size.x * 0.8;
+  const float dialog_height = size.y * (lines.size() + 1) * 0.06f;
+  const float dialog_height_offset = size.y - dialog_height - size.y * 0.05f;
+  const float dialog_element_height = size.y * 0.05f;
+  const float dialog_width = size.x * 0.8f;
   const float dialog_width_offset = (size.x - dialog_width) / 2;
 
   nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
@@ -290,7 +290,7 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
   if (nk_begin(ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
     static const float ratio[] = {0.01f, 0.98f, 0.01f};
 
-    nk_layout_row_static(ctx, dialog_height * 0.05, 15, 1);
+    nk_layout_row_static(ctx, dialog_height * 0.05f, 15, 1);
     nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
 
     for (size_t i = 0; i < lines.size(); i++) {
