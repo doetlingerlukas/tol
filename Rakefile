@@ -17,6 +17,10 @@ task run: :build do
   sh "#{BUILD_DIR}/tol"
 end
 
+task :format do
+  sh 'clang-format', '-i', *Dir.glob('**/*.{c,h}pp')
+end
+
 task :clean do
   rm_rf BUILD_DIR
 end

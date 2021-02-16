@@ -6,6 +6,7 @@ uname="$(uname -s)"
 if [[ "${uname}" == 'Darwin' ]]; then
   brew install ruby
   brew install cmake
+  brew install llvm
   brew install vcpkg
   brew install ninja
   brew install tiled
@@ -14,7 +15,7 @@ if [[ "${uname}" == 'Darwin' ]]; then
 elif [[ "${uname}" == 'Linux' ]]; then
   sudo apt-get update
   sudo apt-get install -y build-essential tar curl cmake zip unzip gcc ruby ninja-build \
-    libx11-dev libxrandr-dev libxi-dev libudev-dev libgl1-mesa-dev
+    libx11-dev libxrandr-dev libxi-dev libudev-dev libgl1-mesa-dev clang-format clang-tidy
 
   git clone https://github.com/microsoft/vcpkg
   pushd vcpkg
