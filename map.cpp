@@ -18,7 +18,7 @@ void TiledMap::draw(sf::RenderTarget& target, sf::RenderStates state) const {
         return std::visit(z_index, a) < std::visit(z_index, b);
       });
 
-      for (const auto object: deferred_tiles) {
+      for (const auto& object: deferred_tiles) {
         std::visit([&](const auto& o) { target.draw(o); }, object);
       }
     }
@@ -77,8 +77,8 @@ void TiledMap::drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::
 
       if (tile.zIndex() && std::any_of(character_rects.begin(), character_rects.end(), [x, y](const auto& r) {
         const auto& [from, to] = r;
-        return x >= from.x && x <= to.x &&
-               y >= from.y && y <= to.y;
+        return static_cast<int>(x) >= from.x && static_cast<int>(x) <= to.x &&
+               static_cast<int>(y) >= from.y && static_cast<int>(y) <= to.y;
        })) {
         deferred_tiles.emplace_back(std::move(tile));
       } else {
@@ -98,7 +98,6 @@ void TiledMap::drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) cons
 }
 
 void TiledMap::drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
-  auto* map = layer.getMap();
   for (auto& obj : layer.getObjects()) {
     switch (obj.getObjectType()) {
       case tson::ObjectType::Object: {
@@ -319,8 +318,8 @@ std::vector<Collision> TiledMap::collisions_around(const sf::FloatRect& bounds) 
   create_collisions = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
     switch (layer.getType()) {
       case tson::LayerType::TileLayer:
-        for (size_t x = std::max(0, from_tile_x - 2); x < std::min(max_x, to_tile_x + 3); x++) {
-          for (size_t y = std::max(0, from_tile_y - 2); y < std::min(max_y, to_tile_y + 3); y++) {
+        for (size_t x = std::max(0, from_tile_x - 2); x < static_cast<size_t>(std::min(max_x, to_tile_x + 3)); x++) {
+          for (size_t y = std::max(0, from_tile_y - 2); y < static_cast<size_t>(std::min(max_y, to_tile_y + 3)); y++) {
             const auto* tileObjectP = layer.getTileObject(x, y);
 
             if (!tileObjectP) {

@@ -38,8 +38,8 @@
 class Game {
   const std::string name = "Tales of Lostness";
   sf::RenderWindow window;
-  Settings& settings;
   fs::path dir;
+  Settings& settings;
 
   GameInstance instance;
 
@@ -218,7 +218,6 @@ public:
     InventoryOverlay inventory_overlay(asset_cache);
 
     sf::Clock clock;
-    float dt = 0.0;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
     const std::shared_ptr<Nuklear> nuklear = std::make_shared<Nuklear>(window.getSize(), stats, asset_cache, &window);

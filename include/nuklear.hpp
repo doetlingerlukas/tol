@@ -32,7 +32,6 @@ class Nuklear {
   sf::Vector2f scale;
   sf::RenderWindow* window;
   const std::shared_ptr<Stats> stats;
-  std::chrono::milliseconds current_time;
   struct nk_context* ctx;
 
   struct nk_context* init(sf::RenderWindow* window) const {

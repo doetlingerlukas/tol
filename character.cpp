@@ -2,7 +2,7 @@
 #include <play_state.hpp>
 
 Character::Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
-    const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), stats(stats_), name(name_) {
+    const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), name(name_), stats(stats_) {
   sprite.setTexture(*asset_cache->loadTexture(path));
   sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
   sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
@@ -96,8 +96,6 @@ std::vector<sf::RectangleShape> Character::move(
   std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
   float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info
 ) {
-  const auto position = getPosition();
-
   const auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
 
   sf::Vector2f velocity = { 0.f, 0.f };
@@ -157,8 +155,6 @@ std::vector<sf::RectangleShape> Character::move(
   const auto player_right = player_left + player_width;
   const auto player_top = player_bounds.top;
   const auto player_bottom = player_top + player_height;
-
-  const auto td2 = now - this->now;
 
   const auto collisions = play_state.getMap().collisions_around(next_bounds);
 

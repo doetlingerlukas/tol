@@ -132,9 +132,8 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
     nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
     nk_label(ctx, "Resolution:", NK_TEXT_LEFT);
     if (nk_combo_begin_label(ctx, res_to_string(supported_resolutions[selected_res]).c_str(), nk_vec2(nk_widget_width(ctx), 200))) {
-      int i;
       nk_layout_row_dynamic(ctx, setting_height * scale.y, 1);
-      for (i = 0; i < supported_resolutions.size(); ++i)
+      for (size_t i = 0; i < supported_resolutions.size(); i++)
         if (nk_combo_item_label(ctx, res_to_string(supported_resolutions[i]).c_str(), NK_TEXT_LEFT)) {
           selected_res = i;
           settings.set_resolution(supported_resolutions[i]);
@@ -224,7 +223,6 @@ std::pair<json, DialogState> Nuklear::renderResponseDialog(const json& dialog, D
 
   const float dialog_height = size.y * 0.10;
   const float dialog_height_offset = size.y - dialog_height - size.y * 0.05;
-  const float dialog_element_height = size.y * 0.05;
   const float dialog_width = size.x * 0.8;
   const float dialog_width_offset = (size.x - dialog_width) / 2;
 
@@ -295,7 +293,7 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
     nk_layout_row_static(ctx, dialog_height * 0.05, 15, 1);
     nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
 
-    for (int i = 0; i < lines.size(); i++) {
+    for (size_t i = 0; i < lines.size(); i++) {
       nk_spacing(ctx, 1);
 
       if (nk_button_label(ctx, lines[i][stateAsString(dialog_state)].get<std::string>().c_str()))
@@ -327,7 +325,7 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
 }
 
 Nuklear::Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window):
-  size(size_), stats(stats_), asset_cache(asset_cache_), ctx(init(_window)), window(_window) { }
+  asset_cache(asset_cache_), size(size_), window(_window), stats(stats_), ctx(init(_window)) { }
 
 void Nuklear::setSize(sf::Vector2u size) {
   this->size = size;

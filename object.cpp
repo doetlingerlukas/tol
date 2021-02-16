@@ -1,13 +1,13 @@
 #include <object.hpp>
 
-Object::Object(const tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache): object(object),
+Object::Object(const tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache):
   Tile(
     tile,
     // Y for tile objects is on bottom, so go up one tile.
     // See https://github.com/mapeditor/tiled/issues/91.
     { static_cast<float>(object.getPosition().x), static_cast<float>(object.getPosition().y - tile.getTileSize().y) },
     asset_cache
-  ) {}
+  ), object(object) {}
 
 bool Object::intersects(const sf::FloatRect& rect) const {
   return rect.intersects({ getPosition().x, getPosition().y, static_cast<float>(getTile().getTileSize().y), static_cast<float>(getTile().getTileSize().y) });

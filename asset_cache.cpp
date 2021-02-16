@@ -2,7 +2,7 @@
 
 #include <nuklear_sfml_gl2.h>
 
-AssetCache::AssetCache(std::filesystem::path dir): dir_(dir) {}
+AssetCache::AssetCache(fs::path dir): dir_(dir) {}
 
 const std::shared_ptr<const std::vector<std::byte>> AssetCache::loadFile(const fs::path& path) const {
   if (bytes.count(path.string()) == 0) {
@@ -77,6 +77,6 @@ const std::shared_ptr<const sf::Texture> AssetCache::loadTexture(const fs::path&
   return textures.at(path.string());
 }
 
-const std::filesystem::path& AssetCache::dir() const {
+const fs::path& AssetCache::dir() const {
   return dir_;
 }

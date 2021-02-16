@@ -20,7 +20,12 @@ public:
     return elements;
   }
 
-  void add(std::pair<std::string, Object> new_element) {
-    elements.push_back(new_element);
+  bool add(std::pair<std::string, Object> new_element) {
+    if (size() < max_size) {
+      elements.push_back(new_element);
+      return true;
+    }
+
+    return false;
   }
 };

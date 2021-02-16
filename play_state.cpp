@@ -30,7 +30,7 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 }
 
 PlayState::PlayState(TiledMap& map_, Protagonist& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size):
-  map(map_), player(player_), asset_cache(asset_cache_), scale(scale_) {
+  asset_cache(asset_cache_), map(map_), player(player_), scale(scale_) {
 
   map_view.reset({ 0, (getMap().getSize().y - window_size.y) * scale_.y, (float) window_size.x, (float) window_size.y });
 
@@ -47,11 +47,11 @@ GameState PlayState::update(KeyInput& key_input, const sf::RenderWindow& window,
   const auto window_size = window.getSize();
   map_view.setSize({ static_cast<float>(window_size.x), static_cast<float>(window_size.y) });
 
-  collision_shapes = std::move(getPlayer().move(
+  collision_shapes = getPlayer().move(
     (key_input.a && !key_input.d) ? std::optional(LEFT) : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
     (key_input.w && !key_input.s) ? std::optional(UP) : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
     dt * CHARACTER_MOVE_SPEED, now, *this, getMap().getCollectibles(), getMap().getSize(), info
-  ));
+  );
 
   if (key_input.up && !key_input.down) {
     direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);

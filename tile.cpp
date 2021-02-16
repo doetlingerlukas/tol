@@ -3,7 +3,6 @@
 std::map<int, Animation> Tile::running_animations;
 
 void Tile::draw(sf::RenderTarget& target, sf::RenderStates state) const {
-  auto& tile = this->tile;
   auto& tileset = *getTile().getTileset();
 
   tson::Rect tsonRect = getTile().getDrawingRect();
@@ -50,7 +49,7 @@ void Tile::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   target.draw(sprite);
 }
 
-Tile::Tile(tson::Tile& tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): tile(tile_), asset_cache(asset_cache_) {
+Tile::Tile(tson::Tile& tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): asset_cache(asset_cache_), tile(tile_) {
   setPosition({ position.x, position.y });
 
   const auto y_prop = getTile().getProp("y");
