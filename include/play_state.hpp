@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <fmt/core.h>
+#include <optional>
 
 #include <asset_cache.hpp>
 #include <input.hpp>
