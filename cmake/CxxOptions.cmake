@@ -11,6 +11,11 @@ endif()
 
 if(MSVC)
   add_compile_options(/permissive-)
+
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.14)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /experimental:external /external:W0 ")
+    set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "/external:I ")
+  endif()
 else()
   add_compile_options(-pedantic)
 endif()
