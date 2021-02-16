@@ -121,6 +121,16 @@ class Game {
       case sf::Keyboard::P:
         instance.setState(GameState::PLAY);
         break;
+      case sf::Keyboard::X:
+        if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+          inventory_overlay.drop_selected();
+        }
+        break;
+      case sf::Keyboard::C:
+        if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+          inventory_overlay.use_selected();
+        }
+        break;
       default:
         break;
       }
@@ -215,7 +225,7 @@ public:
     Info info(asset_cache);
     info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
 
-    InventoryOverlay inventory_overlay(asset_cache);
+    InventoryOverlay inventory_overlay(asset_cache, player.getInventory());
 
     sf::Clock clock;
     std::chrono::milliseconds now = std::chrono::milliseconds(0);
@@ -261,7 +271,6 @@ public:
       case GameState::INVENTORY:
         window.draw(play_state);
 
-        inventory_overlay.update_elements(player.getInventoryElements());
         window.draw(inventory_overlay);
         break;
       case GameState::PLAY:

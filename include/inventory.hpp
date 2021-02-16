@@ -28,4 +28,8 @@ public:
 
     return false;
   }
+
+  void remove(int index) {
+    elements.erase(elements.cbegin() + index);
+  }
 };

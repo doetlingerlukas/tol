@@ -13,7 +13,7 @@
 
 class InventoryOverlay : public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
-  std::vector<std::pair<std::string, Object>> elements;
+  std::reference_wrapper<Inventory> inventory;
 
   sf::Vector2f mouse_location;
   bool mouse_pressed;
@@ -21,6 +21,8 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
   mutable int selected;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+    auto elements = getInventory().getElements();
+
     sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
     sf::FloatRect inventory_dims(((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.05f, target_size.x, target_size.y * 0.9f);
     sf::FloatRect detail(inventory_dims.left, inventory_dims.top, inventory_dims.width * 0.29f, inventory_dims.height);
@@ -121,14 +123,24 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
   }
 
 public:
-  explicit InventoryOverlay(const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_), selected(0) {}
+  explicit InventoryOverlay(const std::shared_ptr<AssetCache> asset_cache_, Inventory& inventory_)
+    : asset_cache(asset_cache_), selected(0), inventory(inventory_) {}
 
-  void update_elements(std::vector<std::pair<std::string, Object>> elements_) {
-    elements = elements_;
+  inline Inventory& getInventory() const {
+    return inventory;
   }
 
   void mouse(sf::Vector2f location, bool pressed) {
     mouse_location = location;
     mouse_pressed = pressed;
+  }
+
+  void drop_selected() {
+    getInventory().remove(selected);
+  }
+
+  void use_selected() {
+    std::cout << "Item used." << std::endl;
+    getInventory().remove(selected);
   }
 };

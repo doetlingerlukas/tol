@@ -45,6 +45,10 @@ std::vector<std::pair<std::string, Object>> Protagonist::getInventoryElements() 
   return inventory.getElements();
 }
 
+Inventory& Protagonist::getInventory() {
+  return inventory;
+}
+
 bool Protagonist::talked_to(const std::string& npc_name) {
   return talked_to_npcs.count(npc_name) > 0;
 }
