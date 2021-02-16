@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.17)
 
-project(tol)
+project(tol VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+include(BuildType)
+include(CxxOptions)
 
 add_executable(tol)
 target_sources(tol
@@ -24,8 +26,8 @@ target_sources(tol
     protagonist.cpp
 )
 
-target_include_directories(tol PRIVATE include)
 target_include_directories(tol SYSTEM PRIVATE external)
+target_include_directories(tol PRIVATE include)
 
 if(UNIX AND NOT APPLE)
   set(OpenGL_GL_PREFERENCE GLVND)
