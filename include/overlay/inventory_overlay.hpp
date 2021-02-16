@@ -9,6 +9,7 @@
 #include <asset_cache.hpp>
 #include <object.hpp>
 #include <inventory.hpp>
+#include <collectibles.hpp>
 
 
 class InventoryOverlay : public sf::Drawable, public sf::Transformable {
@@ -97,7 +98,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       display_text("<C> use item", { info_pos.x, detail.top + detail.height - 4 * margin.y });
       display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
 
-      std::istringstream iss(name);
+      std::istringstream iss(getCollectible(name).info);
       const std::vector<std::string> words({ std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{} });
 
       sf::Text text;
