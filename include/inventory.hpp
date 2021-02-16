@@ -30,6 +30,15 @@ public:
   }
 
   void remove(int index) {
-    elements.erase(elements.cbegin() + index);
+    if (!elements.empty() && index < elements.size()) {
+      elements.erase(elements.cbegin() + index);
+    }
+  }
+
+  bool element_available(int index) {
+    if (!elements.empty() && index < elements.size()) {
+      return true;
+    }
+    return false;
   }
 };

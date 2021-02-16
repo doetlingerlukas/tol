@@ -137,11 +137,15 @@ public:
   }
 
   void drop_selected() {
-    getInventory().remove(selected);
+    if (getInventory().element_available(selected)) {
+      getInventory().remove(selected);
+    }
   }
 
   void use_selected() {
-    std::cout << "Item used." << std::endl;
-    getInventory().remove(selected);
+    if (getInventory().element_available(selected)) {
+      std::cout << "Item used." << std::endl;
+      getInventory().remove(selected);
+    }
   }
 };
