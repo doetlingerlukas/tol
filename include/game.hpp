@@ -29,8 +29,10 @@
 #include <map.hpp>
 #include <music.hpp>
 #include <overlay/info.hpp>
+#include <overlay/overlay.hpp>
 #include <play_state.hpp>
 #include <protagonist.hpp>
+#include <quest.hpp>
 #include <settings.hpp>
 #include <stats.hpp>
 #include <string>
@@ -49,7 +51,8 @@ class Game {
 
   bool mouse_pressed;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory) {
+  void handle_event(
+    sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -63,15 +66,16 @@ class Game {
         break;
       case sf::Event::MouseButtonPressed:
       case sf::Event::MouseButtonReleased:
-        if (state == GameState::INVENTORY) {
-          mouse_pressed = event.type == sf::Event::MouseButtonPressed;
+        mouse_pressed = event.type == sf::Event::MouseButtonPressed;
 
-          if (event.mouseButton.button == sf::Mouse::Button::Left) {
-            inventory.mouse(
-              { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) }, mouse_pressed);
+        if (event.mouseButton.button == sf::Mouse::Button::Left) {
+          if (state == GameState::INVENTORY) {
+            inventory.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
+          } else if (state == GameState::OVERLAY) {
+            overlay.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
+          } else {
+            mouse_pressed = false;
           }
-        } else {
-          mouse_pressed = false;
         }
         break;
 
@@ -135,6 +139,9 @@ class Game {
             break;
           case sf::Keyboard::P:
             instance.setState(GameState::PLAY);
+            break;
+          case sf::Keyboard::Tab:
+            instance.setState(GameState::OVERLAY);
             break;
           case sf::Keyboard::X:
             if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
@@ -224,6 +231,10 @@ class Game {
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
     Protagonist player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
+    QuestStack quest_stack;
+    quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
+    quest_stack.quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));
+    quest_stack.select(0);
 
     map.setScale(scale);
     player.setScale(scale);
@@ -240,6 +251,8 @@ class Game {
       "Welcome to a very loost island with some very loost "
       "people, who are doing very loost things!",
       std::chrono::seconds(10));
+
+    Overlay overlay(asset_cache, quest_stack);
 
     std::reference_wrapper<Inventory> inventory = player.getInventory();
 
@@ -263,7 +276,7 @@ class Game {
       sf::Event event;
       nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
-        handle_event(event, key_input, music, inventory);
+        handle_event(event, key_input, music, inventory, overlay);
       }
       nk_input_end(nuklear->getCtx());
 
@@ -271,6 +284,8 @@ class Game {
         handle_settings_update(music);
         nuklear->setSize(window.getSize());
       }
+
+      quest_stack.check(player, info);
 
       window.clear();
       window.resetGLStates();
@@ -286,6 +301,11 @@ class Game {
           window.draw(play_state);
 
           window.draw(inventory);
+          break;
+        case GameState::OVERLAY:
+          window.draw(play_state);
+
+          window.draw(overlay);
           break;
         case GameState::FIGHT:
           instance.setState(fight.with(key_input, now, last_npc_interaction, map));
