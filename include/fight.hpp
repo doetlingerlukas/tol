@@ -20,7 +20,6 @@ class Fight: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
   Menu menu;
   std::chrono::milliseconds now = std::chrono::milliseconds(0);
-  std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
   std::chrono::milliseconds last_turn = std::chrono::milliseconds(0);
 
   std::optional<int> last_enemy_damage;
@@ -167,7 +166,9 @@ class Fight: public sf::Drawable, public sf::Transformable {
     target.draw(enemy_level);
     target.draw(player_health_percent);
 
-    target.draw(menu);
+    if (fight_turn == Turn::PLAYER) {
+      target.draw(menu);
+    }
   }
 
   void resetFight() {
@@ -176,7 +177,6 @@ class Fight: public sf::Drawable, public sf::Transformable {
     last_enemy_damage = std::nullopt;
     fight_turn = Turn::PLAYER;
     last_turn = std::chrono::milliseconds(0);
-    last_input = std::chrono::milliseconds(0);
   }
 
   public:
@@ -198,9 +198,27 @@ class Fight: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  GameState with(
-    const KeyInput& input, std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact,
-    const TiledMap& map) {
+  void up() {
+    if (fight_turn == Turn::PLAYER) {
+      menu.up();
+    }
+  }
+
+  void down() {
+    if (fight_turn == Turn::PLAYER) {
+      menu.down();
+    }
+  }
+
+  void enter(bool pressed) {
+    if (fight_turn == Turn::PLAYER) {
+      menu.enter(pressed);
+    }
+  }
+
+  GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, const TiledMap& map) {
+    now = now_;
+
     if (player.getStats()->health().get() == 0) {
       resetFight();
       return GameState::DEAD;
@@ -210,9 +228,6 @@ class Fight: public sf::Drawable, public sf::Transformable {
       resetFight();
       return GameState::PLAY;
     }
-
-    const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
-    now = now_;
 
     if (npc_interact && npc == nullptr) {
       const auto& characters = map.getCharacters();
@@ -226,29 +241,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     assert(npc != nullptr);
 
-    if (fight_turn == Turn::PLAYER) {
-      if (input.up) {
-        if (td.count() > 120) {
-          menu.up();
-          last_input = now;
-        }
-      } else if (input.down) {
-        if (td.count() > 120) {
-          menu.down();
-          last_input = now;
-        }
-      } else if (input.enter) {
-        if (td.count() > 120) {
-          menu.enter(input.enter);
-          last_input = now;
-        }
-      } else {
-        menu.enter(false);
-      }
-    } else {
-      const auto td_turn = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_turn);
-
-      if (td_turn.count() > 1000) {
+    if (fight_turn == Turn::ENEMY) {
+      if (now > last_turn + std::chrono::milliseconds(3000)) {
         fight_turn = Turn::PLAYER;
         const auto& attacks = npc->getAttacks();
 
