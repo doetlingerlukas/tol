@@ -51,7 +51,8 @@ class Game {
 
   bool mouse_pressed;
 
-  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music, InventoryOverlay& inventory_overlay, Overlay& overlay) {
+  void handle_event(
+    sf::Event& event, KeyInput& key_input, tol::Music& music, InventoryOverlay& inventory_overlay, Overlay& overlay) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -232,8 +233,7 @@ class Game {
     Protagonist player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
     QuestStack quest_stack;
     quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
-    quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
-    quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
+    quest_stack.quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));
     quest_stack.select(0);
 
     map.setScale(scale);

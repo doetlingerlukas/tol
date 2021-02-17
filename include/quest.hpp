@@ -24,13 +24,41 @@ class Quest {
 };
 
 class InitialQuest: public Quest {
-  const std::string name = "Your first quest!";
+  const std::string name = "Gather resources!";
   const std::string task = "You are hungly. Find something to eat.";
   bool completed = false;
 
   public:
   bool condition(Protagonist& player, Info& info) override {
     if (player.getInventoryElements().size() > 0) {
+      setCompleted();
+      info.display_info("Completed Quest: " + name, std::chrono::seconds(5));
+      return true;
+    }
+    return false;
+  }
+
+  const std::string& getName() const override {
+    return name;
+  }
+
+  const std::string& getTask() const override {
+    return task;
+  }
+
+  void setCompleted() override {
+    completed = true;
+  }
+};
+
+class SearchQuest: public Quest {
+  const std::string name = "Find the lost item.";
+  const std::string task = "<NPC> has lost something in the woods. Find it for him to receive a reward.";
+  bool completed = false;
+
+  public:
+  bool condition(Protagonist& player, Info& info) override {
+    if (false) {
       setCompleted();
       info.display_info("Completed Quest: " + name, std::chrono::seconds(5));
       return true;
