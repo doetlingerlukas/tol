@@ -16,6 +16,7 @@ Checks: >
   -llvmlibc-restrict-system-libc-headers,
   -llvmlibc-implementation-in-namespace,
   -misc-no-recursion,
+  -google-runtime-references
 HeaderFilterRegex: .*
 AnalyzeTemporaryDtors: false
 FormatStyle: none
