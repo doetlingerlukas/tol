@@ -22,20 +22,24 @@ std::vector<sf::RectangleShape> Protagonist::move(
     auto& [id, collectible] = *it;
 
     if (collectible.collides_with(bounds)) {
-      std::cout << "Item collected: " << collectible.getName() << std::endl;
-      inventory.add(make_pair(collectible.getName(), collectible));
-      pick_up_sound.play();
+      if (inventory.add(make_pair(collectible.getName(), collectible))) {
+        pick_up_sound.play();
+        std::cout << "Item collected: " << collectible.getName() << std::endl;
 
-      const auto& found = collectible_effects.find(collectible.getName());
-      if (found != collectible_effects.end()) {
-        const auto& callback = found->second;
-        callback();
+        const auto& found = collectible_effects.find(collectible.getName());
+        if (found != collectible_effects.end()) {
+          const auto& callback = found->second;
+          callback();
+        }
+
+        it = collectibles.erase(it);
+        continue;
+      } else {
+        std::cout << "Inventory is full." << std::endl;
       }
-
-      it = collectibles.erase(it);
-    } else {
-      it++;
     }
+
+    it++;
   }
 
   return shapes;
