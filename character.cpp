@@ -1,8 +1,11 @@
 #include <character.hpp>
 #include <play_state.hpp>
 
-Character::Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
-    const std::string& name_, std::vector<Attack>&& attacks_) : asset_cache(asset_cache_), name(name_), character_texture(path), attacks(attacks_), stats(stats_) {
+Character::Character(
+  const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
+  const std::string& name_, std::vector<Attack>&& attacks_):
+  asset_cache(asset_cache_),
+  name(name_), character_texture(path), attacks(attacks_), stats(stats_) {
   sprite.setTexture(*asset_cache->loadTexture(path));
   sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
   sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
@@ -49,20 +52,21 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
   auto bounding_box_rect = getBoundingRect();
   sf::RectangleShape bounding_box;
-  bounding_box.setSize({bounding_box_rect.width, bounding_box_rect.height});
+  bounding_box.setSize({ bounding_box_rect.width, bounding_box_rect.height });
   bounding_box.setOutlineThickness(0.5f);
   bounding_box.setOutlineColor(sf::Color::Red);
   bounding_box.setFillColor(sf::Color::Transparent);
-  bounding_box.setPosition({bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y});
+  bounding_box.setPosition({ bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y });
   bounding_box.setScale(scale);
 
   auto texture_bounding_box_rect = getTextureBoundingRect();
   sf::RectangleShape texture_bounding_box;
-  texture_bounding_box.setSize({texture_bounding_box_rect.width, texture_bounding_box_rect.height});
+  texture_bounding_box.setSize({ texture_bounding_box_rect.width, texture_bounding_box_rect.height });
   texture_bounding_box.setOutlineThickness(0.5f);
   texture_bounding_box.setOutlineColor(sf::Color::Green);
   texture_bounding_box.setFillColor(sf::Color::Transparent);
-  texture_bounding_box.setPosition({texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y});
+  texture_bounding_box.setPosition(
+    { texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y });
   texture_bounding_box.setScale(scale);
 
   if (current_effect) {
@@ -105,9 +109,8 @@ sf::FloatRect Character::getTextureBoundingRect() const {
 }
 
 std::vector<sf::RectangleShape> Character::move(
-  std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-  float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info
-) {
+  std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed,
+  std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info) {
   const auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
 
   sf::Vector2f velocity = { 0.f, 0.f };
@@ -149,7 +152,7 @@ std::vector<sf::RectangleShape> Character::move(
 
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_collision);
 
-    if(td.count() > 250)
+    if (td.count() > 250)
       stats->health().decrease(10);
 
     this->last_collision = now;
@@ -182,7 +185,7 @@ std::vector<sf::RectangleShape> Character::move(
     return shape;
   };
 
-  for (auto& collision : collisions) {
+  for (auto& collision: collisions) {
     auto shape = create_collision_shape(collision.bounds);
 
     if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition)) {
@@ -201,44 +204,32 @@ std::vector<sf::RectangleShape> Character::move(
 
       // Left collision
       if (
-        player_left    > obstacle_left  &&
-        player_right  > obstacle_right  &&
-        player_top    < obstacle_bottom &&
-        player_bottom > obstacle_top
-      ) {
+        player_left > obstacle_left && player_right > obstacle_right && player_top < obstacle_bottom &&
+        player_bottom > obstacle_top) {
         next_bounds.left = obstacle_right;
         stop_movement(LEFT);
       }
 
       // Right collision
       if (
-        player_left   < obstacle_left   &&
-        player_right  < obstacle_right  &&
-        player_top    < obstacle_bottom &&
-        player_bottom > obstacle_top
-      ) {
+        player_left < obstacle_left && player_right < obstacle_right && player_top < obstacle_bottom &&
+        player_bottom > obstacle_top) {
         next_bounds.left = obstacle_left - player_width;
         stop_movement(RIGHT);
       }
 
       // Top collision
       if (
-        player_top    > obstacle_top    &&
-        player_bottom > obstacle_bottom &&
-        player_left   < obstacle_right  &&
-        player_right  > obstacle_left
-      ) {
+        player_top > obstacle_top && player_bottom > obstacle_bottom && player_left < obstacle_right &&
+        player_right > obstacle_left) {
         next_bounds.top = obstacle_bottom;
         stop_movement(UP);
       }
 
       // Bottom collision
       if (
-        player_top    < obstacle_top    &&
-        player_bottom < obstacle_bottom &&
-        player_left   < obstacle_right  &&
-        player_right  > obstacle_left
-      ) {
+        player_top < obstacle_top && player_bottom < obstacle_bottom && player_left < obstacle_right &&
+        player_right > obstacle_left) {
         next_bounds.top = obstacle_top - player_height;
         stop_movement(DOWN);
       }
@@ -283,7 +274,9 @@ std::vector<sf::RectangleShape> Character::move(
 
       auto animation_type = WALK;
       for (int i = 1; i < CHARACTER_ANIMATION_FRAMES[animation_type]; i++) {
-        frames.push_back(std::make_tuple(std::chrono::milliseconds(100), sf::IntRect{ i * TILE_SIZE, (animation_type * 4 + *direction) * TILE_SIZE, TILE_SIZE, TILE_SIZE }));
+        frames.push_back(std::make_tuple(
+          std::chrono::milliseconds(100),
+          sf::IntRect{ i * TILE_SIZE, (animation_type * 4 + *direction) * TILE_SIZE, TILE_SIZE, TILE_SIZE }));
       }
 
       animation = Animation(std::move(frames));

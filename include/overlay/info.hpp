@@ -2,15 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
-#include <string>
-#include <sstream>
-#include <vector>
 #include <iterator>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include <asset_cache.hpp>
 
-
-class Info : public sf::Drawable, public sf::Transformable {
+class Info: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
 
   std::chrono::milliseconds display_time;
@@ -38,10 +37,11 @@ class Info : public sf::Drawable, public sf::Transformable {
 
       std::vector<sf::Text> lines;
       lines.push_back(text);
-      for (auto& word : words) {
+      for (auto& word: words) {
         if (lines.back().getGlobalBounds().width + word.size() * 14 > max_line_width) {
           lines.push_back(text);
-          lines.back().setPosition({ text_start_pos.x, text_start_pos.y + text.getCharacterSize() * (lines.size() - 1) });
+          lines.back().setPosition(
+            { text_start_pos.x, text_start_pos.y + text.getCharacterSize() * (lines.size() - 1) });
         }
         std::string current = lines.back().getString();
         lines.back().setString(current + " " + word);
@@ -51,20 +51,21 @@ class Info : public sf::Drawable, public sf::Transformable {
       info_box.setSize(info_box_size);
       target.draw(info_box);
 
-      for (auto& line : lines) {
+      for (auto& line: lines) {
         target.draw(line);
       }
     }
   }
 
-public:
-  explicit Info(const std::shared_ptr<AssetCache> asset_cache_) : asset_cache(asset_cache_), display_time(0) {}
+  public:
+  explicit Info(const std::shared_ptr<AssetCache> asset_cache_): asset_cache(asset_cache_), display_time(0) {}
 
   void display_info(const std::string& text_, std::chrono::seconds duration) {
     display_time = std::chrono::milliseconds(duration);
 
     std::istringstream iss(text_);
-    words = std::vector<std::string>({ std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{} });
+    words =
+      std::vector<std::string>({ std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
   }
 
   void update_time(std::chrono::milliseconds delta) {

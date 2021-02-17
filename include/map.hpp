@@ -1,24 +1,24 @@
 #pragma once
 #define _MAP_HPP_
 
-#include <variant>
 #include <algorithm>
 #include <chrono>
 #include <fstream>
-#include <optional>
 #include <nlohmann/json.hpp>
+#include <optional>
+#include <variant>
 
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
 
-#include <asset_cache.hpp>
-#include <tile.hpp>
-#include <object.hpp>
 #include <animation.hpp>
+#include <asset_cache.hpp>
 #include <character.hpp>
 #include <npc.hpp>
-#include <protagonist.hpp>
+#include <object.hpp>
 #include <overlay/info.hpp>
+#include <protagonist.hpp>
+#include <tile.hpp>
 
 class PlayState;
 
@@ -48,20 +48,26 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds now;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
-  void drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
+  void drawLayer(
+    tson::Layer& layer, sf::RenderTarget& target,
+    std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
 
   mutable std::map<int, Animation> running_animations;
 
-  void drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
+  void drawTileLayer(
+    tson::Layer& layer, sf::RenderTarget& target,
+    std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
 
   void drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const;
 
-  void drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
+  void drawObjectLayer(
+    tson::Layer& layer, sf::RenderTarget& target,
+    std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
 
   void createTileData(tson::Layer& layer);
   void gatherCollectibles(tson::Layer& layer);
 
-public:
+  public:
   sf::Vector2i getTileSize() const;
 
   sf::Vector2f getSize() const;

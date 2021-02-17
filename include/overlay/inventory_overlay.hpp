@@ -1,19 +1,18 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <algorithm>
+#include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <algorithm>
-#include <optional>
 
 #include <asset_cache.hpp>
-#include <object.hpp>
-#include <inventory.hpp>
 #include <collectibles.hpp>
+#include <inventory.hpp>
+#include <object.hpp>
 
-
-class InventoryOverlay : public sf::Drawable, public sf::Transformable {
+class InventoryOverlay: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
   std::reference_wrapper<Inventory> inventory;
 
@@ -26,9 +25,12 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
     auto elements = getInventory().getElements();
 
     sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
-    sf::FloatRect inventory_dims(((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.05f, target_size.x, target_size.y * 0.9f);
+    sf::FloatRect inventory_dims(
+      ((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.05f, target_size.x, target_size.y * 0.9f);
     sf::FloatRect detail(inventory_dims.left, inventory_dims.top, inventory_dims.width * 0.29f, inventory_dims.height);
-    sf::FloatRect objects(detail.left + inventory_dims.width * 0.3f, inventory_dims.top, inventory_dims.width * 0.7f, inventory_dims.height);
+    sf::FloatRect objects(
+      detail.left + inventory_dims.width * 0.3f, inventory_dims.top, inventory_dims.width * 0.7f,
+      inventory_dims.height);
 
     sf::RectangleShape detail_box;
     detail_box.setFillColor(sf::Color(0, 0, 0, 175));
@@ -54,7 +56,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
     // Offsets for placement.
     auto h = 0;
     auto w = 0;
-    for (auto [name, element] : elements) {
+    for (auto [name, element]: elements) {
       element.setScale(scale);
 
       auto rect = element.getBoundingRect();
@@ -100,7 +102,8 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
       display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
 
       std::istringstream iss(getCollectible(name).info);
-      const std::vector<std::string> words({ std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{} });
+      const std::vector<std::string> words(
+        { std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
 
       sf::Text text;
       text.setFont(font);
@@ -109,7 +112,7 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
 
       std::vector<sf::Text> lines;
       lines.push_back(text);
-      for (auto& word : words) {
+      for (auto& word: words) {
         if (lines.back().getGlobalBounds().width + word.size() * 14 > max_line_width) {
           lines.push_back(text);
           lines.back().setPosition({ info_pos.x, info_pos.y + text.getCharacterSize() * (lines.size() - 1) });
@@ -118,15 +121,15 @@ class InventoryOverlay : public sf::Drawable, public sf::Transformable {
         lines.back().setString(current + " " + word);
       }
 
-      for (auto& line : lines) {
+      for (auto& line: lines) {
         target.draw(line);
       }
     }
   }
 
-public:
-  explicit InventoryOverlay(const std::shared_ptr<AssetCache> asset_cache_, Inventory& inventory_)
-    : asset_cache(asset_cache_), inventory(inventory_) {}
+  public:
+  explicit InventoryOverlay(const std::shared_ptr<AssetCache> asset_cache_, Inventory& inventory_):
+    asset_cache(asset_cache_), inventory(inventory_) {}
 
   inline Inventory& getInventory() const {
     return inventory;

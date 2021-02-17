@@ -18,7 +18,7 @@ task run: :build do
 end
 
 task :format do
-  sh 'clang-format', '-i', *Dir.glob('**/*.{c,h}pp')
+  sh 'clang-format', '-i', *Dir.glob('{include/**/*.hpp,*.cpp}')
 end
 
 task :clean do

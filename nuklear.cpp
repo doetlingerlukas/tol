@@ -42,7 +42,8 @@ void Nuklear::renderMenu(GameInstance& game, PlayState& play_state) const {
   ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
   /* GUI */
-  if (nk_begin(ctx, "menu", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
+  if (nk_begin(
+        ctx, "menu", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
     static const float ratio[] = { 0.3f, 0.4f, 0.3f };
 
     nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
@@ -114,7 +115,9 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
   nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, space * scale.y));
   ctx->style.button.text_alignment = NK_TEXT_CENTERED;
 
-  if (nk_begin(ctx, "settings", nk_rect(0, space * scale.y, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
+  if (nk_begin(
+        ctx, "settings", nk_rect(0, space * scale.y, static_cast<float>(size.x), static_cast<float>(size.y)),
+        NK_WINDOW_BACKGROUND)) {
     static const float ratio[] = { 0.f, 1.f, 0.f };
     static const float button_ratio[] = { 0.f, 0.25f, 0.f };
 
@@ -131,7 +134,8 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
 
     nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
     nk_label(ctx, "Resolution:", NK_TEXT_LEFT);
-    if (nk_combo_begin_label(ctx, res_to_string(supported_resolutions[selected_res]).c_str(), nk_vec2(nk_widget_width(ctx), 200))) {
+    if (nk_combo_begin_label(
+          ctx, res_to_string(supported_resolutions[selected_res]).c_str(), nk_vec2(nk_widget_width(ctx), 200))) {
       nk_layout_row_dynamic(ctx, setting_height * scale.y, 1);
       for (size_t i = 0; i < supported_resolutions.size(); i++)
         if (nk_combo_item_label(ctx, res_to_string(supported_resolutions[i]).c_str(), NK_TEXT_LEFT)) {
@@ -147,8 +151,10 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
     nk_label(ctx, "V-Sync:", NK_TEXT_LEFT);
 
     nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
-    if (nk_option_label(ctx, "Enabled", settings.vsync())) settings.set_vsync(true);
-    if (nk_option_label(ctx, "Disabled", !settings.vsync())) settings.set_vsync(false);
+    if (nk_option_label(ctx, "Enabled", settings.vsync()))
+      settings.set_vsync(true);
+    if (nk_option_label(ctx, "Disabled", !settings.vsync()))
+      settings.set_vsync(false);
 
     nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
 
@@ -157,8 +163,10 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
     nk_label(ctx, "Video Mode:", NK_TEXT_LEFT);
 
     nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
-    if (nk_option_label(ctx, "Fullscreen", settings.fullscreen())) settings.set_fullscreen(true);
-    if (nk_option_label(ctx, "Windowed", !settings.fullscreen())) settings.set_fullscreen(false);
+    if (nk_option_label(ctx, "Fullscreen", settings.fullscreen()))
+      settings.set_fullscreen(true);
+    if (nk_option_label(ctx, "Windowed", !settings.fullscreen()))
+      settings.set_fullscreen(false);
 
     nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
 
@@ -169,7 +177,7 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
       nk_layout_row_push(ctx, 0.3f);
       nk_label(ctx, "Volume:", NK_TEXT_LEFT);
       nk_layout_row_push(ctx, 0.5);
-      nk_slider_float(ctx, 0, &settings.volume_level , 1.0f, 0.01f);
+      nk_slider_float(ctx, 0, &settings.volume_level, 1.0f, 0.01f);
     }
     nk_layout_row_end(ctx);
   }
@@ -190,7 +198,12 @@ void Nuklear::renderHud() {
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
 
-  if (nk_begin(ctx, "hud", nk_rect(size.x * 0.6f, size.y - (progressbar_height + margin) * scale.y, size.x * 0.4f, (progressbar_height + margin) * scale.y), NK_WINDOW_BACKGROUND)) {
+  if (nk_begin(
+        ctx, "hud",
+        nk_rect(
+          size.x * 0.6f, size.y - (progressbar_height + margin) * scale.y, size.x * 0.4f,
+          (progressbar_height + margin) * scale.y),
+        NK_WINDOW_BACKGROUND)) {
     nk_size currentHealth = stats->health().get();
 
     nk_layout_row_static(ctx, progressbar_height * scale.y, size.x * 0.4f - margin * static_cast<float>(scale.x), 1);
@@ -216,7 +229,8 @@ void Nuklear::renderHud() {
   pop_window_state();
 }
 
-std::pair<json, DialogState> Nuklear::renderResponseDialog(const json& dialog, DialogState dialog_state, const json& init) {
+std::pair<json, DialogState>
+Nuklear::renderResponseDialog(const json& dialog, DialogState dialog_state, const json& init) {
   push_window_state();
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
@@ -228,20 +242,22 @@ std::pair<json, DialogState> Nuklear::renderResponseDialog(const json& dialog, D
 
   nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
   nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(255, 232, 225, 100)));
-  nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(255, 232,225, 200)));
+  nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(255, 232, 225, 200)));
   ctx->style.button.text_alignment = NK_TEXT_LEFT;
   ctx->style.button.border = 0;
   ctx->style.window.border = 10.0f;
 
   bool selected = false;
-  if (nk_begin(ctx, "dialog_response", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = {0.01f, 0.98f, 0.01f};
+  if (nk_begin(
+        ctx, "dialog_response", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height),
+        NK_WINDOW_BACKGROUND)) {
+    static const float ratio[] = { 0.01f, 0.98f, 0.01f };
 
     nk_layout_row_static(ctx, dialog_height / 5, 15, 1);
     nk_layout_row(ctx, NK_DYNAMIC, 0, 2, ratio);
     nk_spacing(ctx, 1);
 
-    if(dialog.is_string()) {
+    if (dialog.is_string()) {
       if (nk_button_label(ctx, dialog.get<std::string>().c_str()))
         selected = true;
     } else {
@@ -260,7 +276,7 @@ std::pair<json, DialogState> Nuklear::renderResponseDialog(const json& dialog, D
   if (!selected) {
     return std::make_pair(dialog, dialog_state);
   } else {
-    if(dialog.is_string()) {
+    if (dialog.is_string()) {
       return std::make_pair(init, !dialog_state);
     } else {
       return std::make_pair(dialog, !dialog_state);
@@ -281,14 +297,16 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
 
   nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
   nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(255, 232, 225, 100)));
-  nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(255, 232,225, 200)));
+  nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(255, 232, 225, 200)));
   ctx->style.button.text_alignment = NK_TEXT_LEFT;
   ctx->style.button.border = 0;
   ctx->style.window.border = 10.0f;
 
   std::optional<int> response;
-  if (nk_begin(ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height), NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = {0.01f, 0.98f, 0.01f};
+  if (nk_begin(
+        ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height),
+        NK_WINDOW_BACKGROUND)) {
+    static const float ratio[] = { 0.01f, 0.98f, 0.01f };
 
     nk_layout_row_static(ctx, dialog_height * 0.05f, 15, 1);
     nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
@@ -324,8 +342,11 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
     return std::make_pair(lines, dialog_state);
 }
 
-Nuklear::Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window):
-  asset_cache(asset_cache_), size(size_), window(_window), stats(stats_), ctx(init(_window)) { }
+Nuklear::Nuklear(
+  sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_,
+  sf::RenderWindow* _window):
+  asset_cache(asset_cache_),
+  size(size_), window(_window), stats(stats_), ctx(init(_window)) {}
 
 void Nuklear::setSize(sf::Vector2u size) {
   this->size = size;

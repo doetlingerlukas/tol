@@ -5,8 +5,8 @@
 #include <nlohmann/json.hpp>
 #include <tileson.hpp>
 
-#include <asset_cache.hpp>
 #include <animation.hpp>
+#include <asset_cache.hpp>
 #include <z_indexable.hpp>
 
 class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
@@ -22,12 +22,12 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 
-protected:
+  protected:
   inline tson::Tile& getTile() const {
     return tile;
   }
 
-public:
+  public:
   Tile(tson::Tile& tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_);
 
   Tile(const tson::TileObject& object, std::shared_ptr<AssetCache> asset_cache);

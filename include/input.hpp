@@ -1,7 +1,7 @@
 #pragma once
 
 class KeyInput {
-public:
+  public:
   bool up, down, left, right;
   bool w, a, s, d;
   bool e;

@@ -22,30 +22,34 @@ void Health::decrease(size_t value) {
   health = health - value;
 }
 
-Health::Health(size_t health_) : health (health_), future_obj(exit_signal.get_future()), regen_thread([this] (std::future<void> future) {
-  while(future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
-    bool damage_received = false;
+Health::Health(size_t health_):
+  health(health_), future_obj(exit_signal.get_future()),
+  regen_thread(
+    [this](std::future<void> future) {
+      while (future.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
+        bool damage_received = false;
 
-    while(health == 100 && future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+        while (health == 100 && future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
 
-    auto health_before = health;
-    for(int i = 0; i < 14; i++) {
-      if (future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout || health_before != health) {
-        damage_received = true;
-        break;
-      } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        auto health_before = health;
+        for (int i = 0; i < 14; i++) {
+          if (future.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout || health_before != health) {
+            damage_received = true;
+            break;
+          } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+          }
+        }
+
+        if (!damage_received && health < 100) {
+          std::lock_guard<std::mutex> guard(health_mutex);
+          health += 2;
+        }
       }
-    }
-
-    if (!damage_received && health < 100) {
-      std::lock_guard<std::mutex> guard(health_mutex);
-      health += 2;
-    }
-  }
-}, std::move(future_obj)) { }
+    },
+    std::move(future_obj)) {}
 
 Health::~Health() {
   exit_signal.set_value();
@@ -57,8 +61,7 @@ std::ostream& Health::print(std::ostream& out) const {
   return out;
 }
 
-
-Strength::Strength(size_t strength_) : strength(static_cast<int>(strength_)) { }
+Strength::Strength(size_t strength_): strength(static_cast<int>(strength_)) {}
 
 void Strength::increase(size_t value) {
   strength += static_cast<int>(value);
@@ -73,13 +76,13 @@ std::ostream& Strength::print(std::ostream& out) const {
   return out;
 }
 
-Experience::Experience(size_t lvl) : level(lvl) { }
+Experience::Experience(size_t lvl): level(lvl) {}
 
 void Experience::increase(size_t value) {
   experience += value;
 
-  for(auto& [xp, lvl]: xp_bracket) {
-    if(xp > experience) {
+  for (auto& [xp, lvl]: xp_bracket) {
+    if (xp > experience) {
       break;
     }
 
@@ -87,7 +90,7 @@ void Experience::increase(size_t value) {
   }
 }
 
-Speed::Speed(size_t speed_) : speed(static_cast<int>(speed_)) { }
+Speed::Speed(size_t speed_): speed(static_cast<int>(speed_)) {}
 
 void Speed::increase(size_t value) {
   speed += static_cast<int>(value);
@@ -115,12 +118,9 @@ std::ostream& Experience::print(std::ostream& out) const {
   return out;
 }
 
-
 Stats::Stats(const json& stats):
-  _health(Health(stats["health"].get<size_t>())),
-  _strength(Strength(stats["strength"].get<size_t>())),
-  _speed(Speed(stats["speed"].get<size_t>())),
-  _experience(Experience(stats["level"].get<size_t>())) { }
+  _health(Health(stats["health"].get<size_t>())), _strength(Strength(stats["strength"].get<size_t>())),
+  _speed(Speed(stats["speed"].get<size_t>())), _experience(Experience(stats["level"].get<size_t>())) {}
 
 Health& Stats::health() {
   return _health;

@@ -1,14 +1,13 @@
 #pragma once
 
-#include <string>
 #include <map>
-
+#include <string>
 
 class Collectible {
-public:
+  public:
   const std::string info;
 
-  explicit Collectible(const std::string& info_) : info(info_) {}
+  explicit Collectible(const std::string& info_): info(info_) {}
 };
 
 std::map<std::string, Collectible> getCollectibles() {

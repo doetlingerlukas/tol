@@ -5,7 +5,7 @@
 class Object: public Tile {
   std::reference_wrapper<const tson::Object> object;
 
-public:
+  public:
   Object(const tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache);
 
   bool intersects(const sf::FloatRect& rect) const;

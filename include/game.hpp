@@ -20,21 +20,20 @@
 #include <SFML/Graphics.hpp>
 #include <fmt/core.h>
 
-#include <map.hpp>
-#include <string>
-#include <protagonist.hpp>
-#include <settings.hpp>
-#include <input.hpp>
-#include <play_state.hpp>
-#include <settings.hpp>
-#include <stats.hpp>
 #include <dialog.hpp>
-#include <music.hpp>
-#include <game_state.hpp>
+#include <fight.hpp>
 #include <game_instance.hpp>
+#include <game_state.hpp>
+#include <input.hpp>
+#include <map.hpp>
+#include <music.hpp>
 #include <overlay/info.hpp>
 #include <overlay/inventory_overlay.hpp>
-#include <fight.hpp>
+#include <play_state.hpp>
+#include <protagonist.hpp>
+#include <settings.hpp>
+#include <stats.hpp>
+#include <string>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -59,7 +58,7 @@ class Game {
         break;
       case sf::Event::MouseMoved:
         if (state == GameState::MENU) {
-          //menu.mouse({ event.mouseMove.x, event.mouseMove.y }, mouse_pressed);
+          // menu.mouse({ event.mouseMove.x, event.mouseMove.y }, mouse_pressed);
         }
         break;
       case sf::Event::MouseButtonPressed:
@@ -68,92 +67,92 @@ class Game {
           mouse_pressed = event.type == sf::Event::MouseButtonPressed;
 
           if (event.mouseButton.button == sf::Mouse::Button::Left) {
-            inventory_overlay.mouse({ (float) event.mouseButton.x, (float) event.mouseButton.y }, mouse_pressed);
+            inventory_overlay.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
           }
         } else {
           mouse_pressed = false;
         }
-      break;
+        break;
 
-    case sf::Event::KeyPressed:
-    case sf::Event::KeyReleased: {
-      switch (event.key.code) {
-      case sf::Keyboard::Q:
-        instance.setState(GameState::DIALOG);
-        break;
-      case sf::Keyboard::F:
-        instance.setState(GameState::FIGHT);
-        break;
-      case sf::Keyboard::Escape:
-        if (event.type == sf::Event::KeyPressed) {
-          switch (instance.getState()) {
-            case GameState::DIALOG:
-            case GameState::INVENTORY:
-              instance.setState(GameState::PLAY);
-              break;
-            default:
-              instance.setState(GameState::MENU);
-              window.setKeyRepeatEnabled(true);
-              break;
-          }
+      case sf::Event::KeyPressed:
+      case sf::Event::KeyReleased: {
+        switch (event.key.code) {
+          case sf::Keyboard::Q:
+            instance.setState(GameState::DIALOG);
+            break;
+          case sf::Keyboard::F:
+            instance.setState(GameState::FIGHT);
+            break;
+          case sf::Keyboard::Escape:
+            if (event.type == sf::Event::KeyPressed) {
+              switch (instance.getState()) {
+                case GameState::DIALOG:
+                case GameState::INVENTORY:
+                  instance.setState(GameState::PLAY);
+                  break;
+                default:
+                  instance.setState(GameState::MENU);
+                  window.setKeyRepeatEnabled(true);
+                  break;
+              }
+            }
+            break;
+          case sf::Keyboard::Enter:
+            key_input.enter = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::Right:
+            key_input.right = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::D:
+            key_input.d = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::Left:
+            key_input.left = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::A:
+            key_input.a = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::Up:
+            key_input.up = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::W:
+            key_input.w = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::Down:
+            key_input.down = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::S:
+            key_input.s = event.type == sf::Event::KeyPressed;
+            break;
+          case sf::Keyboard::E:
+            key_input.e = event.type == sf::Event::KeyPressed;
+          case sf::Keyboard::M:
+            music.stop_background();
+            break;
+          case sf::Keyboard::I:
+            instance.setState(GameState::INVENTORY);
+            break;
+          case sf::Keyboard::P:
+            instance.setState(GameState::PLAY);
+            break;
+          case sf::Keyboard::X:
+            if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+              inventory_overlay.drop_selected();
+            }
+            break;
+          case sf::Keyboard::C:
+            if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+              inventory_overlay.use_selected();
+            }
+            break;
+          default:
+            break;
         }
-        break;
-      case sf::Keyboard::Enter:
-        key_input.enter = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::Right:
-        key_input.right = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::D:
-        key_input.d = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::Left:
-        key_input.left = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::A:
-        key_input.a = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::Up:
-        key_input.up = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::W:
-        key_input.w = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::Down:
-        key_input.down = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::S:
-        key_input.s = event.type == sf::Event::KeyPressed;
-        break;
-      case sf::Keyboard::E:
-        key_input.e = event.type == sf::Event::KeyPressed;
-      case sf::Keyboard::M:
-        music.stop_background();
-        break;
-      case sf::Keyboard::I:
-        instance.setState(GameState::INVENTORY);
-        break;
-      case sf::Keyboard::P:
-        instance.setState(GameState::PLAY);
-        break;
-      case sf::Keyboard::X:
-        if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
-          inventory_overlay.drop_selected();
-        }
-        break;
-      case sf::Keyboard::C:
-        if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
-          inventory_overlay.use_selected();
-        }
-        break;
-      default:
+
         break;
       }
-
-      break;
-    }
-    default:
-      break;
+      default:
+        break;
     }
 
     nk_sfml_handle_event(&event);
@@ -173,20 +172,21 @@ class Game {
       window_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
     }
 
-    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
+    window.create(
+      sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
 
     instance.setSettingsChanged(false);
   }
 
-public:
-  Game(fs::path dir_, Settings& settings_) : dir(dir_), settings(settings_), instance(GameInstance(dir_)) {
+  public:
+  Game(fs::path dir_, Settings& settings_): dir(dir_), settings(settings_), instance(GameInstance(dir_)) {
     scale = { 2.0, 2.0 };
     resolution_scale = { 1.0, 1.0 };
 
     auto video_mode = sf::VideoMode::getDesktopMode();
     fmt::print("Full Resolution: {}, {}\n", video_mode.width, video_mode.height);
 
-    #if __APPLE__
+#if __APPLE__
     auto display_id = CGMainDisplayID();
     auto width = CGDisplayPixelsWide(display_id);
     auto height = CGDisplayPixelsHigh(display_id);
@@ -194,7 +194,7 @@ public:
 
     resolution_scale.x = static_cast<float>(video_mode.width) / static_cast<float>(width);
     resolution_scale.y = static_cast<float>(video_mode.height) / static_cast<float>(height);
-    #endif
+#endif
 
     scale.x *= resolution_scale.x;
     scale.y *= resolution_scale.y;
@@ -209,19 +209,15 @@ public:
   void run() {
     const auto [window_width, window_height] = settings.resolution();
 
-    window.create(sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
+    window.create(
+      sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
     // load from saved stats
-    json protagonist_stats = {
-      { "strength", 10 },
-      { "speed",  10 },
-      { "health", 100 },
-      { "level",  1 }
-    };
+    json protagonist_stats = { { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } };
 
     const std::shared_ptr<Stats> stats = std::make_shared<Stats>(std::move(protagonist_stats));
 
@@ -239,7 +235,10 @@ public:
     music.play_background();
 
     Info info(asset_cache);
-    info.display_info("Welcome to a very loost island with some very loost people, who are doing very loost things!", std::chrono::seconds(10));
+    info.display_info(
+      "Welcome to a very loost island with some very loost "
+      "people, who are doing very loost things!",
+      std::chrono::seconds(10));
 
     InventoryOverlay inventory_overlay(asset_cache, player.getInventory());
 
@@ -251,9 +250,7 @@ public:
 
     nuklear->setScale(scale);
 
-    stats->health().subscribe([]() {
-      std::exit(0);
-    });
+    stats->health().subscribe([]() { std::exit(0); });
 
     std::optional<std::string> last_npc_interaction;
 
@@ -280,44 +277,44 @@ public:
       window.resetGLStates();
 
       switch (instance.getState()) {
-      case GameState::QUIT:
-        window.close();
-        break;
-      case GameState::MENU:
-        nuklear->renderMenu(instance, play_state);
-        break;
-      case GameState::INVENTORY:
-        window.draw(play_state);
+        case GameState::QUIT:
+          window.close();
+          break;
+        case GameState::MENU:
+          nuklear->renderMenu(instance, play_state);
+          break;
+        case GameState::INVENTORY:
+          window.draw(play_state);
 
-        window.draw(inventory_overlay);
-        break;
-      case GameState::FIGHT:
-        fight.with(key_input, now, last_npc_interaction, map);
-        window.draw(fight);
-        break;
-      case GameState::PLAY:
-      case GameState::QUEST:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));
-        window.draw(play_state);
+          window.draw(inventory_overlay);
+          break;
+        case GameState::FIGHT:
+          fight.with(key_input, now, last_npc_interaction, map);
+          window.draw(fight);
+          break;
+        case GameState::PLAY:
+        case GameState::QUEST:
+          instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));
+          window.draw(play_state);
 
-        info.update_time(std::chrono::milliseconds(millis));
-        window.draw(info);
+          info.update_time(std::chrono::milliseconds(millis));
+          window.draw(info);
 
-        nuklear->renderHud();
-        break;
-      case GameState::DIALOG:
-        window.draw(play_state);
+          nuklear->renderHud();
+          break;
+        case GameState::DIALOG:
+          window.draw(play_state);
 
-        if (last_npc_interaction) {
-          instance.setState(dialog.show(*last_npc_interaction));
-          player.talk_to(*last_npc_interaction);
-        }
-        break;
-      case GameState::SETTINGS:
-        nuklear->renderSettings(instance, settings);
-        break;
-      default:
-        break;
+          if (last_npc_interaction) {
+            instance.setState(dialog.show(*last_npc_interaction));
+            player.talk_to(*last_npc_interaction);
+          }
+          break;
+        case GameState::SETTINGS:
+          nuklear->renderSettings(instance, settings);
+          break;
+        default:
+          break;
       }
 
       window.display();

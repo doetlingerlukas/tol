@@ -5,7 +5,7 @@
 void TiledMap::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   std::vector<std::variant<Tile, Character, Object>> deferred_tiles;
 
-  for (auto& layer : map->getLayers()) {
+  for (auto& layer: map->getLayers()) {
     drawLayer(layer, target, deferred_tiles);
 
     if (layer.getName() == "characters") {
@@ -25,7 +25,9 @@ void TiledMap::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   }
 }
 
-void TiledMap::drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
+void TiledMap::drawLayer(
+  tson::Layer& layer, sf::RenderTarget& target,
+  std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
   if (layer.getName() == "collision") {
     return;
   }
@@ -41,7 +43,7 @@ void TiledMap::drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vect
       drawImageLayer(layer, target);
       break;
     case tson::LayerType::Group:
-      for (auto& l : layer.getLayers()) {
+      for (auto& l: layer.getLayers()) {
         drawLayer(l, target, deferred_tiles);
       }
       break;
@@ -50,7 +52,9 @@ void TiledMap::drawLayer(tson::Layer& layer, sf::RenderTarget& target, std::vect
   }
 }
 
-void TiledMap::drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
+void TiledMap::drawTileLayer(
+  tson::Layer& layer, sf::RenderTarget& target,
+  std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
   std::vector<std::pair<sf::Vector2i, sf::Vector2i>> character_rects;
 
   for (const auto* character: characters) {
@@ -60,7 +64,8 @@ void TiledMap::drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::
     const auto texture_tile_to_x = static_cast<int>((texture_rect.left + texture_rect.width) / getTileSize().x);
     const auto texture_tile_to_y = static_cast<int>((texture_rect.top + texture_rect.height) / getTileSize().y);
 
-    character_rects.emplace_back(sf::Vector2i{texture_tile_from_x, texture_tile_from_y}, sf::Vector2i{texture_tile_to_x, texture_tile_to_y});
+    character_rects.emplace_back(
+      sf::Vector2i{ texture_tile_from_x, texture_tile_from_y }, sf::Vector2i{ texture_tile_to_x, texture_tile_to_y });
   }
 
   for (size_t x = from_x; x < to_x; x++) {
@@ -76,10 +81,10 @@ void TiledMap::drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::
       tile.update(now);
 
       if (tile.zIndex() && std::any_of(character_rects.begin(), character_rects.end(), [x, y](const auto& r) {
-        const auto& [from, to] = r;
-        return static_cast<int>(x) >= from.x && static_cast<int>(x) <= to.x &&
-               static_cast<int>(y) >= from.y && static_cast<int>(y) <= to.y;
-       })) {
+            const auto& [from, to] = r;
+            return static_cast<int>(x) >= from.x && static_cast<int>(x) <= to.x && static_cast<int>(y) >= from.y &&
+                   static_cast<int>(y) <= to.y;
+          })) {
         deferred_tiles.emplace_back(std::move(tile));
       } else {
         target.draw(tile);
@@ -92,17 +97,18 @@ std::vector<const Character*> TiledMap::getCharacters() const {
   return characters;
 }
 
-
 void TiledMap::drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const {
   auto texture = asset_cache->loadTexture(layer.getImage());
   sf::Sprite sprite;
   sprite.setTexture(*texture);
-  sprite.setPosition({layer.getOffset().x, layer.getOffset().y});
+  sprite.setPosition({ layer.getOffset().x, layer.getOffset().y });
   target.draw(sprite);
 }
 
-void TiledMap::drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target, std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
-  for (auto& obj : layer.getObjects()) {
+void TiledMap::drawObjectLayer(
+  tson::Layer& layer, sf::RenderTarget& target,
+  std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const {
+  for (auto& obj: layer.getObjects()) {
     switch (obj.getObjectType()) {
       case tson::ObjectType::Object: {
         const auto id = obj.getId();
@@ -112,8 +118,8 @@ void TiledMap::drawObjectLayer(tson::Layer& layer, sf::RenderTarget& target, std
           object.update(now);
 
           if (std::any_of(characters.begin(), characters.end(), [&object](const auto& c) {
-            return object.intersects(c->getTextureBoundingRect());
-          })) {
+                return object.intersects(c->getTextureBoundingRect());
+              })) {
             deferred_tiles.emplace_back(std::move(object));
           } else {
             target.draw(object);
@@ -136,8 +142,8 @@ void TiledMap::createTileData(tson::Layer& layer) {
       createTileData(nested);
     }
   } else if (layer.getType() == tson::LayerType::TileLayer) {
- 		layer.assignTileMap((std::map<uint32_t, tson::Tile*>*)(&map->getTileMap()));
- 		layer.createTileData(map->getSize(), map->isInfinite());
+    layer.assignTileMap((std::map<uint32_t, tson::Tile*>*)(&map->getTileMap()));
+    layer.createTileData(map->getSize(), map->isInfinite());
   }
 }
 
@@ -147,15 +153,13 @@ void TiledMap::gatherCollectibles(tson::Layer& layer) {
       gatherCollectibles(nested);
     }
   } else if (layer.getType() == tson::LayerType::ObjectGroup) {
-    for (auto& obj : layer.getObjects()) {
+    for (auto& obj: layer.getObjects()) {
       if (obj.getObjectType() == tson::ObjectType::Object && obj.getType() == "collectible") {
         auto* tileset = map->getTilesetByGid(obj.getGid());
 
         collectibles.emplace(
-          std::piecewise_construct,
-          std::make_tuple(obj.getId()),
-          std::make_tuple(std::cref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache)
-        );
+          std::piecewise_construct, std::make_tuple(obj.getId()),
+          std::make_tuple(std::cref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache));
       }
     }
   }
@@ -166,15 +170,14 @@ sf::Vector2i TiledMap::getTileSize() const {
   return { x, y };
 }
 
-
 sf::Vector2f TiledMap::getSize() const {
   auto [x, y] = map->getSize();
   auto [tile_size_x, tile_size_y] = getTileSize();
   return { static_cast<float>(x * tile_size_x), static_cast<float>(y * tile_size_y) };
 }
 
-
-TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> asset_cache_): asset_cache(asset_cache_) {
+TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> asset_cache_):
+  asset_cache(asset_cache_) {
   dir = map_path.parent_path();
   filename = map_path.filename();
 
@@ -219,7 +222,6 @@ TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> a
   to_y = map->getSize().y;
 }
 
-
 sf::Vector2i TiledMap::mapCoordsToTile(const sf::Vector2f& coords) {
   const auto factor_x = getScale().x * getTileSize().x;
   const auto factor_y = getScale().y * getTileSize().y;
@@ -232,17 +234,15 @@ void TiledMap::update(const sf::View& view, const sf::RenderWindow& window, cons
 
   const auto window_size = window.getSize();
 
-  const auto from_coords = window.mapPixelToCoords({0, 0}, view);
+  const auto from_coords = window.mapPixelToCoords({ 0, 0 }, view);
   const auto from_tile = mapCoordsToTile(from_coords);
-  const auto to_coords = window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view);
+  const auto to_coords =
+    window.mapPixelToCoords({ static_cast<int>(window_size.x), static_cast<int>(window_size.y) }, view);
   const auto to_tile = mapCoordsToTile(to_coords);
 
-  window_rect = {
-    static_cast<float>(from_coords.x) / getScale().x,
-    static_cast<float>(from_coords.y) / getScale().y,
-    static_cast<float>(to_coords.x - from_coords.x) / getScale().x,
-    static_cast<float>(to_coords.y - from_coords.y) / getScale().y
-  };
+  window_rect = { static_cast<float>(from_coords.x) / getScale().x, static_cast<float>(from_coords.y) / getScale().y,
+                  static_cast<float>(to_coords.x - from_coords.x) / getScale().x,
+                  static_cast<float>(to_coords.y - from_coords.y) / getScale().y };
 
   // Update culling range.
   from_x = std::max(0, from_tile.x);
@@ -261,7 +261,8 @@ void TiledMap::setPosition(sf::Vector2f position, const sf::RenderTarget& target
 std::optional<sf::Vector2f> TiledMap::getSpawn() {
   const auto& objects = map->getLayer("objects")->getObjects();
 
-  const auto spawn = std::find_if(objects.begin(), objects.end(), [](const auto& object) {  return object.getType() == "spawn"; });
+  const auto spawn =
+    std::find_if(objects.begin(), objects.end(), [](const auto& object) { return object.getType() == "spawn"; });
 
   if (spawn == objects.end()) {
     return std::nullopt;
@@ -319,7 +320,7 @@ std::vector<Collision> TiledMap::collisions_around(const sf::FloatRect& bounds) 
   const auto [max_x, max_y] = map->getSize();
 
   std::function<void(tson::Layer&)> create_collisions;
-  create_collisions = [&, max_x = max_x, max_y = max_y](tson::Layer& layer){
+  create_collisions = [&, max_x = max_x, max_y = max_y](tson::Layer& layer) {
     switch (layer.getType()) {
       case tson::LayerType::TileLayer:
         for (size_t x = std::max(0, from_tile_x - 3); x < static_cast<size_t>(std::min(max_x, to_tile_x + 4)); x++) {
@@ -343,7 +344,7 @@ std::vector<Collision> TiledMap::collisions_around(const sf::FloatRect& bounds) 
         }
         break;
       case tson::LayerType::ObjectGroup:
-        for (auto& obj : layer.getObjects()) {
+        for (auto& obj: layer.getObjects()) {
           if (obj.getObjectType() == tson::ObjectType::Rectangle && obj.getType() == "collision") {
             Collision collision;
             collision.bounds = {

@@ -15,7 +15,8 @@ void Tile::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
     if (running_animations.count(tile_id) == 0) {
       std::cout << "Adding animation for tile " << tile_id << std::endl;
-      running_animations.emplace(std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, std::ref(tileset)));
+      running_animations.emplace(
+        std::piecewise_construct, std::make_tuple(tile_id), std::make_tuple(animation, std::ref(tileset)));
     } else {
       rect = running_animations.at(tile_id).getDrawingRect(now);
     }
@@ -49,7 +50,8 @@ void Tile::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   target.draw(sprite);
 }
 
-Tile::Tile(tson::Tile& tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_): asset_cache(asset_cache_), tile(tile_) {
+Tile::Tile(tson::Tile& tile_, const sf::Vector2f& position, std::shared_ptr<AssetCache> asset_cache_):
+  asset_cache(asset_cache_), tile(tile_) {
   setPosition({ position.x, position.y });
 
   const auto y_prop = getTile().getProp("y");
@@ -76,11 +78,8 @@ std::vector<sf::FloatRect> Tile::getCollisionRects() const {
   auto object_group = getTile().getObjectgroup();
   for (auto& object: object_group.getObjects()) {
     collision_rects.emplace_back(
-      (getPosition().x + object.getPosition().x),
-      (getPosition().y + object.getPosition().y),
-      static_cast<float>(object.getSize().x),
-      static_cast<float>(object.getSize().y)
-    );
+      (getPosition().x + object.getPosition().x), (getPosition().y + object.getPosition().y),
+      static_cast<float>(object.getSize().x), static_cast<float>(object.getSize().y));
   }
 
   return collision_rects;

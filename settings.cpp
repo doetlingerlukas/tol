@@ -37,7 +37,7 @@ void Settings::loadSettings() {
   out << std::setw(2) << settings << std::endl;
 }
 
-Settings::Settings(const fs::path exec_path) : settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
+Settings::Settings(const fs::path exec_path): settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
   loadSettings();
 }
 

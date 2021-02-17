@@ -1,10 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <memory>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
 
@@ -27,7 +27,7 @@ class AssetCache {
   mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
   fs::path dir_;
 
-public:
+  public:
   AssetCache(fs::path dir);
 
   const std::shared_ptr<const std::vector<std::byte>> loadFile(const fs::path& path) const;
