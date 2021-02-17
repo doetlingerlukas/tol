@@ -7,13 +7,13 @@
 using json = nlohmann::json;
 
 class Npc: public Character {
-  inline static json load() {
+  static json load() {
     std::ifstream ifs("assets/character.json");
     json parsed = json::parse(ifs);
     return parsed["characters"];
   }
 
-  inline static json npcs = load();
+  static json getNpcs();
 
   json npc_stats(const std::string& name) const;
 

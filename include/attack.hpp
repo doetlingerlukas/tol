@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Attack {
   std::string name;
   const int damage;

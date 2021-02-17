@@ -5,12 +5,12 @@
 
 #include <SFML/Audio.hpp>
 
-#include "attack.hpp"
 #include <animation.hpp>
 #include <inventory.hpp>
 #include <overlay/info.hpp>
 #include <stats.hpp>
 #include <z_indexable.hpp>
+#include <attack.hpp>
 
 class PlayState;
 
