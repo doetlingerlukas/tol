@@ -1,39 +1,29 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <chrono>
 #include <optional>
+#include <string>
+#include <vector>
 
 #include <overlay/info.hpp>
 #include <protagonist.hpp>
 
 class Quest {
-  const std::string name;
-  const std::string task;
-  bool completed;
-
   public:
   Quest() {}
-  Quest(const std::string& name_, const std::string& task_):
-    name(name_), task(task_), completed(false) {}
 
   virtual bool condition(Protagonist& player, Info& info) = 0;
 
-  const std::string& getTask() const {
-    return task;
-  }
+  virtual const std::string& getName() const = 0;
 
-  void setCompleted() {
-    completed = true;
-  }
+  virtual const std::string& getTask() const = 0;
 
-  void display_current(Info& info) const {
-    info.display_info("Quest: " + getTask(), std::chrono::seconds(10));
-  }
+  virtual void setCompleted() = 0;
+
+  // virtual void display_current(Info& info) const = 0;
 };
 
-class InitialQuest : public Quest {
+class InitialQuest: public Quest {
   const std::string name = "Your first quest!";
   const std::string task = "You are hungly. Find something to eat.";
   bool completed = false;
@@ -46,6 +36,18 @@ class InitialQuest : public Quest {
       return true;
     }
     return false;
+  }
+
+  const std::string& getName() const override {
+    return name;
+  }
+
+  const std::string& getTask() const override {
+    return task;
+  }
+
+  void setCompleted() override {
+    completed = true;
   }
 };
 

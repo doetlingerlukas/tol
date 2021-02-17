@@ -29,12 +29,13 @@
 #include <map.hpp>
 #include <music.hpp>
 #include <overlay/info.hpp>
+#include <overlay/overlay.hpp>
 #include <play_state.hpp>
 #include <protagonist.hpp>
+#include <quest.hpp>
 #include <settings.hpp>
 #include <stats.hpp>
 #include <string>
-#include <quest.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -137,6 +138,9 @@ class Game {
           case sf::Keyboard::P:
             instance.setState(GameState::PLAY);
             break;
+          case sf::Keyboard::Tab:
+            instance.setState(GameState::OVERLAY);
+            break;
           case sf::Keyboard::X:
             if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
               inventory.drop_selected();
@@ -227,6 +231,8 @@ class Game {
     Protagonist player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
     QuestStack quest_stack;
     quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
+    quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
+    quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
     quest_stack.select(0);
 
     map.setScale(scale);
@@ -244,6 +250,8 @@ class Game {
       "Welcome to a very loost island with some very loost "
       "people, who are doing very loost things!",
       std::chrono::seconds(10));
+
+    Overlay overlay(asset_cache, quest_stack);
 
     std::reference_wrapper<Inventory> inventory = player.getInventory();
 
@@ -292,6 +300,11 @@ class Game {
           window.draw(play_state);
 
           window.draw(inventory);
+          break;
+        case GameState::OVERLAY:
+          window.draw(play_state);
+
+          window.draw(overlay);
           break;
         case GameState::FIGHT:
           instance.setState(fight.with(key_input, now, last_npc_interaction, map));
