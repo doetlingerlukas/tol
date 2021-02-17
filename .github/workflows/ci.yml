@@ -8,7 +8,7 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             CC: gcc-10
             CXX: g++-10
     runs-on: ${{ matrix.os }}
@@ -20,5 +20,6 @@ jobs:
           cmake -G Ninja -B ./build -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build ./build -v
         env:
+          CXXFLAGS: -Werror
           CC: ${{ matrix.CC }}
           CXX: ${{ matrix.CXX }}
