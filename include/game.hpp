@@ -34,6 +34,7 @@
 #include <settings.hpp>
 #include <stats.hpp>
 #include <string>
+#include <quest.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -224,6 +225,9 @@ class Game {
 
     TiledMap map(asset_cache->dir() / "map.json", asset_cache);
     Protagonist player(fs::path("tilesets/character-whitebeard.png"), asset_cache, stats, "detlef");
+    QuestStack quest_stack;
+    quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
+    quest_stack.select(0);
 
     map.setScale(scale);
     player.setScale(scale);
@@ -271,6 +275,8 @@ class Game {
         handle_settings_update(music);
         nuklear->setSize(window.getSize());
       }
+
+      quest_stack.check(player, info);
 
       window.clear();
       window.resetGLStates();
