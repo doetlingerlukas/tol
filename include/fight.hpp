@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <ctime>
 
 #include "input.hpp"
 #include "map.hpp"
@@ -149,8 +150,10 @@ class Fight: public sf::Drawable, public sf::Transformable {
   }
 
   public:
-  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_):
-    player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
+  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_) :
+      player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
+    std::srand(std::time(nullptr));
+
     const auto& attacks = player.getAttacks();
 
     for (const auto& attack: attacks) {
@@ -205,7 +208,10 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
       if (td_turn.count() > 1000) {
         fight_turn = Turn::PLAYER;
-        player.getStats()->health().decrease(10);
+        const auto& attacks = npc->getAttacks();
+        int rnd = std::rand()/((RAND_MAX + 1u) / attacks.size());
+        const auto& enemy_attack = attacks[rnd].getDamage();
+        player.getStats()->health().decrease(enemy_attack);
       }
     }
   }
