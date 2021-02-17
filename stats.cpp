@@ -14,7 +14,7 @@ size_t Health::get() const {
 
 void Health::decrease(size_t value) {
   std::cout << health << "\n";
-  health = std::clamp<size_t>(health - value, 0, 100);
+  health = std::clamp<int>(health - value, 0, 100);
   std::cout << health << " after\n";
 
   if (health == 0)

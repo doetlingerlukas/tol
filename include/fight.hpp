@@ -100,12 +100,17 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     if (health > 40 && health < 70) {
       health_fill.setFillColor(sf::Color(255, 165, 0, 255));
-      health_enemy_fill.setFillColor(sf::Color(255, 165, 0, 255));
     } else if (health >= 70) {
       health_fill.setFillColor(sf::Color(36, 109, 36, 255));
-      health_enemy_fill.setFillColor(sf::Color(36, 109, 36, 255));
     } else {
       health_fill.setFillColor(sf::Color(255, 0, 0, 255));
+    }
+
+    if (enemy_health > 40 && enemy_health < 70) {
+      health_enemy_fill.setFillColor(sf::Color(255, 165, 0, 255));
+    } else if (enemy_health >= 70) {
+      health_enemy_fill.setFillColor(sf::Color(36, 109, 36, 255));
+    } else {
       health_enemy_fill.setFillColor(sf::Color(255, 0, 0, 255));
     }
 
