@@ -8,6 +8,7 @@
 #include "menu.hpp"
 #include "protagonist.hpp"
 #include "shared.hpp"
+#include "game_state.hpp"
 
 enum class Turn { PLAYER, ENEMY };
 
@@ -167,6 +168,15 @@ class Fight: public sf::Drawable, public sf::Transformable {
     target.draw(menu);
   }
 
+  void resetFight() {
+    npc = nullptr;
+    last_enemy_attack = std::nullopt;
+    last_enemy_damage = std::nullopt;
+    fight_turn = Turn::PLAYER;
+    last_turn = std::chrono::milliseconds(0);
+    last_input = std::chrono::milliseconds(0);
+  }
+
   public:
   Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_) :
       player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
@@ -186,11 +196,22 @@ class Fight: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  void with(
+  GameState with(
     const KeyInput& input, std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact,
     const TiledMap& map) {
-    now = now_;
+
+    if(player.getStats()->health().get() == 0) {
+      resetFight();
+      return GameState::DEAD;
+    }
+
+    if(npc != nullptr && npc->getStats()->health().get() == 0) {
+      resetFight();
+      return GameState::PLAY;
+    }
+
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
+    now = now_;
 
     if (npc_interact && npc == nullptr) {
       const auto& characters = map.getCharacters();
@@ -238,5 +259,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
         player.getStats()->health().decrease(*last_enemy_damage);
       }
     }
+
+    return GameState::FIGHT;
   }
 };

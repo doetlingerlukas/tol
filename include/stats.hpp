@@ -22,11 +22,7 @@ template <typename T> class StatsProps {
 class Health: public StatsProps<size_t> {
   private:
   size_t health = 100;
-  std::mutex health_mutex;
-  std::promise<void> exit_signal;
-  std::future<void> future_obj;
-  std::thread regen_thread;
-  std::function<void()> callback;
+  std::function<void()> callback = nullptr;
 
   public:
   void subscribe(std::function<void()> func);

@@ -250,8 +250,6 @@ class Game {
 
     nuklear->setScale(scale);
 
-    stats->health().subscribe([]() { std::exit(0); });
-
     std::optional<std::string> last_npc_interaction;
 
     Fight fight(asset_cache, player);
@@ -289,9 +287,12 @@ class Game {
           window.draw(inventory_overlay);
           break;
         case GameState::FIGHT:
-          fight.with(key_input, now, last_npc_interaction, map);
-          window.draw(fight);
+          instance.setState(fight.with(key_input, now, last_npc_interaction, map));
+
+          if(instance.getState() == GameState::FIGHT)
+            window.draw(fight);
           break;
+        case GameState::DEAD:
         case GameState::PLAY:
         case GameState::QUEST:
           instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));

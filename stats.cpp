@@ -15,7 +15,7 @@ size_t Health::get() const {
 void Health::decrease(size_t value) {
   health = std::clamp<int>(health - value, 0, 100);
 
-  if (health == 0)
+  if (health == 0 && callback != nullptr)
     callback();
 }
 
