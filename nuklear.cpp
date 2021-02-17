@@ -67,7 +67,7 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
 
     if (nk_button_label(ctx, "EXIT")) {
       game.setState(GameState::QUIT);
-}
+    }
   }
 
   nk_end(ctx);

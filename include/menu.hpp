@@ -94,8 +94,10 @@ class Menu: public sf::Drawable, public sf::Transformable {
   }
 
   public:
-  explicit Menu(const std::shared_ptr<AssetCache> asset_cache_, int character_scalar_ = 32, sf::Vector2i location = { 1, 1 }):
-    asset_cache(asset_cache_), character_scalar(character_scalar_), menu_location(location) {}
+  explicit Menu(
+    const std::shared_ptr<AssetCache> asset_cache_, int character_scalar_ = 32, sf::Vector2i location = { 1, 1 }):
+    asset_cache(asset_cache_),
+    character_scalar(character_scalar_), menu_location(location) {}
 
   void up() {
     if (current_item > 0) {

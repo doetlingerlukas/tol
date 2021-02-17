@@ -19,14 +19,14 @@ void Health::decrease(size_t value) {
     callback();
 }
 
-Health::Health(size_t health_) : health (health_) { }
+Health::Health(size_t health_): health(health_) {}
 
 std::ostream& Health::print(std::ostream& out) const {
   out << "health: " << health << "\n";
   return out;
 }
 
-Strength::Strength(size_t strength_) : strength(strength_) { }
+Strength::Strength(size_t strength_): strength(strength_) {}
 
 void Strength::increase(size_t value) {
   strength += value;
@@ -55,7 +55,7 @@ void Experience::increase(size_t value) {
   }
 }
 
-Speed::Speed(size_t speed_) : speed(speed_) { }
+Speed::Speed(size_t speed_): speed(speed_) {}
 
 void Speed::increase(size_t value) {
   speed += value;
