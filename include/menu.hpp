@@ -5,13 +5,13 @@
 #include "shared.hpp"
 
 class MenuItem: public sf::Drawable {
-  std::shared_ptr<AssetCache> asset_cache;
-
   int character_scalar;
   std::string title;
+
+  std::shared_ptr<AssetCache> asset_cache;
+
   std::function<void(int)> callback_;
   sf::Vector2i menu_location;
-
 
   sf::Text text;
 
@@ -21,7 +21,7 @@ class MenuItem: public sf::Drawable {
 
 public:
   MenuItem(std::string title, std::function<void(int)> callback, const std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2i& location,
-      int character_scalar_) : character_scalar(character_scalar_), title(title), callback_(callback), asset_cache(asset_cache_), menu_location(location) {
+      int character_scalar_) : character_scalar(character_scalar_), title(title), asset_cache(asset_cache_), callback_(callback), menu_location(location) {
     text.setString(title);
   }
 

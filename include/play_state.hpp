@@ -68,3 +68,4 @@ inline sf::Vector2f PlayState::player_position() const {
 inline void PlayState::set_player_position(sf::Vector2f pos) {
   getPlayer().setPosition(pos);
 }
+

@@ -12,6 +12,8 @@
 #include <overlay/info.hpp>
 #include "attack.hpp"
 
+class PlayState;
+
 enum CharacterDirection {
   UP = 0,
   LEFT,
@@ -52,18 +54,13 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::optional<sf::IntRect> current_effect;
 
-  fs::path character_texture;
   std::string name;
+  fs::path character_texture;
 
   std::vector<Attack> attacks;
 
-  std::function<void(const std::string&)> pickup_callback;
-
+ mutable CharacterDirection last_direction = DOWN;
 protected:
-  void registerPickup(std::function<void(const std::string&)> callback) {
-    pickup_callback = callback;
-  }
-
   std::shared_ptr<Stats> stats;
 
 public:

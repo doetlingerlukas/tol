@@ -6,6 +6,7 @@
 
 #include <character.hpp>
 #include <game_state.hpp>
+#include <attack.hpp>
 
 class Protagonist: public Character {
   Inventory inventory;
@@ -35,6 +36,8 @@ class Protagonist: public Character {
       stats->get();
     }}
   };
+
+  std::vector<Attack> attacks() const;
 
   std::set<std::string> talked_to_npcs;
 

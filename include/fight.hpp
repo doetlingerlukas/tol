@@ -113,7 +113,6 @@ class Fight: public sf::Drawable, public sf::Transformable {
     enemy_health_percent.setCharacterSize(character_size);
     enemy_health_percent.setFillColor(sf::Color::White);
     enemy_health_percent.setString(fmt::format("{}", enemy_health));
-    const int enemy_health_percent_size = enemy_health_percent.getGlobalBounds().width * 4;
     enemy_health_percent.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
 
     enemy_health_percent.setPosition({

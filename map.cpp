@@ -88,6 +88,10 @@ void TiledMap::drawTileLayer(tson::Layer& layer, sf::RenderTarget& target, std::
   }
 }
 
+std::vector<const Character*> TiledMap::getCharacters() const {
+  return characters;
+}
+
 
 void TiledMap::drawImageLayer(tson::Layer& layer, sf::RenderTarget& target) const {
   auto texture = asset_cache->loadTexture(layer.getImage());

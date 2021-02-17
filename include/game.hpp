@@ -297,7 +297,7 @@ public:
         break;
       case GameState::PLAY:
       case GameState::QUEST:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction));
+        instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));
         window.draw(play_state);
 
         info.update_time(std::chrono::milliseconds(millis));

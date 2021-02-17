@@ -96,25 +96,13 @@ public:
 
   void setScale(const sf::Vector2f factors);
 
-  std::vector<Npc>& getNpcs();
+  std::vector<const Character*> getCharacters() const;
 
-  sf::Vector2f getView(const float window_width, const float window_height);
+  std::vector<Npc>& getNpcs();
 
   void setPlayer(Character* player);
 
-  void addCharacter(const Character* character);
-
-  std::vector<const Character*> getCharacters() const;
-
-  std::map<int, Object>& getCollectibles();
-
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
-
-  void setScale(float factorX, float factorY);
-
-  void setScale(const sf::Vector2f factors);
-
-  std::vector<Npc>& getNpcs()
 };
 
 #ifndef _PLAY_STATE_HPP_
