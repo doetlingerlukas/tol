@@ -22,6 +22,9 @@ class Fight: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
   std::chrono::milliseconds last_turn = std::chrono::milliseconds(0);
 
+  std::optional<int> last_enemy_damage;
+  std::optional<std::string> last_enemy_attack;
+
   const int TILE_SIZE = 64;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -148,6 +151,16 @@ class Fight: public sf::Drawable, public sf::Transformable {
     enemy_level.setPosition(
       { resize_x - scale_pos(enemy_text_size * 2, target.getSize().x, resize_x, -enemy_text_size), 20.0f });
 
+    if (last_enemy_attack && last_enemy_damage) {
+      sf::Text attack_info;
+      attack_info.setCharacterSize(70);
+      attack_info.setFillColor(sf::Color::White);
+      attack_info.setString(fmt::format("{} used \"{}\" for {} damage.", npc->getName(), *last_enemy_attack, *last_enemy_damage));
+      attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+      attack_info.setPosition({ target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
+      target.draw(attack_info);
+    }
+
     target.draw(enemy_level);
     target.draw(player_health_percent);
 
@@ -167,6 +180,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
         npc->getStats()->health().decrease(damage);
         fight_turn = Turn::ENEMY;
         last_turn = this->now;
+        last_enemy_attack = std::nullopt;
+        last_enemy_damage = std::nullopt;
       });
     }
   }
@@ -214,9 +229,13 @@ class Fight: public sf::Drawable, public sf::Transformable {
       if (td_turn.count() > 1000) {
         fight_turn = Turn::PLAYER;
         const auto& attacks = npc->getAttacks();
+
         int rnd = std::rand()/((RAND_MAX + 1u) / attacks.size());
-        const auto& enemy_attack = attacks[rnd].getDamage();
-        player.getStats()->health().decrease(enemy_attack);
+        const auto& enemy_attack = attacks[rnd];
+        last_enemy_attack = std::make_optional(enemy_attack.getName());
+        last_enemy_damage = std::make_optional(enemy_attack.getDamage());
+
+        player.getStats()->health().decrease(*last_enemy_damage);
       }
     }
   }
