@@ -293,6 +293,8 @@ class Game {
             window.draw(fight);
           break;
         case GameState::DEAD:
+          nuklear->renderDeath(instance, play_state);
+          break;
         case GameState::PLAY:
         case GameState::QUEST:
           instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));

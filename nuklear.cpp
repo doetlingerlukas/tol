@@ -13,6 +13,75 @@ struct nk_context* Nuklear::getCtx() const {
   return ctx;
 }
 
+void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
+  push_window_state();
+  const float button_height = 40;
+  const int r = 0;
+  const int g = 0;
+  const int b = 0;
+  const int a = 0;
+
+  struct nk_color background = nk_rgba(r, g, b, a);
+
+  const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
+  nk_style_set_font(ctx, &font->handle);
+
+  struct nk_style& s = ctx->style;
+
+  const float spacing = 10;
+
+  nk_style_push_color(ctx, &s.window.background, background);
+  nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(r, g, b, a)));
+  nk_style_push_style_item(ctx, &s.button.normal, nk_style_item_color(nk_rgba(40, 40, 40, 255)));
+  nk_style_push_style_item(ctx, &s.button.hover, nk_style_item_color(nk_rgba(50, 50, 50, 255)));
+  nk_style_push_style_item(ctx, &s.button.active, nk_style_item_color(nk_rgba(30, 30, 30, 255)));
+  nk_style_push_color(ctx, &s.button.text_normal, nk_rgba(255, 255, 255, 255));
+  nk_style_push_color(ctx, &s.button.text_hover, nk_rgba(255, 255, 255, 255));
+  nk_style_push_color(ctx, &s.button.text_active, nk_rgba(255, 255, 255, 255));
+  nk_style_push_vec2(ctx, &s.window.spacing, nk_vec2(0, spacing * scale.y));
+  ctx->style.button.text_alignment = NK_TEXT_CENTERED;
+
+  /* GUI */
+  if (nk_begin(
+        ctx, "death", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
+    static const float ratio[] = { 0.3f, 0.4f, 0.3f };
+
+    nk_layout_row_static(ctx, (size.y / 3.0f - 32 * scale.y), 0, 1);
+    nk_layout_row(ctx, NK_DYNAMIC, 32, 2, ratio);
+
+    nk_spacing(ctx, 1);
+
+    nk_label(ctx, "YOU ARE DEAD", NK_TEXT_CENTERED);
+
+    nk_layout_row_static(ctx, button_height, 0, 1);
+    nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
+
+    nk_spacing(ctx, 1);
+
+    if (nk_button_label(ctx, "LOAD")) {
+      game.load(play_state);
+      game.setState(GameState::PLAY);
+    }
+
+    nk_spacing(ctx, 1);
+
+    if (nk_button_label(ctx, "EXIT"))
+      game.setState(GameState::QUIT);
+  }
+
+  nk_end(ctx);
+  nk_style_pop_vec2(ctx);
+  nk_style_pop_color(ctx);
+  nk_style_pop_color(ctx);
+  nk_style_pop_color(ctx);
+  nk_style_pop_style_item(ctx);
+  nk_style_pop_style_item(ctx);
+  nk_style_pop_style_item(ctx);
+  nk_style_pop_style_item(ctx);
+  nk_style_pop_color(ctx);
+  pop_window_state();
+}
+
 void Nuklear::renderMenu(GameInstance& game, PlayState& play_state) const {
   push_window_state();
   const float button_height = 40;
