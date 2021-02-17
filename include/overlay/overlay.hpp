@@ -42,45 +42,40 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     auto height_offset = 0;
 
     const auto display_text = [&](std::string name_, std::string text_) {
-      sf::Vector2f quest_pos({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
-
       std::istringstream iss(text_);
       const std::vector<std::string> words(
         { std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
 
+      sf::Text name;
+      name.setFont(font);
+      //name.setStyle(sf::Text::Style::Bold);
+      name.setFillColor(sf::Color::White);
+      name.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
+      name.setString(name_);
+      target.draw(name);
+
+      height_offset += name.getCharacterSize();
       sf::Text text;
       text.setFont(font);
-      text.setStyle(sf::Text::Style::Bold);
       text.setFillColor(sf::Color::White);
-      text.setPosition(quest_pos);
-      text.setString(name_);
-      target.draw(text);
-
-      std::cout << "Drawing Quest at: " << quest_pos.x << ", " << quest_pos.y << std::endl;
-      std::cout << "Name: " << name_ << std::endl;
-
-      height_offset += text.getCharacterSize();
-      text.setStyle(sf::Text::Style::Regular);
-      text.setString("");
+      text.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
 
       std::vector<sf::Text> lines;
       lines.push_back(text);
       for (auto& word: words) {
-        if (lines.back().getGlobalBounds().width + word.size() * 14 > quests_rect.left - margin.x) {
+        if (lines.back().getGlobalBounds().width + word.size() * 14 > quests_rect.width - margin.x) {
           lines.push_back(text);
           height_offset += text.getCharacterSize();
-          lines.back().setPosition({ quest_pos.x, quest_pos.y + height_offset });
+          lines.back().setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
         }
         std::string current = lines.back().getString();
         lines.back().setString(current + " " + word);
       }
-      height_offset += margin.y;
+      height_offset += margin.y + text.getCharacterSize();
 
       for (auto& line: lines) {
-        std::cout << "Line at: " << line.getPosition().x << ", " << line.getPosition().y << std::endl;
         target.draw(line);
       }
-      std::cout << "--------------------------------------------------------" << std::endl;
     };
 
     for (auto& quest: getQuestStack().quests) {
