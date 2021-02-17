@@ -101,6 +101,7 @@ class QuestStack {
     if (selected) {
       auto done = quests.at(static_cast<size_t>(*selected))->condition(player, info);
       if (done) {
+        quests.erase(quests.cbegin() + *selected);
         selected = std::nullopt;
       }
     }
