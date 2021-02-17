@@ -6,6 +6,7 @@
 
 #include <character.hpp>
 #include <game_state.hpp>
+#include <attack.hpp>
 
 class Protagonist: public Character {
   Inventory inventory;
@@ -36,17 +37,13 @@ class Protagonist: public Character {
     }}
   };
 
-  json protagonist_stats = {
-    { "strength", 10 },
-    { "speed",  10 },
-    { "health", 100 },
-    { "level",  1 }
-  };
+  std::vector<Attack> attacks() const;
 
   std::set<std::string> talked_to_npcs;
 
 public:
-  Protagonist(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats, const std::string& name);
+  Protagonist(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats,
+      const std::string& name);
 
   std::vector<sf::RectangleShape> move(
     std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,

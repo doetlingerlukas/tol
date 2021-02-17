@@ -10,6 +10,7 @@
 #include <z_indexable.hpp>
 #include <inventory.hpp>
 #include <overlay/info.hpp>
+#include "attack.hpp"
 
 class PlayState;
 
@@ -54,19 +55,26 @@ class Character: public sf::Drawable, public sf::Transformable {
   std::optional<sf::IntRect> current_effect;
 
   std::string name;
+  fs::path character_texture;
 
-  sf::FloatRect bounding_box_rect;
+  std::vector<Attack> attacks;
 
-  mutable CharacterDirection last_direction = DOWN;
-
+ mutable CharacterDirection last_direction = DOWN;
 protected:
   std::shared_ptr<Stats> stats;
 
 public:
   Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
-      const std::shared_ptr<Stats> stats_, const std::string& name_);
+      const std::shared_ptr<Stats> stats_, const std::string& name_, std::vector<Attack>&& attacks_);
+
+  fs::path getCharacterTexture();
 
   std::string getName() const;
+  std::vector<Attack> getAttacks() const;
+
+  fs::path getCharacterTexture() const;
+
+  std::shared_ptr<Stats> getStats() const;
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 

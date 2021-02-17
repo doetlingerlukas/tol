@@ -34,6 +34,7 @@
 #include <game_instance.hpp>
 #include <overlay/info.hpp>
 #include <overlay/inventory_overlay.hpp>
+#include <fight.hpp>
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -77,8 +78,11 @@ class Game {
     case sf::Event::KeyPressed:
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
-        case sf::Keyboard::Q:
+      case sf::Keyboard::Q:
         instance.setState(GameState::DIALOG);
+        break;
+      case sf::Keyboard::F:
+        instance.setState(GameState::FIGHT);
         break;
       case sf::Keyboard::Escape:
         if (event.type == sf::Event::KeyPressed) {
@@ -93,6 +97,9 @@ class Game {
               break;
           }
         }
+        break;
+      case sf::Keyboard::Enter:
+        key_input.enter = event.type == sf::Event::KeyPressed;
         break;
       case sf::Keyboard::Right:
         key_input.right = event.type == sf::Event::KeyPressed;
@@ -120,8 +127,6 @@ class Game {
         break;
       case sf::Keyboard::E:
         key_input.e = event.type == sf::Event::KeyPressed;
-      case sf::Keyboard::Enter:
-        break;
       case sf::Keyboard::M:
         music.stop_background();
         break;
@@ -210,6 +215,7 @@ public:
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
+    // load from saved stats
     json protagonist_stats = {
       { "strength", 10 },
       { "speed",  10 },
@@ -249,7 +255,9 @@ public:
       std::exit(0);
     });
 
-    std::optional<std::string> last_npc_dialog;
+    std::optional<std::string> last_npc_interaction;
+
+    Fight fight(asset_cache, player);
 
     while (window.isOpen()) {
       const auto millis = clock.restart().asMilliseconds();
@@ -283,10 +291,13 @@ public:
 
         window.draw(inventory_overlay);
         break;
+      case GameState::FIGHT:
+        fight.with(key_input, now, last_npc_interaction, map);
+        window.draw(fight);
+        break;
       case GameState::PLAY:
       case GameState::QUEST:
-      case GameState::FIGHT:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_dialog, info));
+        instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));
         window.draw(play_state);
 
         info.update_time(std::chrono::milliseconds(millis));
@@ -297,10 +308,9 @@ public:
       case GameState::DIALOG:
         window.draw(play_state);
 
-        if (last_npc_dialog) {
-          const auto npc_name = "npc1";
-          instance.setState(dialog.show(npc_name));
-          player.talk_to(npc_name);
+        if (last_npc_interaction) {
+          instance.setState(dialog.show(*last_npc_interaction));
+          player.talk_to(*last_npc_interaction);
         }
         break;
       case GameState::SETTINGS:

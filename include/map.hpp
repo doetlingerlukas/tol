@@ -96,7 +96,13 @@ public:
 
   void setScale(const sf::Vector2f factors);
 
+  std::vector<const Character*> getCharacters() const;
+
   std::vector<Npc>& getNpcs();
+
+  void setPlayer(Character* player);
+
+  std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
 };
 
 #ifndef _PLAY_STATE_HPP_

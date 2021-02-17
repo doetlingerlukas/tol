@@ -1,0 +1,45 @@
+{
+  "characters": {
+    "npc1": {
+      "strength": 10,
+      "speed": 10,
+      "level": 3,
+      "health": 100,
+      "attacks": [
+        {
+          "name":"scratch",
+          "damage": 5
+        },
+        {
+          "name":"holy birnbamm",
+          "damage": 12
+        },
+        {
+          "name":"use spider",
+          "damage": 32
+        }
+      ]
+    },
+    "npc2": {
+      "strength": 12,
+      "speed": 10,
+      "level": 2,
+      "health": 100,
+      "attacks": [
+        {
+          "name":"scratch",
+          "damage": 5
+        },
+        {
+          "name":"holy birnbamm",
+          "damage": 12
+        },
+        {
+          "name":"use spider",
+          "damage": 32
+        }
+      ]
+    }
+  }
+}
+

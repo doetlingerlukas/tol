@@ -1,8 +1,8 @@
 #include <character.hpp>
 #include <play_state.hpp>
 
-Character::Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
-    const std::shared_ptr<Stats> stats_, const std::string& name_) : asset_cache(asset_cache_), name(name_), stats(stats_) {
+Character::Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
+    const std::string& name_, std::vector<Attack>&& attacks_) : asset_cache(asset_cache_), name(name_), character_texture(path), attacks(attacks_), stats(stats_) {
   sprite.setTexture(*asset_cache->loadTexture(path));
   sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
   sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
@@ -13,6 +13,18 @@ Character::Character(const fs::path& path, const std::shared_ptr<AssetCache> ass
 
 std::string Character::getName() const {
   return name;
+}
+
+fs::path Character::getCharacterTexture() const {
+  return character_texture;
+}
+
+std::vector<Attack> Character::getAttacks() const {
+  return attacks;
+}
+
+std::shared_ptr<Stats> Character::getStats() const {
+  return stats;
 }
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
