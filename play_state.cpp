@@ -111,7 +111,9 @@ GameState PlayState::update(
 bool PlayState::check_unlock_condition(const std::string& condition_name) const {
   if (condition_name == "bridge_gate") {
     return getPlayer().getInventoryElements().size() >= 3;
-  } else if (condition_name == "city_gate") {
+  }
+
+  if (condition_name == "city_gate") {
     return getPlayer().talked_to("npc1");
   }
 

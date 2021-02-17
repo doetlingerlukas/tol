@@ -15,7 +15,7 @@ class Info: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds display_time;
   std::vector<std::string> words;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     if (display_time.count() > 0) {
       sf::Vector2f target_size({ (float)target.getSize().x, (float)target.getSize().y });
       sf::Vector2f info_box_size({ target_size.x * 0.35f, 0 });

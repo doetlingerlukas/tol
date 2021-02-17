@@ -25,7 +25,7 @@ class GameInstance {
 
   GameState getState();
 
-  bool isSettingsChanged();
+  [[nodiscard]] bool isSettingsChanged() const;
 
   void setSettingsChanged(bool value);
 

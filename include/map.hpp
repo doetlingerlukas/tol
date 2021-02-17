@@ -1,5 +1,5 @@
 #pragma once
-#define _MAP_HPP_
+#define TOL_MAP_HPP
 
 #include <algorithm>
 #include <chrono>
@@ -47,7 +47,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   std::vector<const Character*> characters;
   std::chrono::milliseconds now;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
   void drawLayer(
     tson::Layer& layer, sf::RenderTarget& target,
     std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
@@ -67,12 +67,14 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   void createTileData(tson::Layer& layer);
   void gatherCollectibles(tson::Layer& layer);
 
+  sf::FloatRect window_rect;
+
   public:
   sf::Vector2i getTileSize() const;
 
   sf::Vector2f getSize() const;
 
-  TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> asset_cache_);
+  TiledMap(const fs::path& map_path, std::shared_ptr<AssetCache> asset_cache_);
 
   sf::Vector2i mapCoordsToTile(const sf::Vector2f& coords);
 
@@ -80,15 +82,13 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
     return window_rect;
   }
 
-  sf::FloatRect window_rect;
-
   void update(const sf::View& view, const sf::RenderWindow& window, const std::chrono::milliseconds& now);
 
   void setPosition(sf::Vector2f position, const sf::RenderTarget& target);
 
   std::optional<sf::Vector2f> getSpawn();
 
-  sf::Vector2f getView(const float window_width, const float window_height);
+  sf::Vector2f getView(float window_width, float window_height);
 
   void setPlayer(Protagonist* player);
 
@@ -100,7 +100,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   void setScale(float factorX, float factorY);
 
-  void setScale(const sf::Vector2f factors);
+  void setScale(sf::Vector2f factors);
 
   std::vector<const Character*> getCharacters() const;
 
@@ -111,6 +111,6 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
 };
 
-#ifndef _PLAY_STATE_HPP_
+#ifndef TOL_PLAY_STATE_HPP
 #include <play_state.hpp>
 #endif

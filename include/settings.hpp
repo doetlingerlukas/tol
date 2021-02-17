@@ -36,17 +36,17 @@ class Settings {
   public:
   float volume_level;
 
-  explicit Settings(const fs::path exec_path);
+  explicit Settings(fs::path exec_path);
 
-  std::pair<int, int> resolution() const;
+  [[nodiscard]] std::pair<int, int> resolution() const;
 
   void set_resolution(std::tuple<int, int> res);
 
   void set_resolution(sf::VideoMode video_mode);
 
-  bool fullscreen() const;
+  [[nodiscard]] bool fullscreen() const;
 
-  bool vsync() const;
+  [[nodiscard]] bool vsync() const;
 
   void set_fullscreen(bool value);
 

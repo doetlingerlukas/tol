@@ -197,7 +197,7 @@ TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> a
   }
 
   for (const auto& tileset: map->getTilesets()) {
-    asset_cache->loadTexture(tileset.getImagePath());
+    (void)asset_cache->loadTexture(tileset.getImagePath());
   }
 
   auto* character_layer = map->getLayer("characters");

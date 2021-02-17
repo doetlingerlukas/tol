@@ -4,5 +4,5 @@
 
 class ZIndexable {
   public:
-  virtual std::optional<float> zIndex() const = 0;
+  [[nodiscard]] virtual std::optional<float> zIndex() const = 0;
 };

@@ -4,7 +4,7 @@
 
 AssetCache::AssetCache(fs::path dir): dir_(dir) {}
 
-const std::shared_ptr<const std::vector<std::byte>> AssetCache::loadFile(const fs::path& path) const {
+std::shared_ptr<const std::vector<std::byte>> AssetCache::loadFile(const fs::path& path) const {
   if (bytes.count(path.string()) == 0) {
     const auto absolute_path = dir_ / path;
     std::cout << "Loading " << absolute_path << std::endl;
@@ -47,7 +47,7 @@ const nk_font* AssetCache::loadNkFont(const fs::path& path, float size) const {
   return nk_fonts.at(path.string());
 }
 
-const std::shared_ptr<const sf::Font> AssetCache::loadFont(const fs::path& path) const {
+std::shared_ptr<const sf::Font> AssetCache::loadFont(const fs::path& path) const {
   if (fonts.count(path.string()) == 0) {
     auto font = std::make_shared<sf::Font>();
     const auto& file = *loadFile(path);
@@ -62,7 +62,7 @@ const std::shared_ptr<const sf::Font> AssetCache::loadFont(const fs::path& path)
   return fonts.at(path.string());
 }
 
-const std::shared_ptr<const sf::Texture> AssetCache::loadTexture(const fs::path& path) const {
+std::shared_ptr<const sf::Texture> AssetCache::loadTexture(const fs::path& path) const {
   if (textures.count(path.string()) == 0) {
     auto texture = std::make_shared<sf::Texture>();
     const auto& file = *loadFile(path);

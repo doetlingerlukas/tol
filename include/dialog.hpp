@@ -73,5 +73,5 @@ class Dialog {
     return GameState::DIALOG;
   }
 
-  Dialog(const std::shared_ptr<Nuklear> _ui): ui(_ui), dialog(load()) {}
+  explicit Dialog(const std::shared_ptr<Nuklear> _ui): ui(_ui), dialog(load()) {}
 };

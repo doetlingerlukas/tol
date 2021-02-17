@@ -28,15 +28,15 @@ class AssetCache {
   fs::path dir_;
 
   public:
-  AssetCache(fs::path dir);
+  explicit AssetCache(fs::path dir);
 
-  const std::shared_ptr<const std::vector<std::byte>> loadFile(const fs::path& path) const;
+  [[nodiscard]] std::shared_ptr<const std::vector<std::byte>> loadFile(const fs::path& path) const;
 
-  const nk_font* loadNkFont(const fs::path& path, float size) const;
+  [[nodiscard]] const nk_font* loadNkFont(const fs::path& path, float size) const;
 
-  const std::shared_ptr<const sf::Font> loadFont(const fs::path& path) const;
+  [[nodiscard]] std::shared_ptr<const sf::Font> loadFont(const fs::path& path) const;
 
-  const std::shared_ptr<const sf::Texture> loadTexture(const fs::path& path) const;
+  [[nodiscard]] std::shared_ptr<const sf::Texture> loadTexture(const fs::path& path) const;
 
-  const fs::path& dir() const;
+  [[nodiscard]] const fs::path& dir() const;
 };
