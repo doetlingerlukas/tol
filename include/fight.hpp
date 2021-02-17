@@ -1,12 +1,14 @@
 #pragma once
 
 #include <algorithm>
+#include <ctime>
 
 #include "input.hpp"
 #include "map.hpp"
 #include "menu.hpp"
 #include "protagonist.hpp"
 #include "shared.hpp"
+#include "game_state.hpp"
 
 enum class Turn { PLAYER, ENEMY };
 
@@ -20,6 +22,9 @@ class Fight: public sf::Drawable, public sf::Transformable {
   std::chrono::milliseconds now = std::chrono::milliseconds(0);
   std::chrono::milliseconds last_input = std::chrono::milliseconds(0);
   std::chrono::milliseconds last_turn = std::chrono::milliseconds(0);
+
+  std::optional<int> last_enemy_damage;
+  std::optional<std::string> last_enemy_attack;
 
   const int TILE_SIZE = 64;
 
@@ -99,12 +104,17 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     if (health > 40 && health < 70) {
       health_fill.setFillColor(sf::Color(255, 165, 0, 255));
-      health_enemy_fill.setFillColor(sf::Color(255, 165, 0, 255));
     } else if (health >= 70) {
       health_fill.setFillColor(sf::Color(36, 109, 36, 255));
-      health_enemy_fill.setFillColor(sf::Color(36, 109, 36, 255));
     } else {
       health_fill.setFillColor(sf::Color(255, 0, 0, 255));
+    }
+
+    if (enemy_health > 40 && enemy_health < 70) {
+      health_enemy_fill.setFillColor(sf::Color(255, 165, 0, 255));
+    } else if (enemy_health >= 70) {
+      health_enemy_fill.setFillColor(sf::Color(36, 109, 36, 255));
+    } else {
       health_enemy_fill.setFillColor(sf::Color(255, 0, 0, 255));
     }
 
@@ -142,15 +152,36 @@ class Fight: public sf::Drawable, public sf::Transformable {
     enemy_level.setPosition(
       { resize_x - scale_pos(enemy_text_size * 2, target.getSize().x, resize_x, -enemy_text_size), 20.0f });
 
+    if (last_enemy_attack && last_enemy_damage) {
+      sf::Text attack_info;
+      attack_info.setCharacterSize(70);
+      attack_info.setFillColor(sf::Color::White);
+      attack_info.setString(fmt::format("{} used \"{}\" for {} damage.", npc->getName(), *last_enemy_attack, *last_enemy_damage));
+      attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+      attack_info.setPosition({ target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
+      target.draw(attack_info);
+    }
+
     target.draw(enemy_level);
     target.draw(player_health_percent);
 
     target.draw(menu);
   }
 
+  void resetFight() {
+    npc = nullptr;
+    last_enemy_attack = std::nullopt;
+    last_enemy_damage = std::nullopt;
+    fight_turn = Turn::PLAYER;
+    last_turn = std::chrono::milliseconds(0);
+    last_input = std::chrono::milliseconds(0);
+  }
+
   public:
-  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_):
-    player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
+  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_) :
+      player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
+    std::srand(std::time(nullptr));
+
     const auto& attacks = player.getAttacks();
 
     for (const auto& attack: attacks) {
@@ -159,15 +190,28 @@ class Fight: public sf::Drawable, public sf::Transformable {
         npc->getStats()->health().decrease(damage);
         fight_turn = Turn::ENEMY;
         last_turn = this->now;
+        last_enemy_attack = std::nullopt;
+        last_enemy_damage = std::nullopt;
       });
     }
   }
 
-  void with(
+  GameState with(
     const KeyInput& input, std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact,
     const TiledMap& map) {
-    now = now_;
+
+    if(player.getStats()->health().get() == 0) {
+      resetFight();
+      return GameState::DEAD;
+    }
+
+    if(npc != nullptr && npc->getStats()->health().get() == 0) {
+      resetFight();
+      return GameState::PLAY;
+    }
+
     const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input);
+    now = now_;
 
     if (npc_interact && npc == nullptr) {
       const auto& characters = map.getCharacters();
@@ -205,8 +249,17 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
       if (td_turn.count() > 1000) {
         fight_turn = Turn::PLAYER;
-        player.getStats()->health().decrease(10);
+        const auto& attacks = npc->getAttacks();
+
+        int rnd = std::rand()/((RAND_MAX + 1u) / attacks.size());
+        const auto& enemy_attack = attacks[rnd];
+        last_enemy_attack = std::make_optional(enemy_attack.getName());
+        last_enemy_damage = std::make_optional(enemy_attack.getDamage());
+
+        player.getStats()->health().decrease(*last_enemy_damage);
       }
     }
+
+    return GameState::FIGHT;
   }
 };

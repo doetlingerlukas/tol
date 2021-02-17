@@ -48,6 +48,8 @@ class Nuklear {
 
   void renderMenu(GameInstance& game, PlayState& play_state) const;
 
+  void renderDeath(GameInstance& game, PlayState& play_state) const;
+
   void renderSettings(GameInstance& game, Settings& settings);
 
   void renderHud();
