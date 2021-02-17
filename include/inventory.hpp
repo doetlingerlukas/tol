@@ -126,7 +126,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   public:
   Inventory(int max_size_, const std::shared_ptr<AssetCache> asset_cache_):
-    max_size(max_size_), asset_cache(asset_cache_), mouse_pressed(false) {}
+    asset_cache(asset_cache_), max_size(max_size_),mouse_pressed(false) {}
 
   [[nodiscard]] int size() const {
     return elements.size();

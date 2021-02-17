@@ -51,8 +51,7 @@ class Game {
 
   bool mouse_pressed;
 
-  void handle_event(
-    sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay) {
+  void handle_event(sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay, Fight& fight) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -97,14 +96,15 @@ class Game {
                   break;
                 default:
                   instance.setState(GameState::MENU);
-                  window.setKeyRepeatEnabled(true);
                   break;
               }
             }
             break;
-          case sf::Keyboard::Enter:
+          case sf::Keyboard::Enter: {
+            fight.enter(event.type == sf::Event::KeyPressed);
             key_input.enter = event.type == sf::Event::KeyPressed;
             break;
+          }
           case sf::Keyboard::Right:
             key_input.right = event.type == sf::Event::KeyPressed;
             break;
@@ -117,15 +117,23 @@ class Game {
           case sf::Keyboard::A:
             key_input.a = event.type == sf::Event::KeyPressed;
             break;
-          case sf::Keyboard::Up:
+          case sf::Keyboard::Up: {
+            if (event.type == sf::Event::KeyPressed) {
+              fight.up();
+            }
             key_input.up = event.type == sf::Event::KeyPressed;
             break;
+          }
           case sf::Keyboard::W:
             key_input.w = event.type == sf::Event::KeyPressed;
             break;
-          case sf::Keyboard::Down:
+          case sf::Keyboard::Down: {
+            if (event.type == sf::Event::KeyPressed) {
+              fight.down();
+            }
             key_input.down = event.type == sf::Event::KeyPressed;
             break;
+          }
           case sf::Keyboard::S:
             key_input.s = event.type == sf::Event::KeyPressed;
             break;
@@ -221,6 +229,7 @@ class Game {
       sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
     window.setVerticalSyncEnabled(settings.vsync());
     window.requestFocus();
+    window.setKeyRepeatEnabled(false);
 
     const std::shared_ptr<AssetCache> asset_cache = std::make_shared<AssetCache>(dir / "assets");
 
@@ -269,14 +278,18 @@ class Game {
     Fight fight(asset_cache, player);
 
     while (window.isOpen()) {
-      const auto millis = clock.restart().asMilliseconds();
+      const auto millis = clock.getElapsedTime().asMilliseconds();
+      if (millis > 0) {
+        clock.restart();
+      }
+
       const auto dt = millis / 1000.f;
       now += std::chrono::milliseconds(millis);
 
       sf::Event event;
       nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
-        handle_event(event, key_input, music, inventory, overlay);
+        handle_event(event, key_input, music, inventory, overlay, fight);
       }
       nk_input_end(nuklear->getCtx());
 
@@ -308,7 +321,7 @@ class Game {
           window.draw(overlay);
           break;
         case GameState::FIGHT:
-          instance.setState(fight.with(key_input, now, last_npc_interaction, map));
+          instance.setState(fight.with(now, last_npc_interaction, map));
 
           if (instance.getState() == GameState::FIGHT)
             window.draw(fight);
