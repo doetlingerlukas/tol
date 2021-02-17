@@ -65,6 +65,10 @@ class QuestStack {
     }
   }
 
+  int getSelected() const {
+    return selected.value_or(-1);
+  }
+
   void check(Protagonist& player, Info& info) {
     if (selected) {
       auto done = quests.at(static_cast<size_t>(*selected))->condition(player, info);

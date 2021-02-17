@@ -11,6 +11,9 @@ class Overlay: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
   std::reference_wrapper<QuestStack> quest_stack;
 
+  sf::Vector2f mouse_location;
+  bool mouse_pressed;
+
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
     sf::FloatRect overlay_dims(
@@ -41,7 +44,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
     auto height_offset = 0;
 
-    const auto display_text = [&](std::string name_, std::string text_) {
+    const auto display_text = [&](std::string name_, std::string text_, int index) {
       std::istringstream iss(text_);
       const std::vector<std::string> words(
         { std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
@@ -49,15 +52,26 @@ class Overlay: public sf::Drawable, public sf::Transformable {
       sf::Text name;
       name.setFont(font);
       name.setStyle(sf::Text::Style::Bold);
-      name.setFillColor(sf::Color::White);
+      if (getQuestStack().getSelected() == index)
+        name.setFillColor(sf::Color::Green);
+      else
+        name.setFillColor(sf::Color::White);
       name.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
       name.setString(" " + name_);
       target.draw(name);
 
+      auto bounds = name.getGlobalBounds();
+      if (bounds.contains(mouse_location)) {
+        getQuestStack().select(index);
+      }
+
       height_offset += name.getCharacterSize();
       sf::Text text;
       text.setFont(font);
-      text.setFillColor(sf::Color::White);
+      if (getQuestStack().getSelected() == index)
+        text.setFillColor(sf::Color::Green);
+      else
+        text.setFillColor(sf::Color::White);
       text.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
 
       std::vector<sf::Text> lines;
@@ -78,8 +92,10 @@ class Overlay: public sf::Drawable, public sf::Transformable {
       }
     };
 
+    auto i = 0;
     for (auto& quest: getQuestStack().quests) {
-      display_text(quest->getName(), quest->getTask());
+      display_text(quest->getName(), quest->getTask(), i);
+      i++;
     }
   }
 
@@ -89,5 +105,10 @@ class Overlay: public sf::Drawable, public sf::Transformable {
 
   inline QuestStack& getQuestStack() const {
     return quest_stack;
+  }
+
+  void mouse(sf::Vector2f location, bool pressed) {
+    mouse_location = location;
+    mouse_pressed = pressed;
   }
 };
