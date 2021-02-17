@@ -52,7 +52,7 @@ class Game {
   bool mouse_pressed;
 
   void handle_event(
-    sf::Event& event, KeyInput& key_input, tol::Music& music, InventoryOverlay& inventory_overlay, Overlay& overlay) {
+    sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay) {
     const auto state = instance.getState();
 
     switch (event.type) {
@@ -70,7 +70,7 @@ class Game {
 
         if (event.mouseButton.button == sf::Mouse::Button::Left) {
           if (state == GameState::INVENTORY) {
-            inventory_overlay.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
+            inventory.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
           } else if (state == GameState::OVERLAY) {
             overlay.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
           } else {
@@ -276,7 +276,7 @@ class Game {
       sf::Event event;
       nk_input_begin(nuklear->getCtx());
       while (window.pollEvent(event)) {
-        handle_event(event, key_input, music, inventory_overlay, overlay);
+        handle_event(event, key_input, music, inventory, overlay);
       }
       nk_input_end(nuklear->getCtx());
 
