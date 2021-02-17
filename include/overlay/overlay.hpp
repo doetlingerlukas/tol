@@ -48,10 +48,10 @@ class Overlay: public sf::Drawable, public sf::Transformable {
 
       sf::Text name;
       name.setFont(font);
-      //name.setStyle(sf::Text::Style::Bold);
+      name.setStyle(sf::Text::Style::Bold);
       name.setFillColor(sf::Color::White);
       name.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
-      name.setString(name_);
+      name.setString(" " + name_);
       target.draw(name);
 
       height_offset += name.getCharacterSize();
