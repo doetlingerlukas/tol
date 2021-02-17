@@ -67,7 +67,7 @@ class Game {
           mouse_pressed = event.type == sf::Event::MouseButtonPressed;
 
           if (event.mouseButton.button == sf::Mouse::Button::Left) {
-            inventory_overlay.mouse(
+            inventory.mouse(
               { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) }, mouse_pressed);
           }
         } else {
