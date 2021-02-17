@@ -1,6 +1,6 @@
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/cfg/env.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 #include <game.hpp>
 #include <settings.hpp>
@@ -11,14 +11,14 @@
 #include <nuklear.h>
 #include <nuklear_sfml_gl2.h>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   try {
     spdlog::cfg::load_env_levels();
 
     const auto executeable_path = fs::canonical(argv[0]);
     const auto executeable_dir = executeable_path.parent_path();
 
-    spdlog::basic_logger_mt("file_logger", fs::path(executeable_dir / "logs"  / "basic-log.txt").string());
+    spdlog::basic_logger_mt("file_logger", fs::path(executeable_dir / "logs" / "basic-log.txt").string());
     auto logger = spdlog::get("file_logger");
     logger->set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
 

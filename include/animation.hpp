@@ -9,7 +9,7 @@ class Animation {
   std::chrono::milliseconds total_time = std::chrono::milliseconds(0);
   std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
 
-public:
+  public:
   Animation(std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>>&& frames) {
     for (const auto& frame: frames) {
       total_time += std::get<0>(frame);

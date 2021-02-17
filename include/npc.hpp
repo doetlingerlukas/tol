@@ -19,6 +19,6 @@ class Npc: public Character {
 
   std::vector<Attack> attacks(const std::string& name);
 
-public:
+  public:
   Npc(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::string& name);
 };

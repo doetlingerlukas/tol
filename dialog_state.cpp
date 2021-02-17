@@ -1,7 +1,7 @@
 #include <dialog_state.hpp>
 
 std::string stateAsString(DialogState state) {
-  switch(state) {
+  switch (state) {
     case DialogState::QUESTION:
       return "question";
     case DialogState::RESPONSE:

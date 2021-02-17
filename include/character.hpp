@@ -5,12 +5,12 @@
 
 #include <SFML/Audio.hpp>
 
+#include "attack.hpp"
 #include <animation.hpp>
-#include <stats.hpp>
-#include <z_indexable.hpp>
 #include <inventory.hpp>
 #include <overlay/info.hpp>
-#include "attack.hpp"
+#include <stats.hpp>
+#include <z_indexable.hpp>
 
 class PlayState;
 
@@ -30,13 +30,8 @@ enum CharacterAnimation {
   HURT,
 };
 
-const int CHARACTER_ANIMATION_FRAMES[6] {
-  7,
-  8,
-  9,
-  6,
-  13,
-  6,
+const int CHARACTER_ANIMATION_FRAMES[6]{
+  7, 8, 9, 6, 13, 6,
 };
 
 const int TILE_SIZE = 64;
@@ -59,13 +54,15 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::vector<Attack> attacks;
 
- mutable CharacterDirection last_direction = DOWN;
-protected:
+  mutable CharacterDirection last_direction = DOWN;
+
+  protected:
   std::shared_ptr<Stats> stats;
 
-public:
-  Character(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_,
-      const std::shared_ptr<Stats> stats_, const std::string& name_, std::vector<Attack>&& attacks_);
+  public:
+  Character(
+    const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
+    const std::string& name_, std::vector<Attack>&& attacks_);
 
   fs::path getCharacterTexture();
 
@@ -83,9 +80,8 @@ public:
   sf::FloatRect getTextureBoundingRect() const;
 
   std::vector<sf::RectangleShape> move(
-    std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction,
-    float speed, std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info
-  );
+    std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed,
+    std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info);
 
   virtual std::optional<float> zIndex() const;
 

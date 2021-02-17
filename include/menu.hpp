@@ -19,9 +19,12 @@ class MenuItem: public sf::Drawable {
     target.draw(text);
   }
 
-public:
-  MenuItem(std::string title, std::function<void(int)> callback, const std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2i& location,
-      int character_scalar_) : character_scalar(character_scalar_), title(title), asset_cache(asset_cache_), callback_(callback), menu_location(location) {
+  public:
+  MenuItem(
+    std::string title, std::function<void(int)> callback, const std::shared_ptr<AssetCache> asset_cache_,
+    const sf::Vector2i& location, int character_scalar_):
+    character_scalar(character_scalar_),
+    title(title), asset_cache(asset_cache_), callback_(callback), menu_location(location) {
     text.setString(title);
   }
 
@@ -72,7 +75,9 @@ class Menu: public sf::Drawable, public sf::Transformable {
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
     for (size_t i = 0; i < items.size(); i++) {
-      items[i].update(i, i == current_item, enter_pressed || mouse_current_item_pressed, getScale(), target.getSize().x, target.getSize().y);
+      items[i].update(
+        i, i == current_item, enter_pressed || mouse_current_item_pressed, getScale(), target.getSize().x,
+        target.getSize().y);
       target.draw(items[i]);
     }
   }
@@ -88,9 +93,9 @@ class Menu: public sf::Drawable, public sf::Transformable {
     return std::nullopt;
   }
 
-public:
-  Menu(const std::shared_ptr<AssetCache> asset_cache_, int character_scalar_ = 32, sf::Vector2i location = {1, 1})
-    : asset_cache(asset_cache_), character_scalar(character_scalar_), menu_location(location) {}
+  public:
+  Menu(const std::shared_ptr<AssetCache> asset_cache_, int character_scalar_ = 32, sf::Vector2i location = { 1, 1 }):
+    asset_cache(asset_cache_), character_scalar(character_scalar_), menu_location(location) {}
 
   void up() {
     if (current_item > 0) {

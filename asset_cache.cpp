@@ -32,7 +32,8 @@ const nk_font* AssetCache::loadNkFont(const fs::path& path, float size) const {
 
     struct nk_font_atlas* atlas;
     nk_sfml_font_stash_begin(&atlas);
-    struct nk_font* font = nk_font_atlas_add_from_memory(atlas, reinterpret_cast<void*>(const_cast<std::byte*>(file.data())), file.size(), size, nullptr);
+    struct nk_font* font = nk_font_atlas_add_from_memory(
+      atlas, reinterpret_cast<void*>(const_cast<std::byte*>(file.data())), file.size(), size, nullptr);
     nk_sfml_font_stash_end();
 
     nk_fonts[path.string()] = font;

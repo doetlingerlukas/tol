@@ -6,10 +6,10 @@
 #include <optional>
 
 #include <asset_cache.hpp>
-#include <input.hpp>
 #include <game_state.hpp>
-#include <overlay/info.hpp>
+#include <input.hpp>
 #include <optional>
+#include <overlay/info.hpp>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
@@ -33,7 +33,7 @@ class PlayState: public sf::Drawable {
 
   virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 
-public:
+  public:
   inline Protagonist& getPlayer() const {
     return player;
   }
@@ -42,9 +42,13 @@ public:
     return map;
   }
 
-  PlayState(TiledMap& map_, Protagonist& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_, const sf::Vector2u& window_size);
+  PlayState(
+    TiledMap& map_, Protagonist& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_,
+    const sf::Vector2u& window_size);
 
-  GameState update(KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt, std::optional<std::string>& npc_dialog, Info& info);
+  GameState update(
+    KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt,
+    std::optional<std::string>& npc_dialog, Info& info);
 
   inline sf::Vector2f player_position() const;
 
@@ -68,4 +72,3 @@ inline sf::Vector2f PlayState::player_position() const {
 inline void PlayState::set_player_position(sf::Vector2f pos) {
   getPlayer().setPosition(pos);
 }
-

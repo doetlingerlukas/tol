@@ -2,10 +2,7 @@
 
 #include <string>
 
-enum class DialogState {
-  QUESTION,
-  RESPONSE
-};
+enum class DialogState { QUESTION, RESPONSE };
 
 std::string stateAsString(DialogState state);
 

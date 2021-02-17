@@ -2,8 +2,8 @@
 
 #include <SFML/Audio.hpp>
 
-#include <filesystem>
 #include <algorithm>
+#include <filesystem>
 
 namespace tol {
 
@@ -12,8 +12,8 @@ class Music {
 
   std::filesystem::path dir;
 
-public:
-  explicit Music(const std::filesystem::path& dir_, float volume) : dir(dir_) {
+  public:
+  explicit Music(const std::filesystem::path& dir_, float volume): dir(dir_) {
     background.setLoop(true);
     background.setVolume(volume);
   }
@@ -37,4 +37,4 @@ public:
   }
 };
 
-}
+} // namespace tol

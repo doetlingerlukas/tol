@@ -4,8 +4,8 @@ class Attack {
   std::string name;
   const int damage;
 
-public:
-  Attack(const std::string& name_, const int damage_) : name(name_), damage(damage_) { }
+  public:
+  Attack(const std::string& name_, const int damage_): name(name_), damage(damage_) {}
 
   std::string getName() const {
     return name;
@@ -15,4 +15,3 @@ public:
     return damage;
   }
 };
-

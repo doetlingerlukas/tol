@@ -9,8 +9,8 @@ class Inventory {
   int max_size;
   std::vector<std::pair<std::string, Object>> elements;
 
-public:
-  explicit Inventory(int max_size_) : max_size(max_size_) {}
+  public:
+  explicit Inventory(int max_size_): max_size(max_size_) {}
 
   int size() const {
     return elements.size();

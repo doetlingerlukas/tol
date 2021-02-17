@@ -1,6 +1,6 @@
 #include <game_instance.hpp>
 
-GameInstance::GameInstance(const fs::path& exec_dir) :
+GameInstance::GameInstance(const fs::path& exec_dir):
   state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
 
 void GameInstance::setState(GameState new_state) {

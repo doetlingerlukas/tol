@@ -18,7 +18,7 @@ class GameInstance {
   bool settings_changed;
   const fs::path saves_dir;
 
-public:
+  public:
   explicit GameInstance(const fs::path& exec_dir);
 
   void setState(GameState new_state);

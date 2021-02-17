@@ -17,12 +17,12 @@
 #include <SFML/Graphics.hpp>
 
 #include <asset_cache.hpp>
-#include <stats.hpp>
 #include <dialog_state.hpp>
-#include <nlohmann/json.hpp>
-#include <game_state.hpp>
-#include <settings.hpp>
 #include <game_instance.hpp>
+#include <game_state.hpp>
+#include <nlohmann/json.hpp>
+#include <settings.hpp>
+#include <stats.hpp>
 
 using json = nlohmann::json;
 
@@ -35,14 +35,15 @@ class Nuklear {
   struct nk_context* ctx;
 
   struct nk_context* init(sf::RenderWindow* window) const {
-    struct nk_context *ctx;
+    struct nk_context* ctx;
     ctx = nk_sfml_init(window);
     return ctx;
   }
 
   void push_window_state() const;
   void pop_window_state() const;
-public:
+
+  public:
   struct nk_context* getCtx() const;
 
   void renderMenu(GameInstance& game, PlayState& play_state) const;
@@ -55,7 +56,9 @@ public:
 
   std::pair<json, DialogState> renderDialog(const json& lines, DialogState dialog_state);
 
-  Nuklear(sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window);
+  Nuklear(
+    sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_,
+    sf::RenderWindow* _window);
 
   void setSize(sf::Vector2u size);
 
