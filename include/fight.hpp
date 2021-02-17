@@ -3,12 +3,12 @@
 #include <algorithm>
 #include <ctime>
 
+#include "game_state.hpp"
 #include "input.hpp"
 #include "map.hpp"
 #include "menu.hpp"
 #include "protagonist.hpp"
 #include "shared.hpp"
-#include "game_state.hpp"
 
 enum class Turn { PLAYER, ENEMY };
 
@@ -28,9 +28,9 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
   const int TILE_SIZE = 64;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     sf::RectangleShape background;
-    background.setSize({ (float)target.getSize().x, (float)target.getSize().y });
+    background.setSize({ static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y) });
     background.setFillColor(sf::Color(132, 94, 28, 200));
     target.draw(background);
 

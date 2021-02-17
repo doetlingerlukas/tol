@@ -1,5 +1,5 @@
 #pragma once
-#define _CHARACTER_HPP_
+#define TOL_CHARACTER_HPP
 
 #include <optional>
 
@@ -30,7 +30,7 @@ enum CharacterAnimation {
   HURT,
 };
 
-const int CHARACTER_ANIMATION_FRAMES[6]{
+const std::array<int, 6> CHARACTER_ANIMATION_FRAMES{
   7, 8, 9, 6, 13, 6,
 };
 
@@ -61,7 +61,7 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   public:
   Character(
-    const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
+    const fs::path& path, std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats_,
     const std::string& name_, std::vector<Attack>&& attacks_);
 
   fs::path getCharacterTexture();
@@ -73,7 +73,7 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::shared_ptr<Stats> getStats() const;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
   sf::FloatRect getBoundingRect() const;
 
@@ -91,5 +91,5 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   void resetEffect();
 
-  void lookToward(const sf::Vector2f point);
+  void lookToward(sf::Vector2f point);
 };

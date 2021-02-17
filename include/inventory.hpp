@@ -12,7 +12,7 @@ class Inventory {
   public:
   explicit Inventory(int max_size_): max_size(max_size_) {}
 
-  int size() const {
+  [[nodiscard]] int size() const {
     return elements.size();
   }
 

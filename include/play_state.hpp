@@ -1,5 +1,5 @@
 #pragma once
-#define _PLAY_STATE_HPP_
+#define TOL_PLAY_STATE_HPP
 
 #include <SFML/Graphics.hpp>
 #include <fmt/core.h>
@@ -31,14 +31,14 @@ class PlayState: public sf::Drawable {
 
   std::vector<sf::RectangleShape> collision_shapes;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
   public:
-  inline Protagonist& getPlayer() const {
+  [[nodiscard]] inline Protagonist& getPlayer() const {
     return player;
   }
 
-  inline TiledMap& getMap() const {
+  [[nodiscard]] inline TiledMap& getMap() const {
     return map;
   }
 
@@ -50,18 +50,18 @@ class PlayState: public sf::Drawable {
     KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt,
     std::optional<std::string>& npc_dialog, Info& info);
 
-  inline sf::Vector2f player_position() const;
+  [[nodiscard]] inline sf::Vector2f player_position() const;
 
   inline void set_player_position(sf::Vector2f pos);
 
-  bool check_unlock_condition(const std::string& condition_name) const;
+  [[nodiscard]] bool check_unlock_condition(const std::string& condition_name) const;
 };
 
-#ifndef _MAP_HPP_
+#ifndef TOL_MAP_HPP
 #include <map.hpp>
 #endif
 
-#ifndef _PROTAGONIST_HPP_
+#ifndef TOL_PROTAGONIST_HPP
 #include <protagonist.hpp>
 #endif
 

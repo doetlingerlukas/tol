@@ -15,7 +15,7 @@ class MenuItem: public sf::Drawable {
 
   sf::Text text;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     target.draw(text);
   }
 
@@ -58,7 +58,7 @@ class MenuItem: public sf::Drawable {
     callback_(idx);
   }
 
-  inline sf::FloatRect global_bounds() const {
+  [[nodiscard]] inline sf::FloatRect global_bounds() const {
     return text.getGlobalBounds();
   }
 };
@@ -73,7 +73,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
   int character_scalar;
   sf::Vector2i menu_location;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     for (size_t i = 0; i < items.size(); i++) {
       items[i].update(
         i, i == current_item, enter_pressed || mouse_current_item_pressed, getScale(), target.getSize().x,
@@ -94,7 +94,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
   }
 
   public:
-  Menu(const std::shared_ptr<AssetCache> asset_cache_, int character_scalar_ = 32, sf::Vector2i location = { 1, 1 }):
+  explicit Menu(const std::shared_ptr<AssetCache> asset_cache_, int character_scalar_ = 32, sf::Vector2i location = { 1, 1 }):
     asset_cache(asset_cache_), character_scalar(character_scalar_), menu_location(location) {}
 
   void up() {

@@ -21,7 +21,7 @@ class InventoryOverlay: public sf::Drawable, public sf::Transformable {
 
   mutable std::optional<int> selected;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     auto elements = getInventory().getElements();
 
     sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
@@ -158,7 +158,9 @@ class InventoryOverlay: public sf::Drawable, public sf::Transformable {
   void select_next() {
     if (*selected < getInventory().size()) {
       return;
-    } else if (*selected > 0) {
+    }
+
+    if (*selected > 0) {
       (*selected)--;
     } else {
       selected = std::nullopt;

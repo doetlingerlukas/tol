@@ -20,7 +20,7 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   std::chrono::milliseconds now;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
   protected:
   inline tson::Tile& getTile() const {
@@ -32,7 +32,7 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   Tile(const tson::TileObject& object, std::shared_ptr<AssetCache> asset_cache);
 
-  virtual std::optional<float> zIndex() const;
+  virtual std::optional<float> zIndex() const override;
 
   sf::FloatRect getBoundingRect() const;
 

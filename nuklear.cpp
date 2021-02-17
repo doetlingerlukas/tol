@@ -44,17 +44,17 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
   /* GUI */
   if (nk_begin(
         ctx, "death", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = { 0.3f, 0.4f, 0.3f };
+    static const std::array<float, 3> ratio{ 0.3f, 0.4f, 0.3f };
 
     nk_layout_row_static(ctx, (size.y / 3.0f - 32 * scale.y), 0, 1);
-    nk_layout_row(ctx, NK_DYNAMIC, 32, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, 32, 2, ratio.data());
 
     nk_spacing(ctx, 1);
 
     nk_label(ctx, "YOU ARE DEAD", NK_TEXT_CENTERED);
 
     nk_layout_row_static(ctx, button_height, 0, 1);
-    nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio.data());
 
     nk_spacing(ctx, 1);
 
@@ -65,8 +65,9 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
 
     nk_spacing(ctx, 1);
 
-    if (nk_button_label(ctx, "EXIT"))
+    if (nk_button_label(ctx, "EXIT")) {
       game.setState(GameState::QUIT);
+}
   }
 
   nk_end(ctx);
@@ -113,15 +114,16 @@ void Nuklear::renderMenu(GameInstance& game, PlayState& play_state) const {
   /* GUI */
   if (nk_begin(
         ctx, "menu", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = { 0.3f, 0.4f, 0.3f };
+    static const std::array<float, 3> ratio{ 0.3f, 0.4f, 0.3f };
 
     nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
-    nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio.data());
 
     nk_spacing(ctx, 1);
 
-    if (nk_button_label(ctx, "CONTINUE"))
+    if (nk_button_label(ctx, "CONTINUE")) {
       game.setState(GameState::PLAY);
+    }
 
     nk_spacing(ctx, 1);
 
@@ -139,13 +141,15 @@ void Nuklear::renderMenu(GameInstance& game, PlayState& play_state) const {
 
     nk_spacing(ctx, 1);
 
-    if (nk_button_label(ctx, "SETTINGS"))
+    if (nk_button_label(ctx, "SETTINGS")) {
       game.setState(GameState::SETTINGS);
+    }
 
     nk_spacing(ctx, 1);
 
-    if (nk_button_label(ctx, "EXIT"))
+    if (nk_button_label(ctx, "EXIT")) {
       game.setState(GameState::QUIT);
+    }
   }
 
   nk_end(ctx);
@@ -187,10 +191,10 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
   if (nk_begin(
         ctx, "settings", nk_rect(0, space * scale.y, static_cast<float>(size.x), static_cast<float>(size.y)),
         NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = { 0.f, 1.f, 0.f };
-    static const float button_ratio[] = { 0.f, 0.25f, 0.f };
+    static const std::array<float, 3> ratio{ 0.f, 1.f, 0.f };
+    static const std::array<float, 3> button_ratio{ 0.f, 0.25f, 0.f };
 
-    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio.data());
 
     nk_spacing(ctx, 1);
 
@@ -214,30 +218,34 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
       nk_combo_end(ctx);
     }
 
-    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, button_ratio.data());
     nk_spacing(ctx, 1);
 
     nk_label(ctx, "V-Sync:", NK_TEXT_LEFT);
 
     nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
-    if (nk_option_label(ctx, "Enabled", settings.vsync()))
+    if (nk_option_label(ctx, "Enabled", settings.vsync())) {
       settings.set_vsync(true);
-    if (nk_option_label(ctx, "Disabled", !settings.vsync()))
+    }
+    if (nk_option_label(ctx, "Disabled", !settings.vsync())) {
       settings.set_vsync(false);
+    }
 
-    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio.data());
 
     nk_spacing(ctx, 1);
 
     nk_label(ctx, "Video Mode:", NK_TEXT_LEFT);
 
     nk_layout_row_dynamic(ctx, setting_height * scale.y, 2);
-    if (nk_option_label(ctx, "Fullscreen", settings.fullscreen()))
+    if (nk_option_label(ctx, "Fullscreen", settings.fullscreen())) {
       settings.set_fullscreen(true);
-    if (nk_option_label(ctx, "Windowed", !settings.fullscreen()))
+    }
+    if (nk_option_label(ctx, "Windowed", !settings.fullscreen())) {
       settings.set_fullscreen(false);
+    }
 
-    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, setting_height * scale.y, 2, ratio.data());
 
     nk_spacing(ctx, 1);
 
@@ -320,10 +328,10 @@ Nuklear::renderResponseDialog(const json& dialog, DialogState dialog_state, cons
   if (nk_begin(
         ctx, "dialog_response", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height),
         NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = { 0.01f, 0.98f, 0.01f };
+    static const std::array<float, 3> ratio{ 0.01f, 0.98f, 0.01f };
 
     nk_layout_row_static(ctx, dialog_height / 5, 15, 1);
-    nk_layout_row(ctx, NK_DYNAMIC, 0, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, 0, 2, ratio.data());
     nk_spacing(ctx, 1);
 
     if (dialog.is_string()) {
@@ -375,10 +383,10 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
   if (nk_begin(
         ctx, "dialog", nk_rect(dialog_width_offset, dialog_height_offset, dialog_width, dialog_height),
         NK_WINDOW_BACKGROUND)) {
-    static const float ratio[] = { 0.01f, 0.98f, 0.01f };
+    static const std::array<float, 3> ratio{ 0.01f, 0.98f, 0.01f };
 
     nk_layout_row_static(ctx, dialog_height * 0.05f, 15, 1);
-    nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio);
+    nk_layout_row(ctx, NK_DYNAMIC, dialog_element_height, 2, ratio.data());
 
     for (size_t i = 0; i < lines.size(); i++) {
       nk_spacing(ctx, 1);

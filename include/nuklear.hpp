@@ -44,7 +44,7 @@ class Nuklear {
   void pop_window_state() const;
 
   public:
-  struct nk_context* getCtx() const;
+  [[nodiscard]] struct nk_context* getCtx() const;
 
   void renderMenu(GameInstance& game, PlayState& play_state) const;
 
@@ -59,7 +59,7 @@ class Nuklear {
   std::pair<json, DialogState> renderDialog(const json& lines, DialogState dialog_state);
 
   Nuklear(
-    sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_,
+    sf::Vector2u size_, std::shared_ptr<Stats> stats_, std::shared_ptr<AssetCache> asset_cache_,
     sf::RenderWindow* _window);
 
   void setSize(sf::Vector2u size);

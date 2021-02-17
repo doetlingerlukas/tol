@@ -11,7 +11,7 @@ GameState GameInstance::getState() {
   return state;
 }
 
-bool GameInstance::isSettingsChanged() {
+bool GameInstance::isSettingsChanged() const {
   return settings_changed;
 }
 

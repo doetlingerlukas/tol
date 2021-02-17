@@ -14,5 +14,5 @@ class Object: public Tile {
 
   const std::string& getName() const;
 
-  virtual std::optional<float> zIndex() const;
+  virtual std::optional<float> zIndex() const override;
 };

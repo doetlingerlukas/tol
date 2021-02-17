@@ -21,6 +21,23 @@ task :format do
   sh 'clang-format', '-i', *Dir.glob('{include/**/*.hpp,*.cpp}')
 end
 
+def clang_tidy(*args)
+  llvm_prefix = `brew --prefix llvm`.chomp
+  ENV["PATH"] = "#{llvm_prefix}/bin:#{ENV["PATH"]}"
+
+  cd BUILD_DIR do
+    sh "#{llvm_prefix}/share/clang/run-clang-tidy.py", *args
+  end
+end
+
+task :tidy => :build do
+  clang_tidy
+end
+
+task :fix => :build do
+  clang_tidy '-fix'
+end
+
 task :clean do
   rm_rf BUILD_DIR
 end

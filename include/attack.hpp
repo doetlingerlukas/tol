@@ -9,11 +9,11 @@ class Attack {
   public:
   Attack(const std::string& name_, const int damage_): name(name_), damage(damage_) {}
 
-  std::string getName() const {
+  [[nodiscard]] std::string getName() const {
     return name;
   }
 
-  int getDamage() const {
+  [[nodiscard]] int getDamage() const {
     return damage;
   }
 };

@@ -1,5 +1,5 @@
 #pragma once
-#define _PROTAGONIST_HPP_
+#define TOL_PROTAGONIST_HPP
 
 #include <SFML/Audio.hpp>
 #include <map>
@@ -45,7 +45,7 @@ class Protagonist: public Character {
 
   public:
   Protagonist(
-    const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats,
+    const fs::path& path, std::shared_ptr<AssetCache> asset_cache, std::shared_ptr<Stats> stats,
     const std::string& name);
 
   std::vector<sf::RectangleShape> move(

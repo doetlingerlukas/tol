@@ -27,15 +27,15 @@ class Health: public StatsProps<size_t> {
   public:
   void subscribe(std::function<void()> func);
 
-  virtual void increase(size_t value) override;
+  void increase(size_t value) override;
 
-  virtual size_t get() const override;
+  [[nodiscard]] size_t get() const override;
 
   void decrease(size_t value);
 
   Health(const Health& h) = delete;
 
-  Health(size_t health_);
+  explicit Health(size_t health_);
 
   virtual std::ostream& print(std::ostream& out) const override;
 };
@@ -45,11 +45,11 @@ class Strength : public StatsProps<size_t> {
   size_t strength = 10;
 
   public:
-  Strength(size_t strength_);
+  explicit Strength(size_t strength_);
 
   void increase(size_t value) override;
 
-  virtual size_t get() const override;
+  [[nodiscard]] size_t get() const override;
 
   virtual std::ostream& print(std::ostream& out) const override;
 };
@@ -58,11 +58,11 @@ class Speed : public StatsProps<size_t> {
   size_t speed = 10;
 
   public:
-  Speed(size_t speed_);
+  explicit Speed(size_t speed_);
 
   void increase(size_t value) override;
 
-  virtual size_t get() const override;
+  [[nodiscard]] size_t get() const override;
 
   virtual std::ostream& print(std::ostream& out) const override;
 };
@@ -75,13 +75,13 @@ class Experience: public StatsProps<size_t> {
                                        { 1300, 6 }, { 2000, 7 }, { 3000, 8 }, { 4500, 9 }, { 6600, 10 } };
 
   public:
-  Experience(size_t lvl);
+  explicit Experience(size_t lvl);
 
   void increase(size_t value) override;
 
-  size_t get() const override;
+  [[nodiscard]] size_t get() const override;
 
-  virtual size_t getLevel() const;
+  [[nodiscard]] virtual size_t getLevel() const;
 
   virtual std::ostream& print(std::ostream& out) const override;
 };
@@ -94,7 +94,7 @@ class Stats {
   Experience _experience;
 
   public:
-  Stats(const json& stats);
+  explicit Stats(const json& stats);
 
   Health& health();
 
