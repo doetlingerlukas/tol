@@ -156,9 +156,11 @@ class Fight: public sf::Drawable, public sf::Transformable {
       sf::Text attack_info;
       attack_info.setCharacterSize(70);
       attack_info.setFillColor(sf::Color::White);
-      attack_info.setString(fmt::format("{} used \"{}\" for {} damage.", npc->getName(), *last_enemy_attack, *last_enemy_damage));
+      attack_info.setString(
+        fmt::format("{} used \"{}\" for {} damage.", npc->getName(), *last_enemy_attack, *last_enemy_damage));
       attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
-      attack_info.setPosition({ target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
+      attack_info.setPosition(
+        { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
       target.draw(attack_info);
     }
 
@@ -178,8 +180,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
   }
 
   public:
-  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_) :
-      player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
+  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_):
+    player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
     std::srand(std::time(nullptr));
 
     const auto& attacks = player.getAttacks();
@@ -199,13 +201,12 @@ class Fight: public sf::Drawable, public sf::Transformable {
   GameState with(
     const KeyInput& input, std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact,
     const TiledMap& map) {
-
-    if(player.getStats()->health().get() == 0) {
+    if (player.getStats()->health().get() == 0) {
       resetFight();
       return GameState::DEAD;
     }
 
-    if(npc != nullptr && npc->getStats()->health().get() == 0) {
+    if (npc != nullptr && npc->getStats()->health().get() == 0) {
       resetFight();
       return GameState::PLAY;
     }
@@ -251,7 +252,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
         fight_turn = Turn::PLAYER;
         const auto& attacks = npc->getAttacks();
 
-        int rnd = std::rand()/((RAND_MAX + 1u) / attacks.size());
+        int rnd = std::rand() / ((RAND_MAX + 1u) / attacks.size());
         const auto& enemy_attack = attacks[rnd];
         last_enemy_attack = std::make_optional(enemy_attack.getName());
         last_enemy_damage = std::make_optional(enemy_attack.getDamage());

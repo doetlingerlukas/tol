@@ -9,7 +9,6 @@
 #include <game_state.hpp>
 #include <inventory.hpp>
 
-
 class Protagonist: public Character {
   Inventory inventory;
 

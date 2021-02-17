@@ -25,10 +25,10 @@
 #include <game_instance.hpp>
 #include <game_state.hpp>
 #include <input.hpp>
+#include <inventory.hpp>
 #include <map.hpp>
 #include <music.hpp>
 #include <overlay/info.hpp>
-#include <inventory.hpp>
 #include <play_state.hpp>
 #include <protagonist.hpp>
 #include <settings.hpp>
@@ -290,7 +290,7 @@ class Game {
         case GameState::FIGHT:
           instance.setState(fight.with(key_input, now, last_npc_interaction, map));
 
-          if(instance.getState() == GameState::FIGHT)
+          if (instance.getState() == GameState::FIGHT)
             window.draw(fight);
           break;
         case GameState::DEAD:

@@ -40,8 +40,7 @@ class Health: public StatsProps<size_t> {
   virtual std::ostream& print(std::ostream& out) const override;
 };
 
-
-class Strength : public StatsProps<size_t> {
+class Strength: public StatsProps<size_t> {
   size_t strength = 10;
 
   public:
@@ -54,7 +53,7 @@ class Strength : public StatsProps<size_t> {
   virtual std::ostream& print(std::ostream& out) const override;
 };
 
-class Speed : public StatsProps<size_t> {
+class Speed: public StatsProps<size_t> {
   size_t speed = 10;
 
   public:
