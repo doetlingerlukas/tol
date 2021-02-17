@@ -69,17 +69,17 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
     { texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y });
   texture_bounding_box.setScale(scale);
 
-  if (current_effect) {
-    effect.setTextureRect(*current_effect);
-    effect.setPosition({ getPosition().x * scale.x, (getPosition().y - EFFECT_TILE_SIZE * 1.5f) * scale.y });
-    effect.setScale({ scale.x, scale.y });
-  }
-
   target.draw(shadow);
   target.draw(sprite);
   target.draw(bounding_box);
   target.draw(texture_bounding_box);
-  target.draw(effect);
+
+  if (current_effect) {
+    effect.setTextureRect(*current_effect);
+    effect.setPosition({ getPosition().x * scale.x, (getPosition().y - EFFECT_TILE_SIZE * 1.5f) * scale.y });
+    effect.setScale({ scale.x, scale.y });
+    target.draw(effect);
+  }
 }
 
 sf::FloatRect Character::getBoundingRect() const {
