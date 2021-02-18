@@ -108,7 +108,10 @@ void Game::handle_event(
           break;
         case sf::Keyboard::C:
           if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
-            inventory.use_selected(player);
+            const auto message = inventory.use_selected(player);
+            if (message) {
+              info.display_info(*message, std::chrono::seconds(5));
+            }
           }
           break;
         default:
@@ -146,7 +149,7 @@ void Game::handle_settings_update(tol::Music& music) {
 
 Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
-  asset_cache(std::make_shared<AssetCache>(dir_ / "assets")),
+  asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache),
   player(Protagonist(
     fs::path("tilesets/character-whitebeard.png"), asset_cache,
     std::make_shared<Stats>(json({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } })),
@@ -202,7 +205,6 @@ void Game::run() {
   tol::Music music(fs::path("assets/music"), settings.volume_level);
   music.play_background();
 
-  Info info(asset_cache);
   info.display_info(
     "Welcome to a very loost island with some very loost "
     "people, who are doing very loost things!",

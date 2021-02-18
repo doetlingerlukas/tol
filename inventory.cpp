@@ -139,11 +139,14 @@ void Inventory::drop_selected() {
   }
 }
 
-void Inventory::use_selected(Protagonist& player) {
+std::optional<std::string> Inventory::use_selected(Protagonist& player) {
   if (selected) {
-    player.use_item(remove(*selected));
+    const auto message = player.use_item(remove(*selected));
     select_next();
+    return message;
   }
+
+  return std::nullopt;
 }
 
 void Inventory::select_next() {
