@@ -17,6 +17,7 @@ class Collectible {
     collectibles.insert({ "orange", Collectible("Makes a perfect juice.") });
     collectibles.insert({ "melon", Collectible("A watermelon.") });
     collectibles.insert({ "pear", Collectible("Increases your speed.") });
+    collectibles.insert({ "cherry", Collectible("Probably edible.") });
 
     return collectibles;
   }
