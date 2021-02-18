@@ -11,8 +11,14 @@ class Collectible {
   const std::string info_;
 
   inline static std::map<std::string, std::string> descriptions{
-    { "lemon", "A sour fruit." }, { "strawberry", "Very sweet and delicious." }, { "orange", "Makes a perfect juice." },
-    { "melon", "A watermelon." }, { "pear", "Increases your speed." },           { "cherry", "Probably edible." },
+    { "lemon", "A sour fruit. Can be used to gain 30 health." },
+    { "strawberry", "Very sweet and delicious. Also adds 400 experience" },
+    { "orange", "Makes a perfect juice. Increases strength by 1." },
+    { "melon", "A tremendous watermelon. Eating it recovers 50 health." },
+    { "pear", "Looks just like a regular fruit, but think twice before eating. Not everyone can handle the speed. +20 "
+              "on walking speed" },
+    { "cherry", "Probably edible." },
+    { "pistol", "Watch out! This kills people." }
   };
 
   public:
