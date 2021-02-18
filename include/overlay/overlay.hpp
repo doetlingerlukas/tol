@@ -99,14 +99,15 @@ class Overlay: public sf::Drawable, public sf::Transformable {
 
     auto i = 0;
     for (auto& quest: getQuestStack().quests) {
-      display_text(quest.title(), quest.description(), i);
+      if (!quest.completed())
+        display_text(quest.title(), quest.description(), i);
       i++;
     }
   }
 
   public:
   explicit Overlay(const std::shared_ptr<AssetCache> asset_cache_, QuestStack& quest_stack_):
-    asset_cache(asset_cache_), quest_stack(quest_stack_) {}
+    asset_cache(asset_cache_), quest_stack(quest_stack_), mouse_pressed(false) {}
 
   inline QuestStack& getQuestStack() const {
     return quest_stack;
