@@ -9,68 +9,57 @@
 #include <protagonist.hpp>
 
 class Quest {
+  bool completed = false;
+
+  protected:
+  std::string name;
+  std::string task;
+
   public:
-  Quest() = default;
+  Quest(std::string name_, std::string task_) : name(std::move(name_)), task(std::move(task_)) {}
 
   virtual bool condition(Protagonist& player, Info& info) = 0;
 
-  [[nodiscard]] virtual const std::string& getName() const = 0;
+  [[nodiscard]] std::string getName() const {
+    return name;
+  };
 
-  [[nodiscard]] virtual const std::string& getTask() const = 0;
+  [[nodiscard]] std::string getTask() const {
+    return task;
+  };
 
-  virtual void setCompleted() = 0;
+  void setCompleted() {
+    completed = true;
+  };
 
   // virtual void display_current(Info& info) const = 0;
 };
 
 class InitialQuest: public Quest {
-  const std::string name = "Gather resources!";
-  const std::string task = "You are hungly. Find something to eat.";
-  bool completed = false;
-
   public:
+  InitialQuest() : Quest("Gather resources!", "You are hungly. Find something to eat.") { }
+
   bool condition(Protagonist& player, Info& info) override {
-    if (player.getInventoryElements().size() > 0) {
+    if (!player.getInventoryElements().empty()) {
       setCompleted();
-      info.display_info("Completed Quest: " + name, std::chrono::seconds(5));
+      info.display_info(fmt::format("Completed Quest: {}", name), std::chrono::seconds(5));
       return true;
     }
     return false;
   }
-
-  [[nodiscard]] const std::string& getName() const override {
-    return name;
-  }
-
-  [[nodiscard]] const std::string& getTask() const override {
-    return task;
-  }
-
-  void setCompleted() override {
-    completed = true;
-  }
 };
 
 class SearchQuest: public Quest {
-  const std::string name = "Find the lost item.";
-  const std::string task = "<NPC> has lost something in the woods. Find it for him to receive a reward.";
-  bool completed = false;
-
   public:
+  SearchQuest() : Quest("Find the lost item.", "<NPC> has lost something in the woods. Find it for him") { }
+
   bool condition(Protagonist& player, Info& info) override {
+    if (false) {
+      setCompleted();
+      info.display_info(fmt::format("Completed Quest: {}", name), std::chrono::seconds(5));
+      return true;
+    }
     return false;
-  }
-
-  [[nodiscard]] const std::string& getName() const override {
-    return name;
-  }
-
-  [[nodiscard]] const std::string& getTask() const override {
-    return task;
-  }
-
-  void setCompleted() override {
-    completed = true;
   }
 };
 
@@ -80,7 +69,10 @@ class QuestStack {
   public:
   std::vector<std::unique_ptr<Quest>> quests;
 
-  QuestStack() = default;
+  QuestStack() : selected(std::make_optional(0)) {
+    quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
+    quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));
+  }
 
   void select(int index) {
     if (quests.size() > index) {
