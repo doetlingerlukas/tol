@@ -48,6 +48,7 @@ class Protagonist: public Character {
   std::vector<Attack> attacks() const;
 
   std::set<std::string> talked_to_npcs;
+  std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);
 
   public:
   Protagonist(
@@ -59,7 +60,7 @@ class Protagonist: public Character {
     std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles,
     const sf::Vector2f& map_size, Info& info);
 
-  std::vector<std::pair<std::string, Object>> getInventoryElements() const;
+  std::vector<std::pair<int, Object>> getInventoryElements() const;
 
   Inventory& getInventory();
 
@@ -67,5 +68,6 @@ class Protagonist: public Character {
 
   void talk_to(const std::string& npc_name);
 
-  std::optional<std::string> use_item(std::pair<std::string, Object> item);
+  void drop_item();
+  std::optional<std::string> use_item(std::pair<int, Object> item);
 };

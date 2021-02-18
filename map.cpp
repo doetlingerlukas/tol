@@ -178,7 +178,6 @@ sf::Vector2f TiledMap::getSize() const {
 
 TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> asset_cache_):
   asset_cache(asset_cache_) {
-
   tson::Tileson parser;
   map = parser.parse(asset_cache->dir() / map_path);
 

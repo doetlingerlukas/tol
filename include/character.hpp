@@ -41,7 +41,6 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   mutable sf::Sprite sprite;
   std::optional<Animation> animation;
-  std::chrono::milliseconds now;
   std::chrono::milliseconds last_collision = std::chrono::milliseconds(0);
 
   mutable sf::Sprite effect;
@@ -56,6 +55,7 @@ class Character: public sf::Drawable, public sf::Transformable {
   mutable CharacterDirection last_direction = DOWN;
 
   protected:
+  std::chrono::milliseconds now = std::chrono::milliseconds(0);
   std::shared_ptr<Stats> stats;
 
   public:

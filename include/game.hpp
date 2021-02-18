@@ -52,8 +52,8 @@ class Game {
   std::shared_ptr<AssetCache> asset_cache;
 
   Info info;
-  Protagonist player;
   TiledMap map;
+  Protagonist player;
 
   bool mouse_pressed;
 

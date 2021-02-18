@@ -1,4 +1,5 @@
 #pragma once
+#define TOL_INVENTORY_HPP
 
 #include <SFML/Graphics.hpp>
 #include <algorithm>
@@ -11,12 +12,13 @@
 #include <collectibles.hpp>
 #include <object.hpp>
 
+class TiledMap;
 class Protagonist;
 
 class Inventory: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
   int max_size;
-  std::vector<std::pair<std::string, Object>> elements;
+  std::vector<std::pair<int, Object>> elements;
 
   sf::Vector2f mouse_location;
   bool mouse_pressed;
@@ -29,20 +31,24 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   [[nodiscard]] int size() const;
 
-  std::vector<std::pair<std::string, Object>> getElements() const;
+  std::vector<std::pair<int, Object>> getElements() const;
 
-  bool add(std::pair<std::string, Object> new_element);
+  bool add(std::pair<int, Object> new_element);
 
-  std::pair<std::string, Object> remove(size_t index);
+  std::pair<int, Object> remove(size_t index);
 
   void mouse(sf::Vector2f location, bool pressed);
 
-  void drop_selected();
+  void drop_selected(Protagonist& player, TiledMap& map);
 
   std::optional<std::string> use_selected(Protagonist& player);
 
   void select_next();
 };
+
+#ifndef TOL_MAP_HPP
+#include <map.hpp>
+#endif
 
 #ifndef TOL_PROTAGONIST_HPP
 #include <protagonist.hpp>

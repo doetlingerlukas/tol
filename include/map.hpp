@@ -17,9 +17,9 @@
 #include <npc.hpp>
 #include <object.hpp>
 #include <overlay/info.hpp>
-#include <protagonist.hpp>
 #include <tile.hpp>
 
+class Protagonist;
 class PlayState;
 
 struct Collision {
@@ -107,6 +107,10 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
 };
+
+#ifndef TOL_PROTAGONIST_HPP
+#include <protagonist.hpp>
+#endif
 
 #ifndef TOL_PLAY_STATE_HPP
 #include <play_state.hpp>
