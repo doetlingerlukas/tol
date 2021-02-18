@@ -25,7 +25,7 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
 
   struct nk_color background = nk_rgba(r, g, b, a);
 
-  const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
+  const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 24 * scale.y);
   nk_style_set_font(ctx, &font->handle);
 
   struct nk_style& s = ctx->style;
@@ -373,7 +373,7 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
 
-  const float dialog_height = size.y * (lines.size() + 1) * 0.06f;
+  const float dialog_height = size.y * lines.size() * 0.06f;
   const float dialog_height_offset = size.y - dialog_height - size.y * 0.05f;
   const float dialog_element_height = size.y * 0.05f;
   const float dialog_width = size.x * 0.8f;
@@ -398,14 +398,13 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
     for (size_t i = 0; i < lines.size(); i++) {
       nk_spacing(ctx, 1);
 
-      if (nk_button_label(ctx, lines[i][stateAsString(dialog_state)].get<std::string>().c_str()))
-        response = i;
+      if (dialog_state == DialogState::QUESTION) {
+        if (nk_button_label(ctx, lines[i][stateAsString(dialog_state)].get<std::string>().c_str()))
+          response = i;
+      } else {
+        dialog_state = !dialog_state;
+      }
     }
-
-    nk_spacing(ctx, 1);
-
-    if (nk_button_label(ctx, "leave"))
-      response = -1;
   }
 
   nk_end(ctx);
@@ -417,11 +416,7 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
 
   if (response) {
     const auto dialog_type = !dialog_state;
-    if (*response != -1) {
-      return std::make_pair(lines[*response][stateAsString(dialog_type)], dialog_type);
-    } else {
-      return std::make_pair(0, dialog_type);
-    }
+    return std::make_pair(lines[*response][stateAsString(dialog_type)], dialog_type);
   } else
     return std::make_pair(lines, dialog_state);
 }
