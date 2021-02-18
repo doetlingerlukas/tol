@@ -138,7 +138,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  [[nodiscard]] int count() const {
+  [[nodiscard]] size_t count() const {
     return items.size();
   }
 
