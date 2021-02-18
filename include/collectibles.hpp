@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 
+namespace tol {
+
 class Collectible {
   const int id_;
   const std::string name_;
@@ -25,15 +27,17 @@ class Collectible {
     }
   }
 
-  inline int id() const {
+  [[nodiscard]] inline int id() const {
     return id_;
   }
 
-  inline const std::string& name() const {
+  [[nodiscard]] inline const std::string& name() const {
     return name_;
   }
 
-  inline const std::string& info() const {
+  [[nodiscard]] inline const std::string& info() const {
     return info_;
   }
 };
+
+} // namespace tol

@@ -1,13 +1,16 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <chrono>
 #include <iterator>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <asset_cache.hpp>
+#include <SFML/Graphics.hpp>
+
+#include "asset_cache.hpp"
+
+namespace tol {
 
 class Info: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -72,3 +75,5 @@ class Info: public sf::Drawable, public sf::Transformable {
     display_time -= delta;
   }
 };
+
+} // namespace tol

@@ -1,4 +1,6 @@
-#include <dialog_state.hpp>
+#include "dialog_state.hpp"
+
+namespace tol {
 
 std::string stateAsString(DialogState state) {
   switch (state) {
@@ -14,3 +16,5 @@ std::string stateAsString(DialogState state) {
 DialogState operator!(DialogState state) {
   return state == DialogState::QUESTION ? DialogState::RESPONSE : DialogState::QUESTION;
 }
+
+} // namespace tol

@@ -1,4 +1,6 @@
-#include <play_state.hpp>
+#include "play_state.hpp"
+
+namespace tol {
 
 void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   target.setView(map_view);
@@ -127,3 +129,5 @@ sf::Vector2f PlayState::player_position() const {
 void PlayState::set_player_position(sf::Vector2f pos) {
   getPlayer().setPosition(pos);
 }
+
+} // namespace tol

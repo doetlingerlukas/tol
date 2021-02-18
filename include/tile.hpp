@@ -1,13 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-
 #include <nlohmann/json.hpp>
 #include <tileson.hpp>
 
-#include <animation.hpp>
-#include <asset_cache.hpp>
-#include <z_indexable.hpp>
+#include "animation.hpp"
+#include "asset_cache.hpp"
+#include "z_indexable.hpp"
+
+namespace tol {
 
 class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -40,3 +41,5 @@ class Tile: public ZIndexable, public sf::Drawable, public sf::Transformable {
 
   void update(std::chrono::milliseconds now);
 };
+
+} // namespace tol

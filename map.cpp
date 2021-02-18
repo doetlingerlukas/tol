@@ -1,6 +1,8 @@
-#include <map.hpp>
-
 #include <fmt/core.h>
+
+#include "map.hpp"
+
+namespace tol {
 
 void TiledMap::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   std::vector<std::variant<Tile, Character, Object>> deferred_tiles;
@@ -401,3 +403,5 @@ void TiledMap::setScale(const sf::Vector2f factors) {
 std::vector<Npc>& TiledMap::getNpcs() {
   return npcs;
 }
+
+} // namespace tol

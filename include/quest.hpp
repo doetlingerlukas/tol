@@ -5,7 +5,9 @@
 #include <string>
 #include <vector>
 
-#include <overlay/info.hpp>
+#include "overlay/info.hpp"
+
+namespace tol {
 
 class Protagonist;
 
@@ -26,7 +28,7 @@ class Quest {
     return description_;
   };
 
-  [[nodiscard]] inline bool completed() {
+  [[nodiscard]] inline bool completed() const {
     return completed_;
   }
 
@@ -40,9 +42,9 @@ class QuestStack {
   public:
   std::vector<Quest> quests;
 
-  QuestStack(Info& info_);
+  explicit QuestStack(Info& info_);
 
-  void select(int index);
+  void select(size_t index);
 
   [[nodiscard]] int getSelected() const;
 
@@ -51,6 +53,7 @@ class QuestStack {
   bool completed(size_t index);
 };
 
+} // namespace tol
 #ifndef TOL_PROTAGONIST_HPP
 #include <protagonist.hpp>
 #endif

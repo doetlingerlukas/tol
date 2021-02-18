@@ -1,6 +1,8 @@
-#include <stats.hpp>
-
 #include <sstream>
+
+#include "stats.hpp"
+
+namespace tol {
 
 void Health::subscribe(std::function<void()> func) {
   callback = func;
@@ -113,3 +115,5 @@ std::string Stats::get() {
   ss << _experience;
   return ss.str();
 }
+
+} // namespace tol

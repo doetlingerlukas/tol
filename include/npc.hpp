@@ -2,7 +2,9 @@
 
 #include <nlohmann/json.hpp>
 
-#include <character.hpp>
+#include "character.hpp"
+
+namespace tol {
 
 using json = nlohmann::json;
 
@@ -22,3 +24,5 @@ class Npc: public Character {
   public:
   Npc(const fs::path& path, std::shared_ptr<AssetCache> asset_cache, const std::string& name);
 };
+
+} // namespace tol

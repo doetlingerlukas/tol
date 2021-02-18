@@ -1,4 +1,6 @@
-#include <tile.hpp>
+#include "tile.hpp"
+
+namespace tol {
 
 std::map<int, Animation> Tile::running_animations;
 
@@ -88,3 +90,5 @@ std::vector<sf::FloatRect> Tile::getCollisionRects() const {
 void Tile::update(std::chrono::milliseconds now) {
   this->now = now;
 }
+
+} // namespace tol

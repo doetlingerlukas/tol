@@ -1,4 +1,6 @@
-#include <game_instance.hpp>
+#include "game_instance.hpp"
+
+namespace tol {
 
 GameInstance::GameInstance(const fs::path& exec_dir):
   state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
@@ -55,3 +57,5 @@ void GameInstance::load(PlayState& play_state) {
 
   play_state.set_player_position(sf::Vector2f(x, y));
 }
+
+} // namespace tol

@@ -4,20 +4,22 @@
 #include <algorithm>
 #include <chrono>
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <optional>
 #include <variant>
 
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 #include <tileson.hpp>
 
-#include <animation.hpp>
-#include <asset_cache.hpp>
-#include <character.hpp>
-#include <npc.hpp>
-#include <object.hpp>
-#include <overlay/info.hpp>
-#include <tile.hpp>
+#include "animation.hpp"
+#include "asset_cache.hpp"
+#include "character.hpp"
+#include "npc.hpp"
+#include "object.hpp"
+#include "overlay/info.hpp"
+#include "tile.hpp"
+
+namespace tol {
 
 class Protagonist;
 class PlayState;
@@ -108,6 +110,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
 };
 
+} // namespace tol
 #ifndef TOL_PROTAGONIST_HPP
 #include <protagonist.hpp>
 #endif

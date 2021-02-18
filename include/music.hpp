@@ -1,9 +1,9 @@
 #pragma once
 
-#include <SFML/Audio.hpp>
-
 #include <algorithm>
 #include <filesystem>
+
+#include <SFML/Audio.hpp>
 
 namespace tol {
 

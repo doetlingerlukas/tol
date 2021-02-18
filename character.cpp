@@ -1,5 +1,7 @@
-#include <character.hpp>
-#include <play_state.hpp>
+#include "character.hpp"
+#include "play_state.hpp"
+
+namespace tol {
 
 Character::Character(
   const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
@@ -332,3 +334,5 @@ void Character::lookToward(const sf::Vector2f point) {
     }
   }
 }
+
+} // namespace tol

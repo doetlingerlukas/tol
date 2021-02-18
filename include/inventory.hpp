@@ -1,16 +1,19 @@
 #pragma once
 #define TOL_INVENTORY_HPP
 
-#include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <iostream>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include <asset_cache.hpp>
-#include <collectibles.hpp>
-#include <object.hpp>
+#include <SFML/Graphics.hpp>
+
+#include "asset_cache.hpp"
+#include "collectibles.hpp"
+#include "object.hpp"
+
+namespace tol {
 
 class TiledMap;
 class Protagonist;
@@ -46,6 +49,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
   void select_next();
 };
 
+} // namespace tol
 #ifndef TOL_MAP_HPP
 #include <map.hpp>
 #endif

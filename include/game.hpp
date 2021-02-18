@@ -1,41 +1,40 @@
 #pragma once
 
-#if __APPLE__
-#include <CoreGraphics/CGDisplayConfiguration.h>
-
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
-#else
+#include <string>
 
 #if _WIN32
 #define NOMINMAX
 #include <windows.h>
 #endif
 
+#if __APPLE__
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
 #endif
-
-#include <nuklear.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <fmt/core.h>
 
-#include <dialog.hpp>
-#include <fight.hpp>
-#include <game_instance.hpp>
-#include <game_state.hpp>
-#include <input.hpp>
-#include <inventory.hpp>
-#include <map.hpp>
-#include <music.hpp>
-#include <overlay/info.hpp>
-#include <overlay/overlay.hpp>
-#include <play_state.hpp>
-#include <protagonist.hpp>
-#include <quest.hpp>
-#include <settings.hpp>
-#include <stats.hpp>
-#include <string>
+#include "dialog.hpp"
+#include "fight.hpp"
+#include "game_instance.hpp"
+#include "game_state.hpp"
+#include "input.hpp"
+#include "inventory.hpp"
+#include "map.hpp"
+#include "music.hpp"
+#include "nuklear.hpp"
+#include "overlay/info.hpp"
+#include "overlay/overlay.hpp"
+#include "play_state.hpp"
+#include "protagonist.hpp"
+#include "quest.hpp"
+#include "settings.hpp"
+#include "stats.hpp"
+
+namespace tol {
 
 class Game {
   const std::string name = "Tales of Lostness";
@@ -67,3 +66,5 @@ class Game {
 
   void run();
 };
+
+} // namespace tol

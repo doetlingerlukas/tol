@@ -1,6 +1,8 @@
-#include <protagonist.hpp>
-
 #include <fmt/core.h>
+
+#include "protagonist.hpp"
+
+namespace tol {
 
 Protagonist::Protagonist(
   const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats,
@@ -80,3 +82,5 @@ std::optional<std::string> Protagonist::use_item(std::pair<int, Object> item) {
 
   return std::nullopt;
 }
+
+} // namespace tol

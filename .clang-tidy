@@ -8,6 +8,7 @@ Checks: >
   -modernize-use-trailing-return-type,
   -llvm-header-guard,
   -google-build-using-namespace,
+  -google-readability-namespace-comments,
   -fuchsia-overloaded-operator,
   -fuchsia-default-arguments-declarations,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,

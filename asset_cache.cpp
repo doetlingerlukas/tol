@@ -1,6 +1,6 @@
-#include <asset_cache.hpp>
+#include "asset_cache.hpp"
 
-#include <nuklear_sfml_gl2.h>
+namespace tol {
 
 AssetCache::AssetCache(fs::path dir): dir_(dir) {}
 
@@ -81,3 +81,5 @@ std::shared_ptr<const sf::Texture> AssetCache::loadTexture(const fs::path& path)
 const fs::path& AssetCache::dir() const {
   return dir_;
 }
+
+} // namespace tol

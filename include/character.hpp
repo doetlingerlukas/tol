@@ -5,11 +5,13 @@
 
 #include <SFML/Audio.hpp>
 
-#include <animation.hpp>
-#include <attack.hpp>
-#include <overlay/info.hpp>
-#include <stats.hpp>
-#include <z_indexable.hpp>
+#include "animation.hpp"
+#include "attack.hpp"
+#include "overlay/info.hpp"
+#include "stats.hpp"
+#include "z_indexable.hpp"
+
+namespace tol {
 
 class PlayState;
 
@@ -97,3 +99,5 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   void lookToward(sf::Vector2f point);
 };
+
+} // namespace tol

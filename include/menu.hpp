@@ -4,6 +4,8 @@
 
 #include "shared.hpp"
 
+namespace tol {
+
 class MenuItem: public sf::Drawable {
   friend class Menu;
 
@@ -122,7 +124,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
   void reposition(sf::Vector2i new_location) {
     menu_location = new_location;
 
-    for(auto& item: items) {
+    for (auto& item: items) {
       item.menu_location = new_location;
     }
   }
@@ -136,7 +138,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  [[nodiscard]] int count() const {
+  [[nodiscard]] size_t count() const {
     return items.size();
   }
 
@@ -160,3 +162,5 @@ class Menu: public sf::Drawable, public sf::Transformable {
     }
   }
 };
+
+} // namespace tol

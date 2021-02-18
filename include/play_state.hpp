@@ -1,21 +1,24 @@
 #pragma once
 #define TOL_PLAY_STATE_HPP
 
-#include <SFML/Graphics.hpp>
-#include <fmt/core.h>
 #include <optional>
 
-#include <asset_cache.hpp>
-#include <game_state.hpp>
-#include <input.hpp>
-#include <optional>
-#include <overlay/info.hpp>
-#include <quest.hpp>
+#include <SFML/Graphics.hpp>
+#include <fmt/core.h>
+
+#include "asset_cache.hpp"
+#include "game_state.hpp"
+#include "input.hpp"
+#include "optional"
+#include "overlay/info.hpp"
+#include "quest.hpp"
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
 const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;
 const float CHARACTER_MOVE_SPEED = 80.f;
+
+namespace tol {
 
 class TiledMap;
 class Protagonist;
@@ -63,6 +66,7 @@ class PlayState: public sf::Drawable {
   [[nodiscard]] bool check_unlock_condition(const std::string& condition_name) const;
 };
 
+} // namespace tol
 #ifndef TOL_MAP_HPP
 #include <map.hpp>
 #endif

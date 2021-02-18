@@ -2,6 +2,8 @@
 
 #include <string>
 
+namespace tol {
+
 class Attack {
   std::string name;
   const int damage;
@@ -17,3 +19,5 @@ class Attack {
     return damage;
   }
 };
+
+} // namespace tol

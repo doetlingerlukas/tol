@@ -4,6 +4,7 @@
 #include <cstring>
 #include <optional>
 
+#include <nlohmann/json.hpp>
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
 #define NK_INCLUDE_STANDARD_VARARGS
@@ -11,18 +12,18 @@
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
+#include <SFML/Graphics.hpp>
 #include <nuklear.h>
 #include <nuklear_sfml_gl2.h>
 
-#include <SFML/Graphics.hpp>
+#include "asset_cache.hpp"
+#include "dialog_state.hpp"
+#include "game_instance.hpp"
+#include "game_state.hpp"
+#include "settings.hpp"
+#include "stats.hpp"
 
-#include <asset_cache.hpp>
-#include <dialog_state.hpp>
-#include <game_instance.hpp>
-#include <game_state.hpp>
-#include <nlohmann/json.hpp>
-#include <settings.hpp>
-#include <stats.hpp>
+namespace tol {
 
 using json = nlohmann::json;
 
@@ -66,3 +67,5 @@ class Nuklear {
 
   void setScale(sf::Vector2f scale);
 };
+
+} // namespace tol

@@ -10,6 +10,8 @@
 #include "protagonist.hpp"
 #include "shared.hpp"
 
+namespace tol {
+
 enum class Turn { PLAYER, ENEMY };
 
 class Fight: public sf::Drawable, public sf::Transformable {
@@ -215,7 +217,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
       last_enemy_damage = std::nullopt;
       last_player_attack = std::make_optional(attack.getName());
       last_player_damage = std::make_optional(final_damage);
-   });
+    });
   }
 
   public:
@@ -255,7 +257,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     const auto& player_attacks = player.getAttacks();
 
-    if(player_attacks.size() > menu.count()) {
+    if (player_attacks.size() > menu.count()) {
       initMenuItem(player_attacks[player_attacks.size() - 1]);
     }
 
@@ -305,3 +307,5 @@ class Fight: public sf::Drawable, public sf::Transformable {
     return GameState::FIGHT;
   }
 };
+
+} // namespace tol

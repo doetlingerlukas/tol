@@ -1,15 +1,17 @@
 #pragma once
 #define TOL_PROTAGONIST_HPP
 
+#include <map>
 #include <optional>
 
 #include <SFML/Audio.hpp>
-#include <map>
 
-#include <attack.hpp>
-#include <character.hpp>
-#include <game_state.hpp>
-#include <inventory.hpp>
+#include "attack.hpp"
+#include "character.hpp"
+#include "game_state.hpp"
+#include "inventory.hpp"
+
+namespace tol {
 
 class Protagonist: public Character {
   Inventory inventory;
@@ -50,7 +52,7 @@ class Protagonist: public Character {
       } }
   };
 
-  std::vector<Attack> attacks() const;
+  [[nodiscard]] std::vector<Attack> attacks() const;
 
   std::set<std::string> talked_to_npcs;
   std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);
@@ -76,3 +78,5 @@ class Protagonist: public Character {
   void drop_item();
   std::optional<std::string> use_item(std::pair<int, Object> item);
 };
+
+} // namespace tol
