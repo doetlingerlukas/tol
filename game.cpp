@@ -19,9 +19,11 @@ void Game::handle_event(
 
       if (event.mouseButton.button == sf::Mouse::Button::Left) {
         if (state == GameState::INVENTORY) {
-          inventory.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
+          inventory.mouse(
+            { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) }, mouse_pressed);
         } else if (state == GameState::OVERLAY) {
-          overlay.mouse({ (float)event.mouseButton.x, (float)event.mouseButton.y }, mouse_pressed);
+          overlay.mouse(
+            { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) }, mouse_pressed);
         } else {
           mouse_pressed = false;
         }

@@ -14,7 +14,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
   sf::Vector2f mouse_location;
   bool mouse_pressed;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const {
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
     sf::FloatRect overlay_dims(
       ((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.05f, target_size.x, target_size.y * 0.9f);
@@ -52,10 +52,11 @@ class Overlay: public sf::Drawable, public sf::Transformable {
       sf::Text name;
       name.setFont(font);
       name.setStyle(sf::Text::Style::Bold);
-      if (getQuestStack().getSelected() == index)
+      if (getQuestStack().getSelected() == index) {
         name.setFillColor(sf::Color::Green);
-      else
+      } else {
         name.setFillColor(sf::Color::White);
+      }
       name.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
       name.setString(" " + name_);
       target.draw(name);
@@ -68,10 +69,11 @@ class Overlay: public sf::Drawable, public sf::Transformable {
       height_offset += name.getCharacterSize();
       sf::Text text;
       text.setFont(font);
-      if (getQuestStack().getSelected() == index)
+      if (getQuestStack().getSelected() == index) {
         text.setFillColor(sf::Color::Green);
-      else
+      } else {
         text.setFillColor(sf::Color::White);
+      }
       text.setPosition({ quests_rect.left + margin.x / 2, quests_rect.top + height_offset + margin.y / 2 });
 
       std::vector<sf::Text> lines;

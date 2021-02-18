@@ -30,9 +30,10 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
   const int TILE_SIZE = 64;
 
-  inline static std::function<int(int, int, int)> calcDamage = [](const int level, const int damage, const int strength) constexpr {
-    return std::ceil(damage * (level / 7.5f + 1) - (strength / 10.0f) * 1.05f);
-  };
+  inline static std::function<int(int, int, int)> calcDamage =
+    [](const int level, const int damage, const int strength) {
+      return std::ceil(damage * (level / 7.5f + 1) - (strength / 10.0f) * 1.05f);
+    };
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     sf::RectangleShape background;
@@ -176,7 +177,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
       attack_info.setFillColor(sf::Color::White);
       attack_info.setString(fmt::format("Detlef used \"{}\" for {} damage.", *last_player_attack, *last_player_damage));
       attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
-      attack_info.setPosition({ target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
+      attack_info.setPosition(
+        { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
       target.draw(attack_info);
     }
 
