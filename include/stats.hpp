@@ -13,7 +13,7 @@ using json = nlohmann::json;
 template <typename T> class StatsProps {
   virtual void increase(T value) = 0;
   virtual T get() const = 0;
-  virtual void set(T stat);
+  virtual void set(T stat) = 0;
   virtual std::ostream& print(std::ostream& print) const = 0;
 
   friend std::ostream& operator<<(std::ostream& stream, const StatsProps& stats) {
@@ -91,7 +91,7 @@ class Experience: public StatsProps<size_t> {
   [[nodiscard]] virtual size_t getLevel() const;
 
   void set(size_t stat) override;
-  void set(size_t xp, size_t lvl);
+  void setAll(size_t xp, size_t lvl);
 
   virtual std::ostream& print(std::ostream& out) const override;
 };

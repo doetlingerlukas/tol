@@ -21,7 +21,7 @@ void GameInstance::setSettingsChanged(bool value) {
   settings_changed = value;
 }
 
-void GameInstance::save(const PlayState& play_state, const Character& player) const {
+void GameInstance::save(const PlayState& play_state, const Character& player, const Inventory& inventory) const {
   if (!fs::exists(saves_dir)) {
     fs::create_directory(saves_dir);
   }
@@ -50,9 +50,16 @@ void GameInstance::save(const PlayState& play_state, const Character& player) co
     attacks[attack.getName()] = attack.getDamage();
   }
 
+  auto& inventory_array = save["player"]["inventory"] = json::array();
+
+  const auto& inventory_elements = inventory.getElements();
+
+  for(const auto& [id, obj]: inventory_elements) {
+    inventory_array.push_back(id);
+  }
+
   std::ofstream ofs(saves_dir / "game.json", std::ofstream::out | std::ofstream::trunc);
   ofs << save.dump(2);
-  ofs.close();
 }
 
 void GameInstance::load(PlayState& play_state) {

@@ -98,7 +98,7 @@ void Experience::set(size_t stat) {
   experience = stat;
 }
 
-void Experience::set(size_t xp, size_t lvl) {
+void Experience::setAll(size_t xp, size_t lvl) {
   experience = xp;
   level = lvl;
 }
