@@ -26,6 +26,10 @@ std::vector<Attack> Character::getAttacks() const {
   return attacks;
 }
 
+void Character::addAttack(Attack&& attack) {
+  attacks.push_back(attack);
+}
+
 std::shared_ptr<Stats> Character::getStats() const {
   return stats;
 }
