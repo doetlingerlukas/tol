@@ -22,10 +22,10 @@ class Inventory: public sf::Drawable, public sf::Transformable {
   bool mouse_pressed;
   mutable std::optional<int> selected;
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates state) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
   public:
-  Inventory(int max_size_, const std::shared_ptr<AssetCache> asset_cache_);
+  Inventory(int max_size_, std::shared_ptr<AssetCache> asset_cache_);
 
   [[nodiscard]] int size() const;
 

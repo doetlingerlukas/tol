@@ -10,13 +10,13 @@
 
 class Quest {
   public:
-  Quest() {}
+  Quest() = default;
 
   virtual bool condition(Protagonist& player, Info& info) = 0;
 
-  virtual const std::string& getName() const = 0;
+  [[nodiscard]] virtual const std::string& getName() const = 0;
 
-  virtual const std::string& getTask() const = 0;
+  [[nodiscard]] virtual const std::string& getTask() const = 0;
 
   virtual void setCompleted() = 0;
 
@@ -38,11 +38,11 @@ class InitialQuest: public Quest {
     return false;
   }
 
-  const std::string& getName() const override {
+  [[nodiscard]] const std::string& getName() const override {
     return name;
   }
 
-  const std::string& getTask() const override {
+  [[nodiscard]] const std::string& getTask() const override {
     return task;
   }
 
@@ -58,19 +58,14 @@ class SearchQuest: public Quest {
 
   public:
   bool condition(Protagonist& player, Info& info) override {
-    if (false) {
-      setCompleted();
-      info.display_info("Completed Quest: " + name, std::chrono::seconds(5));
-      return true;
-    }
     return false;
   }
 
-  const std::string& getName() const override {
+  [[nodiscard]] const std::string& getName() const override {
     return name;
   }
 
-  const std::string& getTask() const override {
+  [[nodiscard]] const std::string& getTask() const override {
     return task;
   }
 
@@ -85,7 +80,7 @@ class QuestStack {
   public:
   std::vector<std::unique_ptr<Quest>> quests;
 
-  QuestStack() {}
+  QuestStack() = default;
 
   void select(int index) {
     if (quests.size() > index) {
@@ -93,7 +88,7 @@ class QuestStack {
     }
   }
 
-  int getSelected() const {
+  [[nodiscard]] int getSelected() const {
     return selected.value_or(-1);
   }
 
