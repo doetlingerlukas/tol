@@ -102,13 +102,25 @@ void Game::handle_event(
           music.stop_background();
           break;
         case sf::Keyboard::I:
-          instance.setState(GameState::INVENTORY);
+          if (event.type == sf::Event::KeyReleased) {
+            if (state == GameState::INVENTORY) {
+              instance.setState(GameState::PLAY);
+            } else {
+              instance.setState(GameState::INVENTORY);
+            }
+          }
           break;
         case sf::Keyboard::P:
           instance.setState(GameState::PLAY);
           break;
         case sf::Keyboard::Tab:
-          instance.setState(GameState::OVERLAY);
+          if (event.type == sf::Event::KeyReleased) {
+            if (state == GameState::OVERLAY) {
+              instance.setState(GameState::PLAY);
+            } else {
+              instance.setState(GameState::OVERLAY);
+            }
+          }
           break;
         case sf::Keyboard::X:
           if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
@@ -268,12 +280,14 @@ void Game::run() {
         break;
       case GameState::INVENTORY:
         window.draw(play_state);
-
+        info.update_time(std::chrono::milliseconds(millis));
+        window.draw(info);
         window.draw(inventory);
         break;
       case GameState::OVERLAY:
         window.draw(play_state);
-
+        info.update_time(std::chrono::milliseconds(millis));
+        window.draw(info);
         window.draw(overlay);
         break;
       case GameState::FIGHT:

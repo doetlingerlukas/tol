@@ -145,8 +145,10 @@ class Overlay: public sf::Drawable, public sf::Transformable {
   }
 
   public:
-  explicit Overlay(const std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats_, QuestStack& quest_stack_):
-    asset_cache(asset_cache_), stats(stats_), quest_stack(quest_stack_), mouse_pressed(false) {}
+  explicit Overlay(
+    const std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats_, QuestStack& quest_stack_):
+    asset_cache(asset_cache_),
+    stats(stats_), quest_stack(quest_stack_), mouse_pressed(false) {}
 
   inline QuestStack& getQuestStack() const {
     return quest_stack;
