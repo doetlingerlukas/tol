@@ -12,6 +12,7 @@
 #include "asset_cache.hpp"
 #include "game_state.hpp"
 #include "input.hpp"
+#include "music.hpp"
 #include "optional"
 #include "overlay/info.hpp"
 #include "quest.hpp"
@@ -36,6 +37,7 @@ class PlayState: public sf::Drawable {
   std::reference_wrapper<Map> _map;
   std::reference_wrapper<Protagonist> _player;
   std::reference_wrapper<QuestStack> _quest_stack;
+  std::reference_wrapper<Music> music;
   std::set<int> used_collectible_ids;
 
   sf::Vector2f scale;
@@ -65,6 +67,10 @@ class PlayState: public sf::Drawable {
   }
   [[nodiscard]] inline QuestStack& quest_stack() {
     return _quest_stack;
+  }
+
+  [[nodiscard]] inline Music& getMusic() const {
+    return music;
   }
 
   PlayState(

@@ -99,8 +99,6 @@ void Game::handle_event(
           break;
         case sf::Keyboard::E:
           key_input.e = event.type == sf::Event::KeyPressed;
-        case sf::Keyboard::M:
-          music.stop_background();
           break;
         case sf::Keyboard::I:
           if (event.type == sf::Event::KeyReleased) {
@@ -216,6 +214,9 @@ void Game::run() {
   player.setScale(scale);
 
   map.set_player(&player);
+
+  tol::Music music(fs::path("assets/music"), settings.volume_level);
+  music.play_background(default_music);
 
   QuestStack quest_stack(info);
   PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());

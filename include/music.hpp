@@ -7,6 +7,9 @@
 
 namespace tol {
 
+constexpr std::string_view default_music = "forgottenland.ogg";
+constexpr std::string_view city_music = "adrift.ogg";
+
 class Music {
   sf::Music background;
 
@@ -18,14 +21,16 @@ class Music {
     background.setVolume(volume);
   }
 
-  void play_background() {
-    const auto music_path = (dir / "forgottenland.ogg").string();
+  void play_background(const std::string_view music_) {
+    background.stop();
+    const auto music_path = (dir / music_).string();
 
     if (!background.openFromFile(music_path)) {
       throw std::runtime_error("Failed to load music '" + music_path + "'.");
     }
 
     background.play();
+    background.setLoop(true);
   }
 
   void stop_background() {
