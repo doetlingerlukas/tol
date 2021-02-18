@@ -20,10 +20,22 @@ class Overlay: public sf::Drawable, public sf::Transformable {
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
     sf::FloatRect overlay_dims(
-      ((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.05f, target_size.x, target_size.y * 0.9f);
+      ((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.1f, target_size.x, target_size.y * 0.85f);
     sf::FloatRect stats_rect(overlay_dims.left, overlay_dims.top, overlay_dims.width * 0.29f, overlay_dims.height);
     sf::FloatRect quests_rect(
       stats_rect.left + overlay_dims.width * 0.3f, overlay_dims.top, overlay_dims.width * 0.7f, overlay_dims.height);
+    const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
+
+    sf::Text header;
+    header.setFont(font);
+    header.setStyle(sf::Text::Style::Bold);
+    header.setFillColor(sf::Color::White);
+    header.setCharacterSize(60);
+    header.setOutlineColor(sf::Color::Black);
+    header.setOutlineThickness(4.f);
+    header.setString("Stats & Quests");
+    header.setPosition({ ((float)target.getSize().x - header.getGlobalBounds().width) / 2, 0 });
+    target.draw(header);
 
     sf::RectangleShape stats_box;
     stats_box.setFillColor(sf::Color(0, 0, 0, 175));
@@ -44,7 +56,6 @@ class Overlay: public sf::Drawable, public sf::Transformable {
 
     sf::Vector2f margin({ 30, 30 });
 
-    const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
     auto height_offset = 0;
 
     const auto display_text = [&](std::string name_, std::string text_, int index) {
