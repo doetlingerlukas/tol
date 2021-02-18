@@ -16,6 +16,10 @@ size_t Health::get() const {
   return health;
 }
 
+void Health::set(size_t stat) {
+  health = stat;
+}
+
 void Health::decrease(size_t value) {
   health = std::clamp<int>(health - value, 0, 100);
 
@@ -38,6 +42,10 @@ void Strength::increase(size_t value) {
 
 size_t Strength::get() const {
   return strength;
+}
+
+void Strength::set(size_t stat) {
+  strength = stat;
 }
 
 std::ostream& Strength::print(std::ostream& out) const {
@@ -69,6 +77,10 @@ size_t Speed::get() const {
   return speed;
 }
 
+void Speed::set(size_t stat) {
+  speed = stat;
+}
+
 std::ostream& Speed::print(std::ostream& out) const {
   out << "Speed: " << speed << "\n";
   return out;
@@ -80,6 +92,15 @@ size_t Experience::get() const {
 
 size_t Experience::getLevel() const {
   return level;
+}
+
+void Experience::set(size_t stat) {
+  experience = stat;
+}
+
+void Experience::set(size_t xp, size_t lvl) {
+  experience = xp;
+  level = lvl;
 }
 
 std::ostream& Experience::print(std::ostream& out) const {
