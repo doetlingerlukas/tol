@@ -96,7 +96,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
 
     auto i = 0;
     for (auto& quest: getQuestStack().quests) {
-      display_text(quest->getName(), quest->getTask(), i);
+      display_text(quest.title(), quest.description(), i);
       i++;
     }
   }

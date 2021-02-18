@@ -191,17 +191,14 @@ void Game::run() {
   window.requestFocus();
   window.setKeyRepeatEnabled(false);
 
-  QuestStack quest_stack;
-  quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
-  quest_stack.quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));
-  quest_stack.select(0);
-
   map.setScale(scale);
   player.setScale(scale);
 
   map.setPlayer(&player);
 
-  PlayState play_state(map, player, asset_cache, scale, window.getSize());
+  QuestStack quest_stack(info);
+
+  PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());
   KeyInput key_input;
   tol::Music music(fs::path("assets/music"), settings.volume_level);
   music.play_background();
@@ -249,7 +246,7 @@ void Game::run() {
       nuklear->setSize(window.getSize());
     }
 
-    quest_stack.check(player, info);
+    quest_stack.check(player);
 
     window.clear();
     window.resetGLStates();
@@ -294,8 +291,13 @@ void Game::run() {
         window.draw(play_state);
 
         if (last_npc_interaction) {
-          instance.setState(dialog.show(*last_npc_interaction));
+          auto [state, quest] = dialog.show(*last_npc_interaction);
+          instance.setState(state);
           player.talk_to(*last_npc_interaction);
+
+          if (state == GameState::QUEST) {
+            quest_stack.select(quest);
+          }
         }
         break;
       case GameState::SETTINGS:

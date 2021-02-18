@@ -23,7 +23,7 @@ class Dialog {
   }
 
   public:
-  GameState show(const std::string& character) {
+  std::pair<GameState, int> show(const std::string& character) {
     if (dialog_progress.is_null()) {
       init_npc_dialog = dialog_progress = dialog[character];
 
@@ -37,7 +37,7 @@ class Dialog {
       auto [progress, state] = ui->renderDialog(dialog_progress, dialog_state);
       dialog_progress = progress;
       dialog_state = state;
-      return GameState::DIALOG;
+      return std::make_pair(GameState::DIALOG, 0);
     }
 
     if (dialog_progress.is_object()) {
@@ -53,24 +53,29 @@ class Dialog {
       auto [progress, state] = pair;
       dialog_progress = progress;
       dialog_state = state;
-      return GameState::DIALOG;
+      return std::make_pair(GameState::DIALOG, 0);
     }
 
     if (dialog_progress.is_string()) {
       auto [progress, state] = ui->renderResponseDialog(dialog_progress, dialog_state, init_npc_dialog);
       dialog_progress = progress;
       dialog_state = state;
-      return GameState::DIALOG;
+      return std::make_pair(GameState::DIALOG, 0);
     }
 
     if (dialog_progress.is_number()) {
       int state = dialog_progress.get<int>();
       dialog_progress = nullptr;
       dialog_state = DialogState::QUESTION;
-      return static_cast<GameState>(state);
+
+      if(state >= 100) {
+        return std::make_pair(GameState::QUEST, state - 100);
+      }
+
+      return std::make_pair(static_cast<GameState>(state), 0);
     }
 
-    return GameState::DIALOG;
+    return std::make_pair(GameState::DIALOG, 0);
   }
 
   explicit Dialog(const std::shared_ptr<Nuklear> _ui): ui(_ui), dialog(load()) {}

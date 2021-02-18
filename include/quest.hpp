@@ -6,99 +6,51 @@
 #include <vector>
 
 #include <overlay/info.hpp>
-#include <protagonist.hpp>
+
+class Protagonist;
 
 class Quest {
-  public:
-  Quest() = default;
-
-  virtual bool condition(Protagonist& player, Info& info) = 0;
-
-  [[nodiscard]] virtual const std::string& getName() const = 0;
-
-  [[nodiscard]] virtual const std::string& getTask() const = 0;
-
-  virtual void setCompleted() = 0;
-
-  // virtual void display_current(Info& info) const = 0;
-};
-
-class InitialQuest: public Quest {
-  const std::string name = "Gather resources!";
-  const std::string task = "You are hungly. Find something to eat.";
-  bool completed = false;
+  std::string title_;
+  std::string description_;
+  std::function<bool(Protagonist& player)> condition;
+  bool completed_ = false;
 
   public:
-  bool condition(Protagonist& player, Info& info) override {
-    if (player.getInventoryElements().size() > 0) {
-      setCompleted();
-      info.display_info("Completed Quest: " + name, std::chrono::seconds(5));
-      return true;
-    }
-    return false;
+  Quest(std::string title, std::string description, std::function<bool(Protagonist& player)> condition);
+
+  [[nodiscard]] inline const std::string& title() const {
+    return title_;
+  };
+
+  [[nodiscard]] inline const std::string& description() const {
+    return description_;
+  };
+
+  [[nodiscard]] inline bool completed() {
+    return completed_;
   }
 
-  [[nodiscard]] const std::string& getName() const override {
-    return name;
-  }
-
-  [[nodiscard]] const std::string& getTask() const override {
-    return task;
-  }
-
-  void setCompleted() override {
-    completed = true;
-  }
-};
-
-class SearchQuest: public Quest {
-  const std::string name = "Find the lost item.";
-  const std::string task = "<NPC> has lost something in the woods. Find it for him to receive a reward.";
-  bool completed = false;
-
-  public:
-  bool condition(Protagonist& player, Info& info) override {
-    return false;
-  }
-
-  [[nodiscard]] const std::string& getName() const override {
-    return name;
-  }
-
-  [[nodiscard]] const std::string& getTask() const override {
-    return task;
-  }
-
-  void setCompleted() override {
-    completed = true;
-  }
+  void check_condition(Protagonist& player, Info& info);
 };
 
 class QuestStack {
   std::optional<int> selected;
+  Info& info;
 
   public:
-  std::vector<std::unique_ptr<Quest>> quests;
+  std::vector<Quest> quests;
 
-  QuestStack() = default;
+  QuestStack(Info& info_);
 
-  void select(int index) {
-    if (quests.size() > index) {
-      selected = index;
-    }
-  }
+  void select(int index);
 
-  [[nodiscard]] int getSelected() const {
-    return selected.value_or(-1);
-  }
+  [[nodiscard]] int getSelected() const;
 
-  void check(Protagonist& player, Info& info) {
-    if (selected) {
-      auto done = quests.at(static_cast<size_t>(*selected))->condition(player, info);
-      if (done) {
-        quests.erase(quests.cbegin() + *selected);
-        selected = std::nullopt;
-      }
-    }
-  }
+  void check(Protagonist& player);
+
+  bool completed(size_t index);
 };
+
+#ifndef TOL_PROTAGONIST_HPP
+#include <protagonist.hpp>
+#endif

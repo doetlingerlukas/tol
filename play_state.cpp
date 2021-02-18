@@ -30,10 +30,10 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 }
 
 PlayState::PlayState(
-  TiledMap& map_, Protagonist& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_,
-  const sf::Vector2u& window_size):
+  TiledMap& map_, Protagonist& player_, QuestStack& quest_stack_, std::shared_ptr<AssetCache> asset_cache_,
+  const sf::Vector2f& scale_, const sf::Vector2u& window_size):
   asset_cache(asset_cache_),
-  map(map_), player(player_), scale(scale_) {
+  map(map_), player(player_), quest_stack(quest_stack_), scale(scale_) {
   map_view.reset({ 0, (getMap().getSize().y - window_size.y) * scale_.y, (float)window_size.x, (float)window_size.y });
 
   const auto spawn = getMap().getSpawn();
@@ -110,7 +110,7 @@ GameState PlayState::update(
 
 bool PlayState::check_unlock_condition(const std::string& condition_name) const {
   if (condition_name == "bridge_gate") {
-    return getPlayer().getInventoryElements().size() >= 3;
+    return getQuestStack().completed(0);
   }
 
   if (condition_name == "city_gate") {

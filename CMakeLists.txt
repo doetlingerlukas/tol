@@ -28,6 +28,7 @@ target_sources(tol
     protagonist.cpp
     inventory.cpp
     game.cpp
+    quest.cpp
 )
 
 target_include_directories(tol SYSTEM PRIVATE external)
