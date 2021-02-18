@@ -32,7 +32,7 @@ class GameInstance {
 
   void setSettingsChanged(bool value);
 
-  void save(const PlayState& play_state) const;
+  void save(const PlayState& play_state, const Character& player) const;
 
   void load(PlayState& play_state);
 };

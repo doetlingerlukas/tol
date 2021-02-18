@@ -275,7 +275,7 @@ void Game::run() {
         window.close();
         break;
       case GameState::MENU:
-        nuklear->renderMenu(instance, play_state);
+        nuklear->renderMenu(instance, play_state, player);
         break;
       case GameState::INVENTORY:
         window.draw(play_state);

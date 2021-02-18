@@ -1,10 +1,8 @@
 #pragma once
 
-#include <future>
 #include <iostream>
 #include <map>
-#include <mutex>
-#include <thread>
+#include <nlohmann/json.hpp>
 
 #include <nlohmann/json.hpp>
 

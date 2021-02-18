@@ -21,7 +21,7 @@ void GameInstance::setSettingsChanged(bool value) {
   settings_changed = value;
 }
 
-void GameInstance::save(const PlayState& play_state) const {
+void GameInstance::save(const PlayState& play_state, const Character& player) const {
   if (!fs::exists(saves_dir)) {
     fs::create_directory(saves_dir);
   }
@@ -29,8 +29,26 @@ void GameInstance::save(const PlayState& play_state) const {
   json save;
 
   auto player_pos = play_state.player_position();
-  save["player"]["x"] = player_pos.x;
-  save["player"]["y"] = player_pos.y;
+  save["player"]["position"]["x"] = player_pos.x;
+  save["player"]["position"]["y"] = player_pos.y;
+
+  auto& stats = save["player"]["stats"];
+
+  const auto& player_stats = player.getStats();
+
+  stats["health"] = player_stats->health().get();
+  stats["speed"] = player_stats->speed().get();
+  stats["experience"] = player_stats->experience().get();
+  stats["level"] = player_stats->experience().getLevel();
+  stats["strength"] = player_stats->strength().get();
+
+  auto& attacks = save["player"]["attacks"];
+
+  const auto& player_attacks = player.getAttacks();
+
+  for(const auto& attack: player_attacks) {
+    attacks[attack.getName()] = attack.getDamage();
+  }
 
   std::ofstream ofs(saves_dir / "game.json", std::ofstream::out | std::ofstream::trunc);
   ofs << save.dump(2);
