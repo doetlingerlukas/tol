@@ -169,6 +169,7 @@ void Nuklear::renderMenu(GameInstance& game, PlayState& play_state) const {
 
 void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
   push_window_state();
+  auto video_mode = sf::VideoMode::getDesktopMode();
   const float setting_height = 40;
   const float space = 10;
 
@@ -177,7 +178,7 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
     return std::to_string(width) + " x " + std::to_string(height);
   };
 
-  static int selected_res = 0;
+  static int selected_res = 3;
 
   struct nk_style& s = ctx->style;
 
@@ -212,11 +213,15 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
     if (nk_combo_begin_label(
           ctx, res_to_string(supported_resolutions[selected_res]).c_str(), nk_vec2(nk_widget_width(ctx), 200))) {
       nk_layout_row_dynamic(ctx, setting_height * scale.y, 1);
-      for (size_t i = 0; i < supported_resolutions.size(); i++)
-        if (nk_combo_item_label(ctx, res_to_string(supported_resolutions[i]).c_str(), NK_TEXT_LEFT)) {
-          selected_res = i;
-          settings.set_resolution(supported_resolutions[i]);
+      for (size_t i = 0; i < supported_resolutions.size(); i++) {
+        auto res = supported_resolutions[i];
+        if (static_cast<int>(video_mode.width) >= res.first && static_cast<int>(video_mode.height) >= res.second) {
+          if (nk_combo_item_label(ctx, res_to_string(res).c_str(), NK_TEXT_LEFT)) {
+            selected_res = i;
+            settings.set_resolution(res);
+          }
         }
+      }
       nk_combo_end(ctx);
     }
 

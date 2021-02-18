@@ -162,7 +162,8 @@ Game::Game(fs::path dir_, Settings& settings_):
   player(Protagonist(
     fs::path("tilesets/character-whitebeard.png"), asset_cache,
     std::make_shared<Stats>(json({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } })),
-    "detlef")) {
+    "detlef")),
+  mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 

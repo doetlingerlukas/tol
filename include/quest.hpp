@@ -1,10 +1,10 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
-#include <functional>
 
 #include "overlay/info.hpp"
 

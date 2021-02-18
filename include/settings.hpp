@@ -13,9 +13,8 @@ namespace fs = std::filesystem;
 
 using json = nlohmann::json;
 
-constexpr std::array<std::pair<int, int>, 6> supported_resolutions = {
-  std::make_pair(3840, 1600), std::make_pair(3440, 1440), std::make_pair(2560, 1440),
-  std::make_pair(1920, 1080), std::make_pair(1280, 720),  std::make_pair(1200, 800)
+constexpr std::array<std::pair<int, int>, 4> supported_resolutions = {
+  std::make_pair(3840, 1600), std::make_pair(3440, 1440), std::make_pair(2560, 1440), std::make_pair(1920, 1080)
 };
 
 template <typename T> T get_or_else(json structure, std::string field, T default_value) {
