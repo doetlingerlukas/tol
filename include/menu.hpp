@@ -4,6 +4,8 @@
 
 #include "shared.hpp"
 
+namespace tol {
+
 class MenuItem: public sf::Drawable {
   friend class Menu;
 
@@ -160,3 +162,5 @@ class Menu: public sf::Drawable, public sf::Transformable {
     }
   }
 };
+
+} // namespace tol

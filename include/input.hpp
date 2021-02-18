@@ -1,5 +1,7 @@
 #pragma once
 
+namespace tol {
+
 class KeyInput {
   public:
   bool up, down, left, right;
@@ -14,3 +16,5 @@ class KeyInput {
     enter = false;
   };
 };
+
+} // namespace tol

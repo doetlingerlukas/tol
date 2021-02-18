@@ -1,4 +1,6 @@
-#include <settings.hpp>
+#include "settings.hpp"
+
+namespace tol {
 
 void Settings::loadSettings() {
   json settings;
@@ -85,3 +87,5 @@ void Settings::serialize() const {
   ofs << settings.dump(2);
   ofs.close();
 }
+
+} // namespace tol

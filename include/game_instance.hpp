@@ -2,11 +2,14 @@
 
 #include <filesystem>
 #include <iostream>
-#include <nlohmann/json.hpp>
 #include <string>
 
-#include <play_state.hpp>
-#include <settings.hpp>
+#include <nlohmann/json.hpp>
+
+#include "play_state.hpp"
+#include "settings.hpp"
+
+namespace tol {
 
 using json = nlohmann::json;
 
@@ -33,3 +36,5 @@ class GameInstance {
 
   void load(PlayState& play_state);
 };
+
+} // namespace tol

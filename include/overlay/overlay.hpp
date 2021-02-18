@@ -1,11 +1,14 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
 
-#include <asset_cache.hpp>
-#include <quest.hpp>
+#include <SFML/Graphics.hpp>
+
+#include "asset_cache.hpp"
+#include "quest.hpp"
+
+namespace tol {
 
 class Overlay: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -114,3 +117,5 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     mouse_pressed = pressed;
   }
 };
+
+} // namespace tol

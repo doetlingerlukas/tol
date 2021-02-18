@@ -1,4 +1,6 @@
-#include <quest.hpp>
+#include "quest.hpp"
+
+namespace tol {
 
 Quest::Quest(std::string title, std::string description, std::function<bool(Protagonist& player)> condition_):
   title_(std::move(title)), description_(std::move(description)), condition(std::move(condition_)) {}
@@ -45,3 +47,5 @@ void QuestStack::check(Protagonist& player) {
 bool QuestStack::completed(size_t index) {
   return quests[index].completed();
 }
+
+} // namespace tol

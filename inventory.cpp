@@ -1,4 +1,6 @@
-#include <inventory.hpp>
+#include "inventory.hpp"
+
+namespace tol {
 
 void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
@@ -169,3 +171,5 @@ void Inventory::select_next() {
     selected = std::nullopt;
   }
 }
+
+} // namespace tol

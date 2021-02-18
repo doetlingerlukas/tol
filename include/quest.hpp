@@ -5,7 +5,9 @@
 #include <string>
 #include <vector>
 
-#include <overlay/info.hpp>
+#include "overlay/info.hpp"
+
+namespace tol {
 
 class Protagonist;
 
@@ -51,6 +53,7 @@ class QuestStack {
   bool completed(size_t index);
 };
 
+} // namespace tol
 #ifndef TOL_PROTAGONIST_HPP
 #include <protagonist.hpp>
 #endif

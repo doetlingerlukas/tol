@@ -1,4 +1,6 @@
-#include <object.hpp>
+#include "object.hpp"
+
+namespace tol {
 
 Object::Object(const tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache):
   Tile(
@@ -39,3 +41,5 @@ const std::string& Object::getName() const {
 std::optional<float> Object::zIndex() const {
   return getPosition().y + getTile().getTileSize().y;
 }
+
+} // namespace tol

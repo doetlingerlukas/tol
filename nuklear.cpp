@@ -1,4 +1,6 @@
-#include <nuklear.hpp>
+#include "nuklear.hpp"
+
+namespace tol {
 
 void Nuklear::push_window_state() const {
   window->pushGLStates();
@@ -432,3 +434,5 @@ void Nuklear::setSize(sf::Vector2u size) {
 void Nuklear::setScale(sf::Vector2f scale) {
   this->scale = scale;
 }
+
+} // namespace tol

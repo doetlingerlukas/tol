@@ -5,6 +5,8 @@
 #include <SFML/Graphics.hpp>
 #include <tileson.hpp>
 
+namespace tol {
+
 class Animation {
   std::chrono::milliseconds total_time = std::chrono::milliseconds(0);
   std::vector<std::tuple<std::chrono::milliseconds, sf::IntRect>> frames;
@@ -45,3 +47,5 @@ class Animation {
     throw std::runtime_error("failed to select animation frame");
   }
 };
+
+}

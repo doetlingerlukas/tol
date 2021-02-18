@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 
+namespace tol {
+
 class Collectible {
   const int id_;
   const std::string name_;
@@ -37,3 +39,5 @@ class Collectible {
     return info_;
   }
 };
+
+} // namespace tol

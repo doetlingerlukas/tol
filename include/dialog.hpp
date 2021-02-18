@@ -2,9 +2,11 @@
 
 #include <memory>
 
-#include <dialog_state.hpp>
-#include <game_state.hpp>
-#include <nuklear.hpp>
+#include "dialog_state.hpp"
+#include "game_state.hpp"
+#include "nuklear.hpp"
+
+namespace tol {
 
 using json = nlohmann::json;
 
@@ -80,3 +82,5 @@ class Dialog {
 
   explicit Dialog(const std::shared_ptr<Nuklear> _ui): ui(_ui), dialog(load()) {}
 };
+
+} // namespace tol

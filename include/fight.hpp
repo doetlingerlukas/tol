@@ -10,6 +10,8 @@
 #include "protagonist.hpp"
 #include "shared.hpp"
 
+namespace tol {
+
 enum class Turn { PLAYER, ENEMY };
 
 class Fight: public sf::Drawable, public sf::Transformable {
@@ -305,3 +307,5 @@ class Fight: public sf::Drawable, public sf::Transformable {
     return GameState::FIGHT;
   }
 };
+
+} // namespace tol

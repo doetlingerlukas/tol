@@ -1,6 +1,8 @@
 #pragma once
 
-#include <tile.hpp>
+#include "tile.hpp"
+
+namespace tol {
 
 class Object: public Tile {
   std::reference_wrapper<const tson::Object> object;
@@ -16,3 +18,5 @@ class Object: public Tile {
 
   virtual std::optional<float> zIndex() const override;
 };
+
+} // namespace tol

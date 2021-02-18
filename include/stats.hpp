@@ -4,8 +4,11 @@
 #include <iostream>
 #include <map>
 #include <mutex>
-#include <nlohmann/json.hpp>
 #include <thread>
+
+#include <nlohmann/json.hpp>
+
+namespace tol {
 
 using json = nlohmann::json;
 
@@ -105,3 +108,5 @@ class Stats {
 
   std::string get();
 };
+
+} // namespace tol

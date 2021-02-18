@@ -1,4 +1,10 @@
-#include <game.hpp>
+#if __APPLE__
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
+#include "game.hpp"
+
+namespace tol {
 
 void Game::handle_event(
   sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay, Fight& fight) {
@@ -312,3 +318,5 @@ void Game::run() {
 
   nk_sfml_shutdown();
 }
+
+} // namespace tol

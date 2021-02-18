@@ -1,4 +1,6 @@
-#include <npc.hpp>
+#include "npc.hpp"
+
+namespace tol {
 
 Npc::Npc(const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::string& name):
   Character(path, asset_cache, std::make_shared<Stats>(npc_stats(name)), name, attacks(name)) {}
@@ -24,3 +26,5 @@ std::vector<Attack> Npc::attacks(const std::string& name) {
 
   return att;
 }
+
+} // namespace tol
