@@ -200,6 +200,24 @@ class Fight: public sf::Drawable, public sf::Transformable {
     last_turn = std::chrono::milliseconds(0);
   }
 
+  void initMenuItem(const Attack& attack) {
+    menu.add_item(attack.getName(), [attack, this](int idx) mutable {
+      auto damage = attack.getDamage();
+      const auto player_level = player.getStats()->experience().getLevel();
+      const auto& npc_stats = npc->getStats();
+      const auto npc_strength = npc_stats->strength().get();
+
+      auto final_damage = calcDamage(player_level, damage, npc_strength);
+      npc_stats->health().decrease(final_damage);
+      fight_turn = Turn::ENEMY;
+      last_turn = this->now;
+      last_enemy_attack = std::nullopt;
+      last_enemy_damage = std::nullopt;
+      last_player_attack = std::make_optional(attack.getName());
+      last_player_damage = std::make_optional(final_damage);
+   });
+  }
+
   public:
   Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_):
     player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
@@ -208,21 +226,9 @@ class Fight: public sf::Drawable, public sf::Transformable {
     const auto& attacks = player.getAttacks();
 
     for (const auto& attack: attacks) {
-      menu.add_item(attack.getName(), [attacks, this](int idx) mutable {
-        auto damage = attacks[idx].getDamage();
-        const auto player_level = player.getStats()->experience().getLevel();
-        const auto& npc_stats = npc->getStats();
-        const auto npc_strength = npc_stats->strength().get();
-
-        auto final_damage = calcDamage(player_level, damage, npc_strength);
-        npc_stats->health().decrease(final_damage);
-        fight_turn = Turn::ENEMY;
-        last_turn = this->now;
-        last_enemy_attack = std::nullopt;
-        last_enemy_damage = std::nullopt;
-        last_player_attack = std::make_optional(attacks[idx].getName());
-        last_player_damage = std::make_optional(final_damage);
-      });
+      initMenuItem(attack);
+      const auto& location = menu.location();
+      menu.reposition({ location.x, location.y + 15 });
     }
   }
 
@@ -246,6 +252,12 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
   GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, const TiledMap& map) {
     now = now_;
+
+    const auto& player_attacks = player.getAttacks();
+
+    if(player_attacks.size() > menu.count()) {
+      initMenuItem(player_attacks[player_attacks.size() - 1]);
+    }
 
     if (player.getStats()->health().get() == 0) {
       resetFight();

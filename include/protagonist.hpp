@@ -42,6 +42,11 @@ class Protagonist: public Character {
       [&]() {
         stats->speed().increase(20);
         return stats->get();
+      } },
+    { "pistol",
+      [&]() {
+        addAttack(Attack("pistol", 20));
+        return "Pistol available for fight.";
       } }
   };
 

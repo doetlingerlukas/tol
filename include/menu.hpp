@@ -5,19 +5,22 @@
 #include "shared.hpp"
 
 class MenuItem: public sf::Drawable {
+  friend class Menu;
+
   int character_scalar;
   std::string title;
 
   std::shared_ptr<AssetCache> asset_cache;
 
   std::function<void(int)> callback_;
-  sf::Vector2i menu_location;
 
   sf::Text text;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     target.draw(text);
   }
+
+  sf::Vector2i menu_location;
 
   public:
   MenuItem(
@@ -116,6 +119,14 @@ class Menu: public sf::Drawable, public sf::Transformable {
     items.push_back(item);
   }
 
+  void reposition(sf::Vector2i new_location) {
+    menu_location = new_location;
+
+    for(auto& item: items) {
+      item.menu_location = new_location;
+    }
+  }
+
   void enter(bool pressed) {
     const auto was_pressed = enter_pressed;
     enter_pressed = pressed;
@@ -123,6 +134,14 @@ class Menu: public sf::Drawable, public sf::Transformable {
     if (was_pressed && !pressed) {
       items[current_item].callback(current_item);
     }
+  }
+
+  [[nodiscard]] int count() const {
+    return items.size();
+  }
+
+  [[nodiscard]] sf::Vector2i location() const {
+    return menu_location;
   }
 
   void mouse(sf::Vector2i location, bool pressed) {

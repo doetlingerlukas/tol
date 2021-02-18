@@ -71,6 +71,7 @@ class Character: public sf::Drawable, public sf::Transformable {
 
   std::string getName() const;
   std::vector<Attack> getAttacks() const;
+  void addAttack(Attack&& attack);
 
   fs::path getCharacterTexture() const;
 
