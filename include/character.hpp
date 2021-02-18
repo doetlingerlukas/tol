@@ -7,7 +7,6 @@
 
 #include <animation.hpp>
 #include <attack.hpp>
-#include <inventory.hpp>
 #include <overlay/info.hpp>
 #include <stats.hpp>
 #include <z_indexable.hpp>
@@ -63,6 +62,10 @@ class Character: public sf::Drawable, public sf::Transformable {
   Character(
     const fs::path& path, std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats_,
     const std::string& name_, std::vector<Attack>&& attacks_);
+
+  inline std::shared_ptr<Stats> getStats() {
+    return stats;
+  }
 
   fs::path getCharacterTexture();
 

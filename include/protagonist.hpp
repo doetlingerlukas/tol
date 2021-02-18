@@ -61,4 +61,6 @@ class Protagonist: public Character {
   bool talked_to(const std::string& npc_name);
 
   void talk_to(const std::string& npc_name);
+
+  void use_item(std::pair<std::string, Object> item);
 };

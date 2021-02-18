@@ -1,5 +1,7 @@
 #include <protagonist.hpp>
 
+#include <fmt/core.h>
+
 Protagonist::Protagonist(
   const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats,
   const std::string& name):
@@ -27,18 +29,11 @@ std::vector<sf::RectangleShape> Protagonist::move(
     if (collectible.collides_with(bounds)) {
       if (inventory.add(make_pair(collectible.getName(), collectible))) {
         pick_up_sound.play();
-        std::cout << "Item collected: " << collectible.getName() << std::endl;
-
-        const auto& found = collectible_effects.find(collectible.getName());
-        if (found != collectible_effects.end()) {
-          const auto& callback = found->second;
-          callback();
-        }
-
+        info.display_info(fmt::format("Item collected: {}", collectible.getName()), std::chrono::seconds(5));
         it = collectibles.erase(it);
         continue;
       } else {
-        std::cout << "Inventory is full." << std::endl;
+        info.display_info("Inventory is full.", std::chrono::seconds(5));
       }
     }
 
@@ -66,4 +61,14 @@ bool Protagonist::talked_to(const std::string& npc_name) {
 
 void Protagonist::talk_to(const std::string& npc_name) {
   talked_to_npcs.insert(npc_name);
+}
+
+void Protagonist::use_item(std::pair<std::string, Object> item) {
+  auto [name, collectible] = item;
+  std::cout << "Item used: " << name << std::endl;
+  const auto& found = collectible_effects.find(name);
+  if (found != collectible_effects.end()) {
+    const auto& callback = found->second;
+    callback();
+  }
 }
