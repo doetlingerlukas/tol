@@ -63,12 +63,14 @@ void Protagonist::talk_to(const std::string& npc_name) {
   talked_to_npcs.insert(npc_name);
 }
 
-void Protagonist::use_item(std::pair<std::string, Object> item) {
+std::optional<std::string> Protagonist::use_item(std::pair<std::string, Object> item) {
   auto [name, collectible] = item;
   std::cout << "Item used: " << name << std::endl;
   const auto& found = collectible_effects.find(name);
   if (found != collectible_effects.end()) {
     const auto& callback = found->second;
-    callback();
+    return callback();
   }
+
+  return std::nullopt;
 }

@@ -1,5 +1,7 @@
 #include <stats.hpp>
 
+#include <sstream>
+
 void Health::subscribe(std::function<void()> func) {
   callback = func;
 }
@@ -22,7 +24,7 @@ void Health::decrease(size_t value) {
 Health::Health(size_t health_): health(health_) {}
 
 std::ostream& Health::print(std::ostream& out) const {
-  out << "health: " << health << "\n";
+  out << "Health: " << health << "\n";
   return out;
 }
 
@@ -37,7 +39,7 @@ size_t Strength::get() const {
 }
 
 std::ostream& Strength::print(std::ostream& out) const {
-  out << "strength: " << strength << "\n";
+  out << "Strength: " << strength << "\n";
   return out;
 }
 
@@ -66,7 +68,7 @@ size_t Speed::get() const {
 }
 
 std::ostream& Speed::print(std::ostream& out) const {
-  out << "speed: " << speed << "\n";
+  out << "Speed: " << speed << "\n";
   return out;
 }
 
@@ -79,7 +81,7 @@ size_t Experience::getLevel() const {
 }
 
 std::ostream& Experience::print(std::ostream& out) const {
-  out << "experience: " << experience << ", level: " << level << "\n";
+  out << "Experience: " << experience << ", Level: " << level << "\n";
   return out;
 }
 
@@ -103,9 +105,11 @@ Experience& Stats::experience() {
   return _experience;
 }
 
-void Stats::get() {
-  std::cout << _health;
-  std::cout << _strength;
-  std::cout << _speed;
-  std::cout << _experience;
+std::string Stats::get() {
+  std::stringstream ss;
+  ss << _health;
+  ss << _strength;
+  ss << _speed;
+  ss << _experience;
+  return ss.str();
 }

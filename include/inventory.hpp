@@ -39,7 +39,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   void drop_selected();
 
-  void use_selected(Protagonist& player);
+  std::optional<std::string> use_selected(Protagonist& player);
 
   void select_next();
 };

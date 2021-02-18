@@ -1,6 +1,8 @@
 #pragma once
 #define TOL_PROTAGONIST_HPP
 
+#include <optional>
+
 #include <SFML/Audio.hpp>
 #include <map>
 
@@ -15,30 +17,33 @@ class Protagonist: public Character {
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
 
-  std::map<std::string, std::function<void()>> collectible_effects{ { "lemon",
-                                                                      [&]() {
-                                                                        stats->health().increase(30);
-                                                                        stats->get();
-                                                                      } },
-                                                                    { "strawberry",
-                                                                      [&]() {
-                                                                        stats->experience().increase(400);
-                                                                        stats->get();
-                                                                      } },
-                                                                    { "orange",
-                                                                      [&]() {
-                                                                        stats->strength().increase(1);
-                                                                        stats->get();
-                                                                      } },
-                                                                    { "melon",
-                                                                      [&]() {
-                                                                        stats->health().increase(50);
-                                                                        stats->get();
-                                                                      } },
-                                                                    { "pear", [&]() {
-                                                                       stats->speed().increase(20);
-                                                                       stats->get();
-                                                                     } } };
+  std::map<std::string, std::function<std::optional<std::string>()>> collectible_effects{
+    { "lemon",
+      [&]() {
+        stats->health().increase(30);
+        return stats->get();
+      } },
+    { "strawberry",
+      [&]() {
+        stats->experience().increase(400);
+        return stats->get();
+      } },
+    { "orange",
+      [&]() {
+        stats->strength().increase(1);
+        return stats->get();
+      } },
+    { "melon",
+      [&]() {
+        stats->health().increase(50);
+        return stats->get();
+      } },
+    { "pear",
+      [&]() {
+        stats->speed().increase(20);
+        return stats->get();
+      } }
+  };
 
   std::vector<Attack> attacks() const;
 
@@ -62,5 +67,5 @@ class Protagonist: public Character {
 
   void talk_to(const std::string& npc_name);
 
-  void use_item(std::pair<std::string, Object> item);
+  std::optional<std::string> use_item(std::pair<std::string, Object> item);
 };

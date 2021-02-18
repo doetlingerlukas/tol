@@ -103,5 +103,5 @@ class Stats {
 
   Experience& experience();
 
-  void get();
+  std::string get();
 };
