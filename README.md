@@ -42,3 +42,13 @@ or alternatively, run
 ```sh
 rake run
 ```
+
+## Controls
+
+| Action            | Control                                                                   |
+|-------------------|---------------------------------------------------------------------------|
+| Player Movement   | <kbd>W</kbd>, <kbd>A</kbd>, <kbd>S</kbd>, <kbd>D</kbd>                    |
+| Attack Selection  | <kbd>↑</kbd> (Up Arrow), <kbd>↓</kbd> (Down Arrow), <kbd>⏎</kbd> (Return) |
+| Talk to Character | <kbd>E</kbd>, Mouse                                                       |
+| Show Inventory    | <kbd>I</kbd>                                                              |
+| Show Quests       | <kbd>⇥</kbd> (Tab)                                                        |
