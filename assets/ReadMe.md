@@ -6,6 +6,7 @@
 - https://opengameart.org/content/lpc-victorian-buildings
 - https://opengameart.org/content/lpc-victorian-town-decorations
 - https://opengameart.org/content/lpc-items-and-game-effects
+- https://opengameart.org/content/pistol-icons-from-youtube-series-pixeltime
 
 # Music & Sounds
 
@@ -13,4 +14,6 @@
   (c) copyright 2020 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/airtone/62216
 - forgottenland by airtone
   (c) copyright 2020 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/airtone/61959
+- midwinter by airtone
+  (c) copyright 2018 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/airtone/58902 Ft: onlymeith
 - https://freesound.org/people/andersmmg/sounds/516223/
