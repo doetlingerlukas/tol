@@ -216,7 +216,7 @@ void Game::run() {
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
 
-  Overlay overlay(asset_cache, quest_stack);
+  Overlay overlay(asset_cache, player.getStats(), quest_stack);
 
   std::reference_wrapper<Inventory> inventory = player.getInventory();
 

@@ -7,11 +7,13 @@
 
 #include "asset_cache.hpp"
 #include "quest.hpp"
+#include "stats.hpp"
 
 namespace tol {
 
 class Overlay: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
+  std::shared_ptr<Stats> stats;
   std::reference_wrapper<QuestStack> quest_stack;
 
   sf::Vector2f mouse_location;
@@ -114,11 +116,37 @@ class Overlay: public sf::Drawable, public sf::Transformable {
         display_text(quest.title(), quest.description(), i);
       i++;
     }
+
+    auto stat_offset = 0;
+    auto draw_stats_text = [&](std::string stat_) {
+      sf::Text stat;
+      stat.setFont(font);
+      stat.setStyle(sf::Text::Style::Bold);
+      stat.setFillColor(sf::Color::White);
+      stat.setString(stat_);
+      stat.setPosition({ stats_rect.left + margin.x / 2, stats_rect.top + stat_offset + margin.y / 2 });
+      target.draw(stat);
+      stat_offset += stat.getCharacterSize() + margin.y / 2;
+    };
+
+    auto ostreamable_to_string = [](auto& stream) {
+      std::ostringstream oss;
+      oss << stream;
+      return oss.str();
+    };
+
+    auto exp = ostreamable_to_string(stats->experience());
+    draw_stats_text(exp.substr(0, exp.find(", ")));
+    exp.erase(0, exp.find(", ") + 2);
+    draw_stats_text(exp);
+    draw_stats_text(ostreamable_to_string(stats->strength()));
+    draw_stats_text(ostreamable_to_string(stats->speed()));
+    draw_stats_text(ostreamable_to_string(stats->health()));
   }
 
   public:
-  explicit Overlay(const std::shared_ptr<AssetCache> asset_cache_, QuestStack& quest_stack_):
-    asset_cache(asset_cache_), quest_stack(quest_stack_), mouse_pressed(false) {}
+  explicit Overlay(const std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats_, QuestStack& quest_stack_):
+    asset_cache(asset_cache_), stats(stats_), quest_stack(quest_stack_), mouse_pressed(false) {}
 
   inline QuestStack& getQuestStack() const {
     return quest_stack;
