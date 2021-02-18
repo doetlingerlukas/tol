@@ -22,22 +22,24 @@ std::vector<sf::RectangleShape> Protagonist::move(
   const sf::Vector2f& map_size, Info& info) {
   const auto shapes = Character::move(x_direction, y_direction, speed, now, play_state, map_size, info);
 
-  const auto bounds = getBoundingRect();
-  for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
-    auto& [id, collectible] = *it;
+  if (now >= pick_up_allowed_after) {
+    const auto bounds = getBoundingRect();
+    for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
+      auto& [id, collectible] = *it;
 
-    if (collectible.collides_with(bounds)) {
-      if (inventory.add(make_pair(collectible.getName(), collectible))) {
-        pick_up_sound.play();
-        info.display_info(fmt::format("Item collected: {}", collectible.getName()), std::chrono::seconds(5));
-        it = collectibles.erase(it);
-        continue;
-      } else {
-        info.display_info("Inventory is full.", std::chrono::seconds(5));
+      if (collectible.collides_with(bounds)) {
+        if (inventory.add(*it)) {
+          pick_up_sound.play();
+          info.display_info(fmt::format("Item collected: {}", collectible.getName()), std::chrono::seconds(5));
+          it = collectibles.erase(it);
+          continue;
+        } else {
+          info.display_info("Inventory is full.", std::chrono::seconds(5));
+        }
       }
-    }
 
-    it++;
+      it++;
+    }
   }
 
   return shapes;
@@ -47,7 +49,7 @@ std::vector<Attack> Protagonist::attacks() const {
   return std::vector<Attack>{ Attack("scratch", 5), Attack("holy birnbamm", 12), Attack("use spider", 32) };
 }
 
-std::vector<std::pair<std::string, Object>> Protagonist::getInventoryElements() const {
+std::vector<std::pair<int, Object>> Protagonist::getInventoryElements() const {
   return inventory.getElements();
 }
 
@@ -63,10 +65,14 @@ void Protagonist::talk_to(const std::string& npc_name) {
   talked_to_npcs.insert(npc_name);
 }
 
-std::optional<std::string> Protagonist::use_item(std::pair<std::string, Object> item) {
-  auto [name, collectible] = item;
-  std::cout << "Item used: " << name << std::endl;
-  const auto& found = collectible_effects.find(name);
+void Protagonist::drop_item() {
+  pick_up_allowed_after = now + std::chrono::seconds(5);
+}
+
+std::optional<std::string> Protagonist::use_item(std::pair<int, Object> item) {
+  auto [id, collectible] = item;
+  std::cout << "Item used: " << collectible.getName() << std::endl;
+  const auto& found = collectible_effects.find(collectible.getName());
   if (found != collectible_effects.end()) {
     const auto& callback = found->second;
     return callback();

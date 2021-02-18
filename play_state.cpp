@@ -119,3 +119,11 @@ bool PlayState::check_unlock_condition(const std::string& condition_name) const 
 
   return false;
 }
+
+sf::Vector2f PlayState::player_position() const {
+  return getPlayer().getPosition();
+}
+
+void PlayState::set_player_position(sf::Vector2f pos) {
+  getPlayer().setPosition(pos);
+}

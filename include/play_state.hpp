@@ -50,9 +50,9 @@ class PlayState: public sf::Drawable {
     KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt,
     std::optional<std::string>& npc_dialog, Info& info);
 
-  [[nodiscard]] inline sf::Vector2f player_position() const;
+  [[nodiscard]] sf::Vector2f player_position() const;
 
-  inline void set_player_position(sf::Vector2f pos);
+  void set_player_position(sf::Vector2f pos);
 
   [[nodiscard]] bool check_unlock_condition(const std::string& condition_name) const;
 };
@@ -64,11 +64,3 @@ class PlayState: public sf::Drawable {
 #ifndef TOL_PROTAGONIST_HPP
 #include <protagonist.hpp>
 #endif
-
-inline sf::Vector2f PlayState::player_position() const {
-  return getPlayer().getPosition();
-}
-
-inline void PlayState::set_player_position(sf::Vector2f pos) {
-  getPlayer().setPosition(pos);
-}

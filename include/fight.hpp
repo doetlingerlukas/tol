@@ -270,7 +270,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     assert(npc != nullptr);
 
     if (fight_turn == Turn::ENEMY) {
-      if (now > last_turn + std::chrono::milliseconds(3000)) {
+      if (now >= last_turn + std::chrono::milliseconds(3000)) {
         fight_turn = Turn::PLAYER;
         const auto& attacks = npc->getAttacks();
         const auto& npc_stats = npc->getStats();

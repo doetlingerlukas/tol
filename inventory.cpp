@@ -32,7 +32,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   // Offsets for placement.
   auto h = 0;
   auto w = 0;
-  for (auto [name, element]: elements) {
+  for (auto [id, element]: elements) {
     element.setScale(scale);
 
     auto rect = element.getBoundingRect();
@@ -69,7 +69,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   };
 
   if (elements.size() > 0 && selected) {
-    auto& [name, element] = elements.at(*selected);
+    auto& [id, element] = elements.at(*selected);
 
     sf::Vector2f info_pos({ detail.left + margin.x / 2, detail.top + margin.y / 2 });
     auto max_line_width = detail.width - margin.x;
@@ -77,7 +77,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
     display_text("<C> use item", { info_pos.x, detail.top + detail.height - 4 * margin.y });
     display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
 
-    std::istringstream iss(Collectible::getCollectible(name).info);
+    std::istringstream iss(Collectible::getCollectible(element.getName()).info());
     const std::vector<std::string> words(
       { std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
 
@@ -110,11 +110,11 @@ Inventory::Inventory(int max_size_, const std::shared_ptr<AssetCache> asset_cach
   return elements.size();
 }
 
-std::vector<std::pair<std::string, Object>> Inventory::getElements() const {
+std::vector<std::pair<int, Object>> Inventory::getElements() const {
   return elements;
 }
 
-bool Inventory::add(std::pair<std::string, Object> new_element) {
+bool Inventory::add(std::pair<int, Object> new_element) {
   if (size() < max_size) {
     elements.push_back(new_element);
     return true;
@@ -123,8 +123,10 @@ bool Inventory::add(std::pair<std::string, Object> new_element) {
   return false;
 }
 
-std::pair<std::string, Object> Inventory::remove(size_t index) {
-  return *elements.erase(elements.cbegin() + index);
+std::pair<int, Object> Inventory::remove(size_t index) {
+  auto element = elements[index];
+  elements.erase(elements.cbegin() + index);
+  return element;
 }
 
 void Inventory::mouse(sf::Vector2f location, bool pressed) {
@@ -132,10 +134,22 @@ void Inventory::mouse(sf::Vector2f location, bool pressed) {
   mouse_pressed = pressed;
 }
 
-void Inventory::drop_selected() {
-  if (selected) {
-    remove(*selected);
+void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
+  auto sel = selected;
+
+  if (sel) {
+    auto s = size();
+    auto [id, collectible] = remove(*sel);
+
+    auto new_position = player.getPosition();
+    new_position.x -= collectible.getBoundingRect().width / 2.f;
+    new_position.y -= collectible.getBoundingRect().height / 2.f;
+    collectible.setPosition(new_position);
+
+    map.getCollectibles().emplace(std::make_pair(id, collectible));
     select_next();
+
+    player.drop_item();
   }
 }
 
