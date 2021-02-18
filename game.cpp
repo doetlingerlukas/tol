@@ -172,9 +172,11 @@ Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-ruby.png"), asset_cache,
-    std::make_shared<Stats>(json({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } })),
-    "Ruby")) {
+    fs::path("tilesets/character-whitebeard.png"),
+    asset_cache,
+    std::make_shared<Stats>(instance.load_stats()),
+    instance.load_attacks(),
+    "detlef")), mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 
@@ -228,6 +230,8 @@ void Game::run() {
     std::chrono::seconds(10));
 
   Overlay overlay(asset_cache, player.getStats(), quest_stack);
+
+  instance.load_position(play_state);
 
   std::reference_wrapper<Inventory> inventory = player.getInventory();
 

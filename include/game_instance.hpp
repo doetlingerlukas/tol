@@ -34,7 +34,10 @@ class GameInstance {
 
   void save(const PlayState& play_state, const Character& player, const Inventory& inventory) const;
 
-  void load(PlayState& play_state);
+  void load_position(PlayState& play_state);
+
+  json load_attacks() const;
+  json load_stats() const;
 };
 
 } // namespace tol

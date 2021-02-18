@@ -61,7 +61,7 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.load(play_state);
+      game.load_position(play_state);
       game.setState(GameState::PLAY);
     }
 
@@ -130,7 +130,7 @@ void Nuklear::renderMenu(GameInstance& game, PlayState& play_state, const Charac
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.load(play_state);
+      game.load_position(play_state);
       game.setState(GameState::PLAY);
     }
 

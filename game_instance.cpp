@@ -3,7 +3,7 @@
 namespace tol {
 
 GameInstance::GameInstance(const fs::path& exec_dir):
-  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
+  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") { }
 
 void GameInstance::setState(GameState new_state) {
   state = new_state;
@@ -42,12 +42,15 @@ void GameInstance::save(const PlayState& play_state, const Character& player, co
   stats["level"] = player_stats->experience().getLevel();
   stats["strength"] = player_stats->strength().get();
 
-  auto& attacks = save["player"]["attacks"];
+  auto& attacks = save["player"]["attacks"] = json::array();
 
   const auto& player_attacks = player.getAttacks();
 
   for(const auto& attack: player_attacks) {
-    attacks[attack.getName()] = attack.getDamage();
+    attacks.push_back(json::object({
+      {"name", attack.getName() },
+      {"damage", attack.getDamage() }
+    }));
   }
 
   auto& inventory_array = save["player"]["inventory"] = json::array();
@@ -62,23 +65,52 @@ void GameInstance::save(const PlayState& play_state, const Character& player, co
   ofs << save.dump(2);
 }
 
-void GameInstance::load(PlayState& play_state) {
+json GameInstance::load_attacks() const {
   auto save_file = saves_dir / "game.json";
-  json save;
+  std::ifstream ifs(save_file);
+  json save = json::parse(ifs);
+  const auto& player = save["player"];
 
-  if (fs::exists(save_file)) {
-    std::ifstream ifs(save_file);
-    save = json::parse(ifs);
-  } else {
-    std::cout << "No save available at: " << save_file.string() << std::endl;
-    return;
-  }
+  return get_or_else(player, "attacks", json::array({
+      json::object({
+        {"name", "scratch" },
+        {"damage", 5 }
+      }),
+      json::object({
+        {"name", "holy birnbamm" },
+        {"damage", 12 }
+      }),
+      json::object({
+        {"name", "use spider" },
+        {"damage", 32 }
+      })
+    }));
+}
 
-  auto& player_j = save["player"];
+json GameInstance::load_stats() const {
+  auto save_file = saves_dir / "game.json";
+  std::ifstream ifs(save_file);
+  json save = json::parse(ifs);
+  const auto& player = save["player"];
+
+  return get_or_else(player, "stats", json::object({
+    { "strength", 10 },
+    { "speed", 10 },
+    { "health", 100 },
+    { "level", 1 }
+  }));
+}
+
+void GameInstance::load_position(PlayState& play_state) {
+  auto save_file = saves_dir / "game.json";
+  std::ifstream ifs(save_file);
+  json save = json::parse(ifs);
+
+  auto& player_j = save["player"]["position"];
 
   auto player_pos = play_state.player_position();
-  const float x = get_or_else<float>(player_j, "x", player_pos.x);
-  const float y = get_or_else<float>(player_j, "y", player_pos.y);
+  const float x = get_or_else(player_j, "x", player_pos.x);
+  const float y = get_or_else(player_j, "y", player_pos.y);
 
   play_state.set_player_position(sf::Vector2f(x, y));
 }
