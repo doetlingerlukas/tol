@@ -65,11 +65,12 @@ class SearchQuest: public Quest {
 
 class QuestStack {
   std::optional<int> selected;
+  Info& info;
 
   public:
   std::vector<std::unique_ptr<Quest>> quests;
 
-  QuestStack() : selected(std::make_optional(0)) {
+  QuestStack(Info& info_) : selected(std::make_optional(0)), info(info_) {
     quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
     quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));
   }
@@ -77,6 +78,8 @@ class QuestStack {
   void select(int index) {
     if (quests.size() > index) {
       selected = index;
+      const auto& quest = quests[index];
+      info.display_info(fmt::format("Quest: {} is active.", quest->getName()), std::chrono::seconds(5));
     }
   }
 
@@ -84,7 +87,7 @@ class QuestStack {
     return selected.value_or(-1);
   }
 
-  void check(Protagonist& player, Info& info) {
+  void check(Protagonist& player) {
     if (selected) {
       auto done = quests.at(static_cast<size_t>(*selected))->condition(player, info);
       if (done) {
