@@ -44,7 +44,7 @@ class QuestStack {
 
   explicit QuestStack(Info& info_);
 
-  void select(int index);
+  void select(size_t index);
 
   [[nodiscard]] int getSelected() const;
 

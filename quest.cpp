@@ -26,7 +26,7 @@ QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_
     }));
 }
 
-void QuestStack::select(int index) {
+void QuestStack::select(size_t index) {
   if (quests.size() > index) {
     selected = index;
     const auto& quest = quests[index];
