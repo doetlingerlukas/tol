@@ -122,7 +122,7 @@ class Menu: public sf::Drawable, public sf::Transformable {
   void reposition(sf::Vector2i new_location) {
     menu_location = new_location;
 
-    for(auto& item: items) {
+    for (auto& item: items) {
       item.menu_location = new_location;
     }
   }

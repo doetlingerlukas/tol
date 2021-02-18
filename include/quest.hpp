@@ -26,7 +26,7 @@ class Quest {
     return description_;
   };
 
-  [[nodiscard]] inline bool completed() {
+  [[nodiscard]] inline bool completed() const {
     return completed_;
   }
 
@@ -40,7 +40,7 @@ class QuestStack {
   public:
   std::vector<Quest> quests;
 
-  QuestStack(Info& info_);
+  explicit QuestStack(Info& info_);
 
   void select(int index);
 

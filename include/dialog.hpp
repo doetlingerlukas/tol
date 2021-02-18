@@ -68,7 +68,7 @@ class Dialog {
       dialog_progress = nullptr;
       dialog_state = DialogState::QUESTION;
 
-      if(state >= 100) {
+      if (state >= 100) {
         return std::make_pair(GameState::QUEST, state - 100);
       }
 
