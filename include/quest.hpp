@@ -6,61 +6,31 @@
 #include <vector>
 
 #include <overlay/info.hpp>
-#include <protagonist.hpp>
+
+class Protagonist;
 
 class Quest {
-  bool completed = false;
-
-  protected:
-  std::string name;
-  std::string task;
+  std::string title_;
+  std::string description_;
+  std::function<bool(Protagonist& player)> condition;
+  bool completed_ = false;
 
   public:
-  Quest(std::string name_, std::string task_) : name(std::move(name_)), task(std::move(task_)) {}
+  Quest(std::string title, std::string description, std::function<bool(Protagonist& player)> condition);
 
-  virtual bool condition(Protagonist& player, Info& info) = 0;
-
-  [[nodiscard]] std::string getName() const {
-    return name;
+  [[nodiscard]] inline const std::string& title() const {
+    return title_;
   };
 
-  [[nodiscard]] std::string getTask() const {
-    return task;
+  [[nodiscard]] inline const std::string& description() const {
+    return description_;
   };
 
-  void setCompleted() {
-    completed = true;
-  };
-
-  // virtual void display_current(Info& info) const = 0;
-};
-
-class InitialQuest: public Quest {
-  public:
-  InitialQuest() : Quest("Gather resources!", "You are hungly. Find something to eat.") { }
-
-  bool condition(Protagonist& player, Info& info) override {
-    if (!player.getInventoryElements().empty()) {
-      setCompleted();
-      info.display_info(fmt::format("Completed Quest: {}", name), std::chrono::seconds(5));
-      return true;
-    }
-    return false;
+  [[nodiscard]] inline bool completed() {
+    return completed_;
   }
-};
 
-class SearchQuest: public Quest {
-  public:
-  SearchQuest() : Quest("Find the lost item.", "<NPC> has lost something in the woods. Find it for him") { }
-
-  bool condition(Protagonist& player, Info& info) override {
-    if (false) {
-      setCompleted();
-      info.display_info(fmt::format("Completed Quest: {}", name), std::chrono::seconds(5));
-      return true;
-    }
-    return false;
-  }
+  void check_condition(Protagonist& player, Info& info);
 };
 
 class QuestStack {
@@ -68,32 +38,19 @@ class QuestStack {
   Info& info;
 
   public:
-  std::vector<std::unique_ptr<Quest>> quests;
+  std::vector<Quest> quests;
 
-  QuestStack(Info& info_) : selected(std::make_optional(0)), info(info_) {
-    quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
-    quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));
-  }
+  QuestStack(Info& info_);
 
-  void select(int index) {
-    if (quests.size() > index) {
-      selected = index;
-      const auto& quest = quests[index];
-      info.display_info(fmt::format("Quest: {} is active.", quest->getName()), std::chrono::seconds(5));
-    }
-  }
+  void select(int index);
 
-  [[nodiscard]] int getSelected() const {
-    return selected.value_or(-1);
-  }
+  [[nodiscard]] int getSelected() const;
 
-  void check(Protagonist& player) {
-    if (selected) {
-      auto done = quests.at(static_cast<size_t>(*selected))->condition(player, info);
-      if (done) {
-        quests.erase(quests.cbegin() + *selected);
-        selected = std::nullopt;
-      }
-    }
-  }
+  void check(Protagonist& player);
+
+  bool completed(size_t index);
 };
+
+#ifndef TOL_PROTAGONIST_HPP
+#include <protagonist.hpp>
+#endif

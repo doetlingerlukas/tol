@@ -10,6 +10,7 @@
 #include <input.hpp>
 #include <optional>
 #include <overlay/info.hpp>
+#include <quest.hpp>
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
@@ -25,6 +26,7 @@ class PlayState: public sf::Drawable {
   sf::View map_view;
   std::reference_wrapper<TiledMap> map;
   std::reference_wrapper<Protagonist> player;
+  std::reference_wrapper<QuestStack> quest_stack;
 
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
@@ -42,9 +44,13 @@ class PlayState: public sf::Drawable {
     return map;
   }
 
+  [[nodiscard]] inline QuestStack& getQuestStack() const {
+    return quest_stack;
+  }
+
   PlayState(
-    TiledMap& map_, Protagonist& player_, std::shared_ptr<AssetCache> asset_cache_, const sf::Vector2f& scale_,
-    const sf::Vector2u& window_size);
+    TiledMap& map_, Protagonist& player_, QuestStack& quest_stack_, std::shared_ptr<AssetCache> asset_cache_,
+    const sf::Vector2f& scale_, const sf::Vector2u& window_size);
 
   GameState update(
     KeyInput& key_input, const sf::RenderWindow& window, const std::chrono::milliseconds& now, float dt,

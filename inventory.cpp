@@ -135,11 +135,8 @@ void Inventory::mouse(sf::Vector2f location, bool pressed) {
 }
 
 void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
-  auto sel = selected;
-
-  if (sel) {
-    auto s = size();
-    auto [id, collectible] = remove(*sel);
+  if (selected) {
+    auto [id, collectible] = remove(*selected);
 
     auto new_position = player.getPosition();
     new_position.x -= collectible.getBoundingRect().width / 2.f;

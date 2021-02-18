@@ -196,7 +196,9 @@ void Game::run() {
 
   map.setPlayer(&player);
 
-  PlayState play_state(map, player, asset_cache, scale, window.getSize());
+  QuestStack quest_stack(info);
+
+  PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());
   KeyInput key_input;
   tol::Music music(fs::path("assets/music"), settings.volume_level);
   music.play_background();
@@ -205,8 +207,6 @@ void Game::run() {
     "Welcome to a very loost island with some very loost "
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
-
-  QuestStack quest_stack(info);
 
   Overlay overlay(asset_cache, quest_stack);
 
