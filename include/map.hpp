@@ -31,9 +31,6 @@ struct Collision {
 class TiledMap: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
 
-  fs::path dir;
-  fs::path filename;
-
   std::unique_ptr<tson::Map> map;
   std::map<int, Object> collectibles;
 

@@ -152,6 +152,7 @@ void Game::handle_settings_update(tol::Music& music) {
 Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache),
+  map("map.json", asset_cache),
   player(Protagonist(
     fs::path("tilesets/character-whitebeard.png"), asset_cache,
     std::make_shared<Stats>(json({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } })),
@@ -191,7 +192,6 @@ void Game::run() {
   window.requestFocus();
   window.setKeyRepeatEnabled(false);
 
-  TiledMap map(asset_cache->dir() / "map.json", asset_cache);
   QuestStack quest_stack;
   quest_stack.quests.push_back(std::unique_ptr<Quest>(new InitialQuest()));
   quest_stack.quests.push_back(std::unique_ptr<Quest>(new SearchQuest()));

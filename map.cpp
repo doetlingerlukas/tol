@@ -178,11 +178,9 @@ sf::Vector2f TiledMap::getSize() const {
 
 TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> asset_cache_):
   asset_cache(asset_cache_) {
-  dir = map_path.parent_path();
-  filename = map_path.filename();
 
   tson::Tileson parser;
-  map = parser.parse(map_path);
+  map = parser.parse(asset_cache->dir() / map_path);
 
   if (map->getStatus() != tson::ParseStatus::OK) {
     throw std::runtime_error("Failed parsing '" + map_path.string() + "'.\n" + map->getStatusMessage());

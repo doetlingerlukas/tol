@@ -53,6 +53,7 @@ class Game {
 
   Info info;
   Protagonist player;
+  TiledMap map;
 
   bool mouse_pressed;
 
