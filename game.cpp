@@ -50,6 +50,7 @@ void Game::handle_event(
             switch (instance.getState()) {
               case GameState::DIALOG:
               case GameState::INVENTORY:
+              case GameState::QUEST:
                 instance.setState(GameState::PLAY);
                 break;
               default:
