@@ -25,7 +25,14 @@ class Fight: public sf::Drawable, public sf::Transformable {
   std::optional<int> last_enemy_damage;
   std::optional<std::string> last_enemy_attack;
 
+  std::optional<int> last_player_damage;
+  std::optional<std::string> last_player_attack;
+
   const int TILE_SIZE = 64;
+
+  inline static std::function<int(int, int, int)> calcDamage = [](const int level, const int damage, const int strength) constexpr {
+    return std::ceil(damage * (level / 7.5f + 1) - (strength / 10.0f) * 1.05f);
+  };
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     sf::RectangleShape background;
@@ -163,6 +170,16 @@ class Fight: public sf::Drawable, public sf::Transformable {
       target.draw(attack_info);
     }
 
+    if (last_player_attack && last_player_damage) {
+      sf::Text attack_info;
+      attack_info.setCharacterSize(70);
+      attack_info.setFillColor(sf::Color::White);
+      attack_info.setString(fmt::format("Detlef used \"{}\" for {} damage.", *last_player_attack, *last_player_damage));
+      attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+      attack_info.setPosition({ target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
+      target.draw(attack_info);
+    }
+
     target.draw(enemy_level);
     target.draw(player_health_percent);
 
@@ -175,6 +192,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
     npc = nullptr;
     last_enemy_attack = std::nullopt;
     last_enemy_damage = std::nullopt;
+    last_player_attack = std::nullopt;
+    last_player_damage = std::nullopt;
     fight_turn = Turn::PLAYER;
     last_turn = std::chrono::milliseconds(0);
   }
@@ -189,11 +208,18 @@ class Fight: public sf::Drawable, public sf::Transformable {
     for (const auto& attack: attacks) {
       menu.add_item(attack.getName(), [attacks, this](int idx) mutable {
         auto damage = attacks[idx].getDamage();
-        npc->getStats()->health().decrease(damage);
+        const auto player_level = player.getStats()->experience().getLevel();
+        const auto& npc_stats = npc->getStats();
+        const auto npc_strength = npc_stats->strength().get();
+
+        auto final_damage = calcDamage(player_level, damage, npc_strength);
+        npc_stats->health().decrease(final_damage);
         fight_turn = Turn::ENEMY;
         last_turn = this->now;
         last_enemy_attack = std::nullopt;
         last_enemy_damage = std::nullopt;
+        last_player_attack = std::make_optional(attacks[idx].getName());
+        last_player_damage = std::make_optional(final_damage);
       });
     }
   }
@@ -245,11 +271,18 @@ class Fight: public sf::Drawable, public sf::Transformable {
       if (now > last_turn + std::chrono::milliseconds(3000)) {
         fight_turn = Turn::PLAYER;
         const auto& attacks = npc->getAttacks();
+        const auto& npc_stats = npc->getStats();
+        const auto npc_level = npc_stats->experience().getLevel();
+        const auto player_strength = player.getStats()->strength().get();
 
         int rnd = std::rand() / ((RAND_MAX + 1u) / attacks.size());
         const auto& enemy_attack = attacks[rnd];
+
+        const auto attack_damage = calcDamage(npc_level, enemy_attack.getDamage(), player_strength);
         last_enemy_attack = std::make_optional(enemy_attack.getName());
-        last_enemy_damage = std::make_optional(enemy_attack.getDamage());
+        last_enemy_damage = std::make_optional(attack_damage);
+        last_player_attack = std::nullopt;
+        last_player_damage = std::nullopt;
 
         player.getStats()->health().decrease(*last_enemy_damage);
       }
