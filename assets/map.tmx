@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="50" nextobjectid="320">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="50" nextobjectid="325">
  <editorsettings>
   <export target="map.json" format="json"/>
  </editorsettings>
@@ -3425,6 +3425,26 @@
    <properties>
     <property name="unlock_condition" value="city_gate_2"/>
     <property name="unlock_hint" value="I should explore the city a bit more before leaving."/>
+   </properties>
+  </object>
+  <object id="320" name="City Region" type="collision" x="1172" y="466" width="578" height="1060">
+   <properties>
+    <property name="city" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="321" name="City Region" type="collision" x="694" y="640" width="476" height="888">
+   <properties>
+    <property name="city" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="323" name="City Region" type="collision" x="352" y="870" width="351" height="646">
+   <properties>
+    <property name="city" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="324" name="City Region" type="collision" x="441" y="1512" width="589" height="68">
+   <properties>
+    <property name="city" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

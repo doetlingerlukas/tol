@@ -26,6 +26,7 @@ class PlayState;
 
 struct Collision {
   sf::FloatRect bounds;
+  bool city = false;
   std::optional<std::reference_wrapper<const std::string>> unlock_condition;
   std::optional<std::reference_wrapper<const std::string>> unlock_hint;
 };
