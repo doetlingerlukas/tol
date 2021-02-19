@@ -1478,6 +1478,31 @@
    <property name="y" type="int" value="4"/>
   </properties>
  </tile>
+ <tile id="565">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="566">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="567">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="568">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
+ <tile id="569">
+  <properties>
+   <property name="y" type="int" value="4"/>
+  </properties>
+ </tile>
  <tile id="576">
   <properties>
    <property name="y" type="int" value="3"/>
@@ -1503,6 +1528,31 @@
    <property name="y" type="int" value="3"/>
   </properties>
  </tile>
+ <tile id="597">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="598">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="599">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="600">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
+ <tile id="601">
+  <properties>
+   <property name="y" type="int" value="3"/>
+  </properties>
+ </tile>
  <tile id="608">
   <properties>
    <property name="y" type="int" value="2"/>
@@ -1524,6 +1574,31 @@
   </properties>
  </tile>
  <tile id="612">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="629">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="630">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="631">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="632">
+  <properties>
+   <property name="y" type="int" value="2"/>
+  </properties>
+ </tile>
+ <tile id="633">
   <properties>
    <property name="y" type="int" value="2"/>
   </properties>
@@ -1559,6 +1634,46 @@
    <property name="y" type="int" value="1"/>
   </properties>
  </tile>
+ <tile id="651">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="652">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="657">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="658">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="663">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="664">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="668">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
+ <tile id="669">
+  <properties>
+   <property name="y" type="int" value="1"/>
+  </properties>
+ </tile>
  <tile id="672">
   <properties>
    <property name="y" type="int" value="0"/>
@@ -1589,6 +1704,56 @@
   </objectgroup>
  </tile>
  <tile id="676">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="683">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="684">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="689">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="690">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="694">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="695">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="696">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="699">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="700">
+  <properties>
+   <property name="y" type="int" value="0"/>
+  </properties>
+ </tile>
+ <tile id="701">
   <properties>
    <property name="y" type="int" value="0"/>
   </properties>
