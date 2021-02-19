@@ -177,7 +177,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
       sf::Text attack_info;
       attack_info.setCharacterSize(70);
       attack_info.setFillColor(sf::Color::White);
-      attack_info.setString(fmt::format("Detlef used \"{}\" for {} damage.", *last_player_attack, *last_player_damage));
+      attack_info.setString(
+        fmt::format("{} used \"{}\" for {} damage.", player.getName(), *last_player_attack, *last_player_damage));
       attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
       attack_info.setPosition(
         { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });

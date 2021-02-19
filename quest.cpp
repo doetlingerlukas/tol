@@ -2,26 +2,36 @@
 
 namespace tol {
 
-Quest::Quest(std::string title, std::string description, std::function<bool(Protagonist& player)> condition_):
+Quest::Quest(std::string title, std::string description, std::function<bool(PlayState& play_state)> condition_):
   title_(std::move(title)), description_(std::move(description)), condition(std::move(condition_)) {}
 
-void Quest::check_condition(Protagonist& player, Info& info) {
+void Quest::check_condition(PlayState& play_state, Info& info) {
   if (completed()) {
     return;
   }
 
-  if (condition(player)) {
+  if (condition(play_state)) {
     completed_ = true;
-    info.display_info(fmt::format("Completed Quest: {}", title()), std::chrono::seconds(5));
+    info.display_info(fmt::format("Completed Quest: {}", title()), std::chrono::seconds(10));
   }
 }
 
 QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_) {
-  quests.push_back(Quest("Gather resources!", "You are hungly. Find something to eat.", [](auto player) {
-    return !player.getInventoryElements().empty();
+  quests.push_back(Quest("Gather resources!", "You are hungry. Find something to eat.", [](auto play_state) {
+    return !play_state.getPlayer().getInventoryElements().empty();
   }));
   quests.push_back(
-    Quest("Find the lost item.", "<NPC> has lost something in the woods. Find it for him", [](auto player) {
+    Quest("Find the lost item.", "Detlef has lost something in the woods. Find it for him.", [](auto play_state) {
+      auto& map = play_state.getMap();
+
+      auto& npc = map.getNpc("Detlef de Loost");
+
+      auto pair = map.getCollectible("tools");
+      if (pair) {
+        auto& [id, collectible] = *pair;
+        return collectible.collides_with(npc.getBoundingRect());
+      }
+
       return false;
     }));
 }
@@ -38,9 +48,9 @@ void QuestStack::select(size_t index) {
   return selected.value_or(-1);
 }
 
-void QuestStack::check(Protagonist& player) {
+void QuestStack::check(PlayState& play_state) {
   if (selected) {
-    quests.at(static_cast<size_t>(*selected)).check_condition(player, info);
+    quests.at(static_cast<size_t>(*selected)).check_condition(play_state, info);
   }
 }
 

@@ -1,68 +1,133 @@
 {
   "dialog": {
-    "npc1": [
-      {
-        "question": "Am I lost?",
-        "response": "Yes you are."
-      },
-      {
-        "question": "Why am I here?",
-        "response": "Not sure."
-      },
-      {
-        "question": "Are you lost?",
-        "response": {
-          "question": "You think this is funny?",
+    "Jen's Loost & Found": {
+      "question": "Welcome to Jen's Loost & Found!",
+      "response": [
+        {
+          "question": "Hi, do also offer food?",
           "response": [
             {
-              "question": "Yes",
-              "response": 2
-            },
-            {
-              "question": "No",
-              "response": 1
+              "question": "Of course!",
+              "response": [
+                {
+                  "question": "Okay then, one baguette, please!",
+                  "response": 0
+                }
+              ]
             }
           ]
         }
-      },
-      {
-        "question": "What is happening?",
-        "response": "Exceptional things."
-      }
-    ],
-    "npc2": {
-      "question": "You, who do you think you are?",
+      ]
+    },
+    "Detlef de Loost": {
+      "question": "Are you lost?",
       "response": [
         {
-          "question": "I am Detlef de Loost.",
-          "response": {
-            "question": "What a shitty name.",
+          "question": "Yes.",
+          "response": [
+            {
+              "question": "I am Detlef de Loost.",
+              "response": [
+                {
+                  "question": "What a shitty name.",
+                  "response": [
+                    {
+                      "question": "You take that back!",
+                      "response": 2
+                    },
+                    {
+                      "question": "Don't be so rude.",
+                      "response": 0
+                    }
+                  ]
+                },
+                {
+                  "question": "Nice to meet you.",
+                  "response": 0
+                }
+              ]
+            },
+            {
+              "question": "You are lost, and I lost something.",
+              "response": [
+                {
+                  "question": "Well that's too bad.",
+                  "response": 0
+                },
+                {
+                  "question": "Where?",
+                  "response": [
+                    {
+                      "question": "Somewhere in these woods.",
+                      "response": [
+                        {
+                          "question": "I'll try and find it for you.",
+                          "response": 101
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "question": "No.",
+          "response": 0
+        }
+      ]
+    },
+    "Juan": [
+      {
+        "question": "Are you lost?",
+        "response": [
+          {
+            "question": "What is happening?",
+            "response": "Exceptional things."
+          },
+          {
+            "question": "You think this is funny?",
             "response": [
               {
-                "question": "You take that back!",
+                "question": "Yes",
                 "response": 2
               },
               {
-                "question": "Don't be so rude.",
+                "question": "No",
                 "response": 1
               }
             ]
           }
-        },
-        {
-          "question": "None of your business!",
-          "response": "Yes I think it is."
-        },
-        {
-          "question": "Why you have to be so mad?",
-          "response": "I am not mad, you are!"
-        },
-        {
-          "question": "Who are you?",
-          "response": "I am Juan, the wisdom of Oz."
-        }
-      ]
-    }
+        ]
+      },
+      {
+        "question": "You, who do you think you are?",
+        "response": [
+          {
+            "question": "None of your business!",
+            "response": [
+              {
+                "question": "Yes I think it is.",
+                "response": 0
+              }
+            ]
+          },
+          {
+            "question": "Why you heff to be mad?",
+            "response": [
+              {
+                "question": "I am not mad, it's just a game!",
+                "response": 0
+              }
+            ]
+          },
+          {
+            "question": "Who are you?",
+            "response": "I am Juan, the wisdom of Oz."
+          }
+        ]
+      }
+    ]
   }
 }
-

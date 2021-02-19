@@ -161,7 +161,7 @@ void TiledMap::gatherCollectibles(tson::Layer& layer) {
 
         collectibles.emplace(
           std::piecewise_construct, std::make_tuple(obj.getId()),
-          std::make_tuple(std::cref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache));
+          std::make_tuple(std::ref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache));
       }
     }
   }
@@ -308,6 +308,19 @@ std::map<int, Object>& TiledMap::getCollectibles() {
   return collectibles;
 }
 
+std::optional<std::pair<int, Object>> TiledMap::getCollectible(const std::string& name) {
+  auto found = std::find_if(collectibles.cbegin(), collectibles.cend(), [&name](const auto& pair) {
+    const auto& [id, collectible] = pair;
+    return collectible.getName() == name;
+  });
+
+  if (found == collectibles.cend()) {
+    return std::nullopt;
+  }
+
+  return *found;
+}
+
 std::vector<Collision> TiledMap::collisions_around(const sf::FloatRect& bounds) const {
   std::vector<Collision> collisions;
 
@@ -402,6 +415,16 @@ void TiledMap::setScale(const sf::Vector2f factors) {
 
 std::vector<Npc>& TiledMap::getNpcs() {
   return npcs;
+}
+
+const Npc& TiledMap::getNpc(const std::string& name) {
+  auto found = std::find_if(npcs.cbegin(), npcs.cend(), [&name](const auto& npc) { return npc.getName() == name; });
+
+  if (found == npcs.cend()) {
+    throw std::runtime_error(fmt::format("No NPC with name '{}' found.", name));
+  }
+
+  return *found;
 }
 
 } // namespace tol

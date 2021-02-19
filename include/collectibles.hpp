@@ -18,7 +18,8 @@ class Collectible {
     { "pear", "Looks just like a regular fruit, but think twice before eating. Not everyone can handle the speed. +20 "
               "on walking speed" },
     { "cherry", "Probably edible." },
-    { "pistol", "Watch out! This kills people." }
+    { "pistol", "Watch out! This kills people." },
+    { "tools", "I should probably bring these back to Detlef." }
   };
 
   public:

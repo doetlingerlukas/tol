@@ -172,10 +172,9 @@ Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-whitebeard.png"), asset_cache,
+    fs::path("tilesets/character-ruby.png"), asset_cache,
     std::make_shared<Stats>(json({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } })),
-    "detlef")),
-  mouse_pressed(false) {
+    "Ruby")) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 
@@ -266,7 +265,7 @@ void Game::run() {
       nuklear->setSize(window.getSize());
     }
 
-    quest_stack.check(player);
+    quest_stack.check(play_state);
 
     window.clear();
     window.resetGLStates();

@@ -116,7 +116,7 @@ bool PlayState::check_unlock_condition(const std::string& condition_name) const 
   }
 
   if (condition_name == "city_gate") {
-    return getPlayer().talked_to("npc1");
+    return getQuestStack().completed(1);
   }
 
   return false;

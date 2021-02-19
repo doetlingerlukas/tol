@@ -7,6 +7,7 @@
 - https://opengameart.org/content/lpc-victorian-town-decorations
 - https://opengameart.org/content/lpc-items-and-game-effects
 - https://opengameart.org/content/pistol-icons-from-youtube-series-pixeltime
+- https://opengameart.org/content/lpc-curly-hair-elven-ears-white-cape-with-blue-trim-and-more
 
 # Music & Sounds
 

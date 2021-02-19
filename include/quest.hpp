@@ -10,16 +10,16 @@
 
 namespace tol {
 
-class Protagonist;
+class PlayState;
 
 class Quest {
   std::string title_;
   std::string description_;
-  std::function<bool(Protagonist& player)> condition;
+  std::function<bool(PlayState& player)> condition;
   bool completed_ = false;
 
   public:
-  Quest(std::string title, std::string description, std::function<bool(Protagonist& player)> condition);
+  Quest(std::string title, std::string description, std::function<bool(PlayState& play_state)> condition);
 
   [[nodiscard]] inline const std::string& title() const {
     return title_;
@@ -33,7 +33,7 @@ class Quest {
     return completed_;
   }
 
-  void check_condition(Protagonist& player, Info& info);
+  void check_condition(PlayState& play_state, Info& info);
 };
 
 class QuestStack {
@@ -49,12 +49,12 @@ class QuestStack {
 
   [[nodiscard]] int getSelected() const;
 
-  void check(Protagonist& player);
+  void check(PlayState& play_state);
 
   bool completed(size_t index);
 };
 
 } // namespace tol
-#ifndef TOL_PROTAGONIST_HPP
-#include <protagonist.hpp>
+#ifndef TOL_PLAY_STATE_HPP
+#include <play_state.hpp>
 #endif

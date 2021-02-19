@@ -7,39 +7,78 @@
       "health": 100,
       "attacks": [
         {
-          "name":"scratch",
+          "name": "scratch",
           "damage": 5
         },
         {
-          "name":"holy birnbamm",
+          "name": "holy birnbamm",
           "damage": 12
         },
         {
-          "name":"use spider",
+          "name": "use spider",
           "damage": 32
         }
       ]
     },
-    "npc2": {
+    "Detlef de Loost": {
       "strength": 12,
       "speed": 10,
       "level": 2,
       "health": 100,
       "attacks": [
         {
-          "name":"scratch",
+          "name": "scratch",
           "damage": 5
         },
         {
-          "name":"holy birnbamm",
+          "name": "holy birnbamm",
           "damage": 12
         },
         {
-          "name":"use spider",
+          "name": "use spider",
+          "damage": 32
+        }
+      ]
+    },
+    "Juan": {
+      "strength": 15,
+      "speed": 10,
+      "level": 4,
+      "health": 100,
+      "attacks": [
+        {
+          "name": "scratch",
+          "damage": 5
+        },
+        {
+          "name": "holy birnbamm",
+          "damage": 12
+        },
+        {
+          "name": "use spider",
+          "damage": 32
+        }
+      ]
+    },
+    "Jen's Loost & Found": {
+      "strength": 0,
+      "speed": 10,
+      "level": 4,
+      "health": 100,
+      "attacks": [
+        {
+          "name": "scratch",
+          "damage": 5
+        },
+        {
+          "name": "holy birnbamm",
+          "damage": 12
+        },
+        {
+          "name": "use spider",
           "damage": 32
         }
       ]
     }
   }
 }
-
