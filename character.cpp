@@ -193,9 +193,11 @@ std::vector<sf::RectangleShape> Character::move(
 
     if (collision.city && collided) {
       play_state.getMusic().play_city();
-    } else if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition, collided)) {
+    }
+
+    if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition, collided)) {
       shape.setOutlineColor(sf::Color::Green);
-    } else if (collided) {
+    } else if (collided && !collision.city) {
       if (collision.unlock_hint) {
         info.display_info(*collision.unlock_hint, std::chrono::seconds(10));
       }
