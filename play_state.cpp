@@ -6,29 +6,55 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   target.setView(map_view);
   target.draw(map());
 
-  for (auto shape: collision_shapes) {
-    shape.setScale(scale);
-    auto position = shape.getPosition();
-    shape.setPosition({ position.x * scale.x, position.y * scale.y });
-    target.draw(shape);
+  if (debug()) {
+    for (auto shape: collision_shapes) {
+      shape.setScale(scale);
+      auto position = shape.getPosition();
+      shape.setPosition({ position.x * scale.x, position.y * scale.y });
+      target.draw(shape);
+    }
+
+    for (const auto* character: map().characters()) {
+      auto bounding_box_rect = character->bounds();
+      sf::RectangleShape bounding_box;
+      bounding_box.setSize({ bounding_box_rect.width, bounding_box_rect.height });
+      bounding_box.setOutlineThickness(0.5f);
+      bounding_box.setOutlineColor(sf::Color::Red);
+      bounding_box.setFillColor(sf::Color::Transparent);
+      bounding_box.setPosition({ bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y });
+      bounding_box.setScale(scale);
+
+      auto texture_bounding_box_rect = character->texture_bounds();
+      sf::RectangleShape texture_bounding_box;
+      texture_bounding_box.setSize({ texture_bounding_box_rect.width, texture_bounding_box_rect.height });
+      texture_bounding_box.setOutlineThickness(0.5f);
+      texture_bounding_box.setOutlineColor(sf::Color::Green);
+      texture_bounding_box.setFillColor(sf::Color::Transparent);
+      texture_bounding_box.setPosition(
+        { texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y });
+      texture_bounding_box.setScale(scale);
+
+      target.draw(bounding_box);
+      target.draw(texture_bounding_box);
+    }
   }
 
   auto center = map_view.getCenter();
   const auto& position = player().getPosition();
 
-  auto ss =
-    fmt::format("Center Coords: {:.1f}, {:.1f}\nPlayer: {:.1f}, {:.1f}\n", center.x, center.y, position.x, position.y);
-
-  sf::Text text;
-  text.setFont(*asset_cache->load_font("fonts/Gaegu-Regular.ttf"));
-  text.setCharacterSize(static_cast<unsigned int>(16 * scale.y));
-  text.setFillColor(sf::Color::White);
-  text.setOutlineColor(sf::Color::Black);
-  text.setOutlineThickness(1);
-  text.setString(ss);
-
   target.setView(target.getDefaultView());
-  target.draw(text);
+
+  if (debug()) {
+    sf::Text text(
+      fmt::format(
+        "Center Coords: {:.1f}, {:.1f}\nPlayer: {:.1f}, {:.1f}\n", center.x, center.y, position.x, position.y),
+      *asset_cache->load_font("fonts/Gaegu-Regular.ttf"), static_cast<unsigned int>(16 * scale.y));
+    text.setFillColor(sf::Color::White);
+    text.setOutlineColor(sf::Color::Black);
+    text.setOutlineThickness(1);
+
+    target.draw(text);
+  }
 }
 
 PlayState::PlayState(

@@ -56,29 +56,8 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   shadow.setOrigin({ shadow.getRadius(), shadow.getRadius() });
   shadow.setScale({ scale.x, scale.y / shadow_ratio });
 
-  auto bounding_box_rect = bounds();
-  sf::RectangleShape bounding_box;
-  bounding_box.setSize({ bounding_box_rect.width, bounding_box_rect.height });
-  bounding_box.setOutlineThickness(0.5f);
-  bounding_box.setOutlineColor(sf::Color::Red);
-  bounding_box.setFillColor(sf::Color::Transparent);
-  bounding_box.setPosition({ bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y });
-  bounding_box.setScale(scale);
-
-  auto texture_bounding_box_rect = texture_bounds();
-  sf::RectangleShape texture_bounding_box;
-  texture_bounding_box.setSize({ texture_bounding_box_rect.width, texture_bounding_box_rect.height });
-  texture_bounding_box.setOutlineThickness(0.5f);
-  texture_bounding_box.setOutlineColor(sf::Color::Green);
-  texture_bounding_box.setFillColor(sf::Color::Transparent);
-  texture_bounding_box.setPosition(
-    { texture_bounding_box_rect.left * scale.x, texture_bounding_box_rect.top * scale.y });
-  texture_bounding_box.setScale(scale);
-
   target.draw(shadow);
   target.draw(sprite);
-  target.draw(bounding_box);
-  target.draw(texture_bounding_box);
 
   if (current_effect) {
     effect.setTextureRect(*current_effect);
@@ -247,9 +226,9 @@ std::vector<sf::RectangleShape> Character::move(
   }
 
   if (in_city) {
-    play_state.getMusic().play_city();
+    play_state.music().play_city();
   } else {
-    play_state.getMusic().play_default();
+    play_state.music().play_default();
   }
 
   // Restrict movement outside the map

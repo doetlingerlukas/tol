@@ -43,6 +43,7 @@ class PlayState: public sf::Drawable {
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
 
+  bool _debug = false;
   std::vector<sf::RectangleShape> collision_shapes;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
@@ -69,8 +70,18 @@ class PlayState: public sf::Drawable {
     return _quest_stack;
   }
 
-  [[nodiscard]] inline Music& getMusic() const {
+  [[nodiscard]] inline const Music& music() const {
     return _music;
+  }
+  [[nodiscard]] inline Music& music() {
+    return _music;
+  }
+
+  [[nodiscard]] inline bool debug() const {
+    return _debug;
+  }
+  inline void set_debug(bool debug) {
+    _debug = debug;
   }
 
   PlayState(
