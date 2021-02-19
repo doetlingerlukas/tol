@@ -2,7 +2,7 @@
 
 namespace tol {
 
-Object::Object(const tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache):
+Object::Object(tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache):
   Tile(
     tile,
     // Y for tile objects is on bottom, so go up one tile.
@@ -40,6 +40,15 @@ const std::string& Object::getName() const {
 
 std::optional<float> Object::zIndex() const {
   return getPosition().y + getTile().getTileSize().y;
+}
+
+bool Object::usable() {
+  auto prop = object.get().getProp("usable");
+  if (prop) {
+    return std::any_cast<const bool&>(prop->getValue());
+  }
+
+  return false;
 }
 
 } // namespace tol

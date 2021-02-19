@@ -161,7 +161,7 @@ void TiledMap::gatherCollectibles(tson::Layer& layer) {
 
         collectibles.emplace(
           std::piecewise_construct, std::make_tuple(obj.getId()),
-          std::make_tuple(std::cref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache));
+          std::make_tuple(std::ref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache));
       }
     }
   }
