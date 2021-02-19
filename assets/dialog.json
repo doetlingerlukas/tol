@@ -6,7 +6,7 @@
         {
           "question": "What is this place?",
           "response": {
-            "question": "This is St. loostistan, a community of believers to worship the tree",
+            "question": "This is St. Loostistan, a community of believers to worship the tree.",
             "response": [
               {
                 "question": "A ... tree?",
@@ -25,7 +25,7 @@
                 }
               },
               {
-                "question": "Nah I don't even want to know",
+                "question": "Nah, I don't even want to know.",
                 "response": 0
               }
             ]
@@ -33,11 +33,11 @@
         },
         {
           "question": "Do you know why I am here?",
-          "response": "The tree in its infinte wisdom must have sent you to test us"
+          "response": "The tree in its infinte wisdom must have sent you to test u.s"
         },
         {
           "question" : "Can I have one of those baguettes?",
-          "response" : "The baguette is powerfull, it must be used with care"
+          "response" : "The baguette is powerful, it must be used with care."
         }
       ]
     },
@@ -48,7 +48,7 @@
           "question": "Yes, where am I?",
           "response": [
             {
-              "question": "You are on a sacret island and you are not supposed to be here.",
+              "question": "You are on a sacred island and you are not supposed to be here.",
               "response": [
                 {
                   "question": "Why is that?",
@@ -84,11 +84,11 @@
                     "question": "I knew it you are the evil, you must be eradicated!",
                     "response": [
                       {
-                        "question": "You are mentally ill and must be stopped.",
+                        "question": "You are mentally ill and must be stopped!",
                         "response": 2
                       },
                       {
-                        "question": "Sure whatever floats your boat.",
+                        "question": "Sure, whatever floats your boat.",
                         "response": 0
                       }
                     ]
@@ -130,7 +130,7 @@
           },
           {
             "question": "Who are you?",
-            "response": "I am Juan, the wisdom of Oz and protector of the tree."
+            "response": "I am Juan, the Wisdom of Oz and protector of the tree."
           }
         ]
       }
