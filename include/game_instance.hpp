@@ -17,7 +17,7 @@ namespace fs = std::filesystem;
 
 // Represents an instance of a game with the current progress
 class GameInstance {
-  GameState state;
+  GameState _state;
   bool settings_changed;
   const fs::path saves_dir;
 
@@ -33,13 +33,13 @@ class GameInstance {
   public:
   explicit GameInstance(const fs::path& exec_dir);
 
-  void setState(GameState new_state);
+  void set_state(GameState state);
 
-  GameState getState();
+  GameState state();
 
   [[nodiscard]] bool isSettingsChanged() const;
 
-  void setSettingsChanged(bool value);
+  void set_settings_changed(bool value);
 
   void remove();
 

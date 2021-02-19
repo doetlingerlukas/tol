@@ -9,22 +9,16 @@ namespace tol {
 void Game::handle_event(
   sf::Event& event, KeyInput& key_input, PlayState& play_state, tol::Music& music, Inventory& inventory,
   Overlay& overlay, Fight& fight) {
-  const auto state = instance.getState();
-
   switch (event.type) {
     case sf::Event::Closed:
-      window.close();
-      break;
-    case sf::Event::MouseMoved:
-      if (state == GameState::MENU) {
-        // menu.mouse({ event.mouseMove.x, event.mouseMove.y }, mouse_pressed);
-      }
+      set_state(GameState::QUIT);
       break;
     case sf::Event::MouseButtonPressed:
     case sf::Event::MouseButtonReleased:
       mouse_pressed = event.type == sf::Event::MouseButtonPressed;
 
       if (event.mouseButton.button == sf::Mouse::Button::Left) {
+        const auto& state = instance().state();
         if (state == GameState::INVENTORY) {
           inventory.mouse(
             { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) }, mouse_pressed);
@@ -40,22 +34,17 @@ void Game::handle_event(
     case sf::Event::KeyPressed:
     case sf::Event::KeyReleased: {
       switch (event.key.code) {
-        case sf::Keyboard::Q:
-          instance.setState(GameState::DIALOG);
-          break;
-        case sf::Keyboard::F:
-          instance.setState(GameState::FIGHT);
-          break;
         case sf::Keyboard::Escape:
           if (event.type == sf::Event::KeyPressed) {
-            switch (instance.getState()) {
-              case GameState::DIALOG:
+            switch (instance().state()) {
               case GameState::INVENTORY:
-              case GameState::QUEST:
-                instance.setState(GameState::PLAY);
+              case GameState::OVERLAY:
+                instance().set_state(GameState::PLAY);
+                break;
+              case GameState::DEAD:
                 break;
               default:
-                instance.setState(GameState::MENU);
+                set_state(GameState::MENU);
                 break;
             }
           }
@@ -102,32 +91,29 @@ void Game::handle_event(
           break;
         case sf::Keyboard::I:
           if (event.type == sf::Event::KeyReleased) {
-            if (state == GameState::INVENTORY) {
-              instance.setState(GameState::PLAY);
+            if (instance().state() == GameState::INVENTORY) {
+              instance().set_state(GameState::PLAY);
             } else {
-              instance.setState(GameState::INVENTORY);
+              instance().set_state(GameState::INVENTORY);
             }
           }
           break;
-        case sf::Keyboard::P:
-          instance.setState(GameState::PLAY);
-          break;
         case sf::Keyboard::Tab:
           if (event.type == sf::Event::KeyReleased) {
-            if (state == GameState::OVERLAY) {
-              instance.setState(GameState::PLAY);
+            if (instance().state() == GameState::OVERLAY) {
+              instance().set_state(GameState::PLAY);
             } else {
-              instance.setState(GameState::OVERLAY);
+              instance().set_state(GameState::OVERLAY);
             }
           }
           break;
         case sf::Keyboard::X:
-          if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+          if (instance().state() == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
             inventory.drop_selected(player, map);
           }
           break;
         case sf::Keyboard::C:
-          if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
+          if (instance().state() == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
             const auto callback = [&play_state](int id) { play_state.add_used_collectibles(id); };
             const auto message = inventory.use_selected(player, callback);
             if (message) {
@@ -165,15 +151,15 @@ void Game::handle_settings_update(tol::Music& music) {
   window.create(
     sf::VideoMode(window_width * resolution_scale.x, window_height * resolution_scale.y), name, window_style);
 
-  instance.setSettingsChanged(false);
+  instance().set_settings_changed(false);
 }
 
 Game::Game(fs::path dir_, Settings& settings_):
-  dir(dir_), settings(settings_), instance(GameInstance(dir_)),
+  dir(dir_), settings(settings_), _instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-ruby.png"), asset_cache, std::make_shared<Stats>(instance.load_stats()),
-    instance.load_attacks(), "Ruby")),
+    fs::path("tilesets/character-ruby.png"), asset_cache, std::make_shared<Stats>(instance().load_stats()),
+    instance().load_attacks(), "Ruby")),
   mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
@@ -222,7 +208,7 @@ void Game::run() {
   Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
   std::reference_wrapper<Inventory> inventory = player.inventory();
 
-  instance.load(quest_stack, play_state);
+  instance().load(quest_stack, play_state);
 
   KeyInput key_input;
 
@@ -230,6 +216,9 @@ void Game::run() {
     "Welcome to a very loost island with some very loost "
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
+
+  instance().load_position(play_state);
+  play_state.set_inventory(instance().load_inventory());
 
   sf::Clock clock;
   std::chrono::milliseconds now = std::chrono::milliseconds(0);
@@ -262,7 +251,7 @@ void Game::run() {
     }
     nk_input_end(nuklear->ctx());
 
-    if (instance.isSettingsChanged()) {
+    if (instance().isSettingsChanged()) {
       handle_settings_update(music);
       nuklear->setSize(window.getSize());
     }
@@ -272,58 +261,64 @@ void Game::run() {
     window.clear();
     window.resetGLStates();
 
-    switch (instance.getState()) {
-      case GameState::QUIT:
-        window.close();
-        break;
-      case GameState::MENU:
-        nuklear->render_menu(instance, play_state, player, inventory, quest_stack);
-        break;
-      case GameState::INVENTORY:
-        window.draw(play_state);
-        info.update_time(std::chrono::milliseconds(millis));
-        window.draw(info);
-        window.draw(inventory);
-        break;
-      case GameState::OVERLAY:
-        window.draw(play_state);
-        info.update_time(std::chrono::milliseconds(millis));
-        window.draw(info);
-        window.draw(overlay);
-        break;
-      case GameState::FIGHT:
-        instance.setState(fight.with(now, last_npc_interaction, map));
-
-        if (instance.getState() == GameState::FIGHT)
-          window.draw(fight);
-        break;
-      case GameState::DEAD:
-        nuklear->render_death(instance, play_state);
-        break;
+    switch (_state) {
       case GameState::PLAY:
-      case GameState::QUEST:
-        instance.setState(play_state.update(key_input, window, now, dt, last_npc_interaction, info));
-        window.draw(play_state);
+        switch (instance().state()) {
+          case GameState::INVENTORY:
+            window.draw(play_state);
+            info.update_time(std::chrono::milliseconds(millis));
+            window.draw(info);
+            window.draw(inventory);
+            break;
+          case GameState::OVERLAY:
+            window.draw(play_state);
+            info.update_time(std::chrono::milliseconds(millis));
+            window.draw(info);
+            window.draw(overlay);
+            break;
+          case GameState::FIGHT:
+            instance().set_state(fight.with(now, last_npc_interaction, map));
 
-        info.update_time(std::chrono::milliseconds(millis));
-        window.draw(info);
+            if (instance().state() == GameState::FIGHT)
+              window.draw(fight);
+            break;
+          case GameState::DEAD:
+            nuklear->render_death(*this, play_state);
+            break;
+          case GameState::PLAY:
+          case GameState::QUEST:
+            instance().set_state(play_state.update(key_input, window, now, dt, last_npc_interaction, info));
+            window.draw(play_state);
 
-        nuklear->render_hud();
-        break;
-      case GameState::DIALOG:
-        window.draw(play_state);
+            info.update_time(std::chrono::milliseconds(millis));
+            window.draw(info);
 
-        if (last_npc_interaction) {
-          auto [state, quest] = dialog.show(*last_npc_interaction);
-          instance.setState(state);
+            nuklear->render_hud();
+            break;
+          case GameState::DIALOG:
+            window.draw(play_state);
 
-          if (state == GameState::QUEST) {
-            quest_stack.select(quest);
-          }
+            if (last_npc_interaction) {
+              auto [state, quest] = dialog.show(*last_npc_interaction);
+              instance().set_state(state);
+
+              if (state == GameState::QUEST) {
+                quest_stack.select(quest);
+              }
+            }
+            break;
+          default:
+            break;
         }
         break;
+      case GameState::MENU:
+        nuklear->render_menu(*this, play_state, player, inventory, quest_stack);
+        break;
       case GameState::SETTINGS:
-        nuklear->render_settings(instance, settings);
+        nuklear->render_settings(*this, settings);
+        break;
+      case GameState::QUIT:
+        window.close();
         break;
       default:
         break;

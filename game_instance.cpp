@@ -3,21 +3,21 @@
 namespace tol {
 
 GameInstance::GameInstance(const fs::path& exec_dir):
-  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
+  _state(GameState::PLAY), settings_changed(false), saves_dir(exec_dir / "saves") {}
 
-void GameInstance::setState(GameState new_state) {
-  state = new_state;
+void GameInstance::set_state(GameState state) {
+  _state = state;
 }
 
-GameState GameInstance::getState() {
-  return state;
+GameState GameInstance::state() {
+  return _state;
 }
 
 bool GameInstance::isSettingsChanged() const {
   return settings_changed;
 }
 
-void GameInstance::setSettingsChanged(bool value) {
+void GameInstance::set_settings_changed(bool value) {
   settings_changed = value;
 }
 

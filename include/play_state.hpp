@@ -87,10 +87,10 @@ class PlayState: public sf::Drawable {
 
   void set_attacks(const json& attacks_array);
 
-  std::set<int> used_collectibles() const;
+  [[nodiscard]] std::set<int> used_collectibles() const;
   void add_used_collectibles(int id);
   void set_used_collectibles(const json& attacks_array);
-  bool is_collectible_used(int id) const;
+  [[nodiscard]] bool is_collectible_used(int id) const;
 
   [[nodiscard]] bool check_unlock_condition(const std::string& condition_name, bool collided);
 };
