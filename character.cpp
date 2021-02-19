@@ -177,7 +177,7 @@ std::vector<sf::RectangleShape> Character::move(
   const auto player_top = player_bounds.top;
   const auto player_bottom = player_top + player_height;
 
-  const auto collisions = play_state.getMap().collisions_around(next_bounds);
+  const auto collisions = play_state.map().collisions_around(next_bounds);
 
   std::vector<sf::RectangleShape> shapes;
 

@@ -4,7 +4,7 @@ namespace tol {
 
 void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   target.setView(map_view);
-  target.draw(map);
+  target.draw(map());
 
   for (auto shape: collision_shapes) {
     shape.setScale(scale);
@@ -14,7 +14,7 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   }
 
   auto center = map_view.getCenter();
-  const auto& position = getPlayer().getPosition();
+  const auto& position = player().getPosition();
 
   auto ss =
     fmt::format("Center Coords: {:.1f}, {:.1f}\nPlayer: {:.1f}, {:.1f}\n", center.x, center.y, position.x, position.y);
@@ -32,16 +32,16 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 }
 
 PlayState::PlayState(
-  TiledMap& map_, Protagonist& player_, QuestStack& quest_stack_, std::shared_ptr<AssetCache> asset_cache_,
+  TiledMap& map, Protagonist& player, QuestStack& quest_stack, std::shared_ptr<AssetCache> asset_cache_,
   const sf::Vector2f& scale_, const sf::Vector2u& window_size):
   asset_cache(asset_cache_),
-  map(map_), player(player_), quest_stack(quest_stack_), scale(scale_) {
-  map_view.reset({ 0, (getMap().getSize().y - window_size.y) * scale_.y, (float)window_size.x, (float)window_size.y });
+  _map(map), _player(player), _quest_stack(quest_stack), scale(scale_) {
+  map_view.reset({ 0, (map.getSize().y - window_size.y) * scale_.y, (float)window_size.x, (float)window_size.y });
 
-  const auto spawn = getMap().getSpawn();
+  const auto spawn = map.getSpawn();
   if (spawn) {
     map_view.setCenter({ spawn->x * scale_.x, spawn->y * scale_.y });
-    player_.setPosition(*spawn);
+    player.setPosition(*spawn);
   }
 }
 
@@ -52,12 +52,12 @@ GameState PlayState::update(
   const auto window_size = window.getSize();
   map_view.setSize({ static_cast<float>(window_size.x), static_cast<float>(window_size.y) });
 
-  collision_shapes = getPlayer().move(
+  collision_shapes = player().move(
     (key_input.a && !key_input.d) ? std::optional(LEFT)
                                   : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
     (key_input.w && !key_input.s) ? std::optional(UP)
                                   : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-    dt * CHARACTER_MOVE_SPEED, now, *this, getMap().getCollectibles(), getMap().getSize(), info);
+    dt * CHARACTER_MOVE_SPEED, now, *this, map().getCollectibles(), map().getSize(), info);
 
   if (key_input.up && !key_input.down) {
     direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
@@ -87,12 +87,12 @@ GameState PlayState::update(
     }
   }
 
-  for (auto& npc: getMap().getNpcs()) {
-    const auto dist = getPlayer().distanceTo(npc);
-    const auto tileDiagonal = std::sqrt(std::pow(getMap().getTileSize().x, 2) + std::pow(getMap().getTileSize().y, 2));
+  for (auto& npc: map().getNpcs()) {
+    const auto dist = player().distanceTo(npc);
+    const auto tileDiagonal = std::sqrt(std::pow(map().getTileSize().x, 2) + std::pow(map().getTileSize().y, 2));
 
     if (dist < tileDiagonal) {
-      npc.lookToward(getPlayer().getPosition());
+      npc.lookToward(player().getPosition());
       npc.setEffectRect({ 480, 192, EFFECT_TILE_SIZE, EFFECT_TILE_SIZE });
 
       if (key_input.e) {
@@ -104,21 +104,21 @@ GameState PlayState::update(
     }
   }
 
-  map_view.setCenter(getMap().getView(window.getSize().x, window.getSize().y));
-  getMap().update(map_view, window, now);
+  map_view.setCenter(map().getView(window.getSize().x, window.getSize().y));
+  map().update(map_view, window, now);
 
   return state;
 }
 
-bool PlayState::check_unlock_condition(const std::string& condition_name, bool collided) const {
+[[nodiscard]] bool PlayState::check_unlock_condition(const std::string& condition_name, bool collided) {
   if (condition_name == "bridge_gate") {
-    return getQuestStack().completed(0);
+    return quest_stack().completed(0);
   }
 
   if (condition_name == "city_gate_1") {
-    if (getQuestStack().completed(1)) {
-      if (collided && !getQuestStack().completed(2) && getQuestStack().getSelected() != 2) {
-        getQuestStack().select(2);
+    if (quest_stack().completed(1)) {
+      if (collided && !quest_stack().completed(2) && quest_stack().getSelected() != 2) {
+        quest_stack().select(2);
       }
 
       return true;
@@ -126,29 +126,21 @@ bool PlayState::check_unlock_condition(const std::string& condition_name, bool c
   }
 
   if (condition_name == "city_gate_2") {
-    return getQuestStack().completed(2);
+    return quest_stack().completed(2);
   }
 
   return false;
 }
 
-sf::Vector2f PlayState::player_position() const {
-  return getPlayer().getPosition();
-}
-
 void PlayState::set_inventory(const json& inventory_array) {
-  auto& inventory = getPlayer().inventory();
-  auto& collectibles = getMap().getCollectibles();
+  auto& inventory = player().inventory();
+  auto& collectibles = map().getCollectibles();
 
   for (const auto& id: inventory_array) {
     auto item = collectibles.at(id.get<int>());
     inventory.add(std::make_pair(id, item));
     collectibles.erase(id.get<int>());
   }
-}
-
-void PlayState::set_player_position(sf::Vector2f pos) {
-  getPlayer().setPosition(pos);
 }
 
 } // namespace tol

@@ -49,7 +49,7 @@ void GameInstance::save(
 
   json save;
 
-  auto player_pos = play_state.player_position();
+  auto player_pos = play_state.player().getPosition();
   save["player"]["position"]["x"] = player_pos.x;
   save["player"]["position"]["y"] = player_pos.y;
 
@@ -112,12 +112,13 @@ void GameInstance::load_position(PlayState& play_state) {
 
   auto& player_j = save["player"]["position"];
 
-  auto player_pos = play_state.player_position();
+  auto& player = play_state.player();
+  auto player_pos = player.getPosition();
 
   const float x = get_or_else<float>(player_j, "x", player_pos.x);
   const float y = get_or_else<float>(player_j, "y", player_pos.y);
 
-  play_state.set_player_position(sf::Vector2f(x, y));
+  player.setPosition(sf::Vector2f(x, y));
 }
 
 json GameInstance::load_inventory() const {
