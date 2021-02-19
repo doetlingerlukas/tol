@@ -1,5 +1,9 @@
 # tol
 
+A 2D game written in C++.
+
+View the provided [specification](specification.md) for more detail.
+
 ## Dependencies
 
 - CMake (https://cmake.org)
@@ -53,3 +57,4 @@ rake run
 | Show Inventory    | <kbd>I</kbd>                                                              |
 | Show Quests       | <kbd>⇥</kbd> (Tab)                                                        |
 | Debug Mode        | <kbd>H</kbd>                                                              |
+| Open Menu         | <kbd>Esc</kbd>                                                            |
