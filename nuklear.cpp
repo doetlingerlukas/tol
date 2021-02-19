@@ -29,7 +29,7 @@ void Nuklear::render_death(Game& game, PlayState& play_state) const {
 
   struct nk_color background = nk_rgba(r, g, b, a);
 
-  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 24 * scale.y);
+  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 32 * scale.y);
   nk_style_set_font(ctx, &font->handle);
 
   struct nk_style& s = ctx->style;
