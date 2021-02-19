@@ -4,6 +4,8 @@
 #include <optional>
 
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
+
 #include <fmt/core.h>
 
 #include "asset_cache.hpp"
@@ -13,12 +15,15 @@
 #include "overlay/info.hpp"
 #include "quest.hpp"
 
+
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
 const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;
 const float CHARACTER_MOVE_SPEED = 80.f;
 
 namespace tol {
+
+using json = nlohmann::json;
 
 class TiledMap;
 class Protagonist;

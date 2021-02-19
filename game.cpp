@@ -172,11 +172,11 @@ Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-whitebeard.png"),
+    fs::path("tilesets/character-ruby.png"),
     asset_cache,
     std::make_shared<Stats>(instance.load_stats()),
     instance.load_attacks(),
-    "detlef")), mouse_pressed(false) {
+    "Ruby")), mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 
@@ -218,6 +218,16 @@ void Game::run() {
   map.setPlayer(&player);
 
   QuestStack quest_stack(info);
+
+  for(size_t quest_id: instance.load_quests()["completed"]) {
+    quest_stack.quests[quest_id].setCompleted();
+  }
+
+  const auto& active_quest = instance.load_quests()["active"];
+
+  if (!active_quest.is_null()) {
+    quest_stack.select(active_quest);
+  }
 
   PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());
   KeyInput key_input;
@@ -280,7 +290,7 @@ void Game::run() {
         window.close();
         break;
       case GameState::MENU:
-        nuklear->renderMenu(instance, play_state, player, inventory);
+        nuklear->renderMenu(instance, play_state, player, inventory, quest_stack);
         break;
       case GameState::INVENTORY:
         window.draw(play_state);

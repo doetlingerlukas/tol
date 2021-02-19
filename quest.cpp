@@ -54,8 +54,16 @@ void QuestStack::check(PlayState& play_state) {
   }
 }
 
-bool QuestStack::completed(size_t index) {
+bool QuestStack::completed(size_t index) const {
   return quests[index].completed();
+}
+
+void QuestStack::setCompleted(size_t index) const {
+  quests[index].setCompleted();
+}
+
+[[nodiscard]] size_t QuestStack::count() const {
+  return quests.size();
 }
 
 } // namespace tol

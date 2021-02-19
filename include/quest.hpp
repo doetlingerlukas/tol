@@ -16,7 +16,7 @@ class Quest {
   std::string title_;
   std::string description_;
   std::function<bool(PlayState& player)> condition;
-  bool completed_ = false;
+  mutable bool completed_ = false;
 
   public:
   Quest(std::string title, std::string description, std::function<bool(PlayState& play_state)> condition);
@@ -33,11 +33,15 @@ class Quest {
     return completed_;
   }
 
-  void check_condition(PlayState& play_state, Info& info);
+  inline void setCompleted() const {
+    completed_ = true;
+  }
+
+  void check_condition(PlayState& player, Info& info);
 };
 
 class QuestStack {
-  std::optional<int> selected;
+  mutable std::optional<int> selected;
   Info& info;
 
   public:
@@ -48,10 +52,13 @@ class QuestStack {
   void select(size_t index);
 
   [[nodiscard]] int getSelected() const;
+  void setCompleted(size_t index) const;
 
   void check(PlayState& play_state);
 
-  bool completed(size_t index);
+  bool completed(size_t index) const;
+
+  [[nodiscard]] size_t count() const;
 };
 
 } // namespace tol
