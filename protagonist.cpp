@@ -30,7 +30,7 @@ std::vector<sf::RectangleShape> Protagonist::move(
       auto& [id, collectible] = *it;
 
       if (collectible.collides_with(bounds_)) {
-        if (_inventory.add(*it)) {
+        if (inventory().add(*it)) {
           pick_up_sound.play();
           info.display_info(fmt::format("Item collected: {}", collectible.name()), std::chrono::seconds(5));
           it = collectibles.erase(it);
@@ -72,10 +72,9 @@ void Protagonist::drop_item() {
 std::optional<std::string> Protagonist::use_item(std::pair<int, Object> item) {
   auto [id, collectible] = item;
   std::cout << "Item used: " << collectible.name() << std::endl;
-  const auto& found = collectible_effects.find(collectible.name());
-  if (found != collectible_effects.end()) {
-    const auto& callback = found->second;
-    return callback();
+  const auto& effect = collectible.effect();
+  if (effect) {
+    (*effect)(*this);
   }
 
   return std::nullopt;

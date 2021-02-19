@@ -32,7 +32,7 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 }
 
 PlayState::PlayState(
-  TiledMap& map, Protagonist& player, QuestStack& quest_stack, std::shared_ptr<AssetCache> asset_cache_,
+  Map& map, Protagonist& player, QuestStack& quest_stack, std::shared_ptr<AssetCache> asset_cache_,
   const sf::Vector2f& scale_, const sf::Vector2u& window_size):
   asset_cache(asset_cache_),
   _map(map), _player(player), _quest_stack(quest_stack), scale(scale_) {
@@ -57,7 +57,7 @@ GameState PlayState::update(
                                   : ((key_input.d && !key_input.a) ? std::optional(RIGHT) : std::nullopt),
     (key_input.w && !key_input.s) ? std::optional(UP)
                                   : ((key_input.s && !key_input.w) ? std::optional(DOWN) : std::nullopt),
-    dt * CHARACTER_MOVE_SPEED, now, *this, map().getCollectibles(), map().getSize(), info);
+    dt * CHARACTER_MOVE_SPEED, now, *this, map().collectibles(), map().getSize(), info);
 
   if (key_input.up && !key_input.down) {
     direction.y = std::clamp(direction.y + 1.0 * dt * VIEW_MOVE_ACCEL, 1.0, 25.0);
@@ -134,7 +134,7 @@ GameState PlayState::update(
 
 void PlayState::set_inventory(const json& inventory_array) {
   auto& inventory = player().inventory();
-  auto& collectibles = map().getCollectibles();
+  auto& collectibles = map().collectibles();
 
   for (const auto& id: inventory_array) {
     auto item = collectibles.at(id.get<int>());

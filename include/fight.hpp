@@ -253,7 +253,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, TiledMap& map) {
+  GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, Map& map) {
     now = now_;
 
     const auto& player_attacks = player.attacks();
@@ -268,11 +268,12 @@ class Fight: public sf::Drawable, public sf::Transformable {
     }
 
     if (npc_interact && npc == nullptr) {
-      const auto& characters = map.getCharacters();
-      const auto& res = std::find_if(
-        characters.cbegin(), characters.cend(), [&npc_interact](const auto& c) { return c->name() == *npc_interact; });
+      const auto& characters_ = map.characters();
+      const auto& res = std::find_if(characters_.cbegin(), characters_.cend(), [&npc_interact](const auto& c) {
+        return c->name() == *npc_interact;
+      });
 
-      if (res != std::end(characters))
+      if (res != characters_.cend())
         npc = *res;
     }
 

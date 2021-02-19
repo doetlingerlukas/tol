@@ -24,14 +24,14 @@ namespace tol {
 
 using json = nlohmann::json;
 
-class TiledMap;
+class Map;
 class Protagonist;
 
 class PlayState: public sf::Drawable {
   std::shared_ptr<AssetCache> asset_cache;
 
   sf::View map_view;
-  std::reference_wrapper<TiledMap> _map;
+  std::reference_wrapper<Map> _map;
   std::reference_wrapper<Protagonist> _player;
   std::reference_wrapper<QuestStack> _quest_stack;
 
@@ -50,10 +50,10 @@ class PlayState: public sf::Drawable {
     return _player;
   }
 
-  [[nodiscard]] inline const TiledMap& map() const {
+  [[nodiscard]] inline const Map& map() const {
     return _map;
   }
-  [[nodiscard]] inline TiledMap& map() {
+  [[nodiscard]] inline Map& map() {
     return _map;
   }
 
@@ -65,7 +65,7 @@ class PlayState: public sf::Drawable {
   }
 
   PlayState(
-    TiledMap& _map, Protagonist& player, QuestStack& quest_stack, std::shared_ptr<AssetCache> asset_cache_,
+    Map& _map, Protagonist& player, QuestStack& quest_stack, std::shared_ptr<AssetCache> asset_cache_,
     const sf::Vector2f& scale_, const sf::Vector2u& window_size);
 
   GameState update(
@@ -79,9 +79,9 @@ class PlayState: public sf::Drawable {
 
 } // namespace tol
 #ifndef TOL_MAP_HPP
-#include <map.hpp>
+#include "map.hpp"
 #endif
 
 #ifndef TOL_PROTAGONIST_HPP
-#include <protagonist.hpp>
+#include "protagonist.hpp"
 #endif

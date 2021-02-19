@@ -154,7 +154,7 @@ void Inventory::mouse(sf::Vector2f location, bool pressed) {
   mouse_pressed = pressed;
 }
 
-void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
+void Inventory::drop_selected(Protagonist& player, Map& map) {
   if (selected) {
     auto [id, collectible] = remove(*selected);
 
@@ -163,7 +163,7 @@ void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
     new_position.y -= collectible.bounds().height / 2.f;
     collectible.setPosition(new_position);
 
-    map.getCollectibles().emplace(std::make_pair(id, collectible));
+    map.collectibles().emplace(std::make_pair(id, collectible));
     select_next();
 
     player.drop_item();
