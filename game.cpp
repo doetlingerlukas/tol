@@ -106,7 +106,7 @@ void Game::handle_event(
             if (state == GameState::INVENTORY) {
               instance.setState(GameState::PLAY);
             } else {
-          instance.setState(GameState::INVENTORY);
+              instance.setState(GameState::INVENTORY);
             }
           }
           break;
@@ -118,7 +118,7 @@ void Game::handle_event(
             if (state == GameState::OVERLAY) {
               instance.setState(GameState::PLAY);
             } else {
-          instance.setState(GameState::OVERLAY);
+              instance.setState(GameState::OVERLAY);
             }
           }
           break;
@@ -265,7 +265,7 @@ void Game::run() {
       nuklear->setSize(window.getSize());
     }
 
-    quest_stack.check(player);
+    quest_stack.check(play_state);
 
     window.clear();
     window.resetGLStates();

@@ -94,6 +94,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   void addCharacter(const Character* character);
 
   std::map<int, Object>& getCollectibles();
+  std::optional<std::pair<int, Object>> getCollectible(const std::string& name);
 
   std::vector<Collision> collisions_around(const sf::FloatRect& player) const;
 
@@ -104,6 +105,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
   std::vector<const Character*> getCharacters() const;
 
   std::vector<Npc>& getNpcs();
+  const Npc& getNpc(const std::string& name);
 
   void setPlayer(Character* player);
 

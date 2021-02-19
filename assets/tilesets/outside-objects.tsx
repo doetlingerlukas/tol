@@ -261,6 +261,11 @@
    <property name="y" type="int" value="0"/>
   </properties>
  </tile>
+ <tile id="530">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="1" y="1" width="30" height="31"/>
+  </objectgroup>
+ </tile>
  <tile id="582">
   <properties>
    <property name="y" type="int" value="1"/>
