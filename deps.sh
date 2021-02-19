@@ -22,9 +22,10 @@ elif [[ "${uname}" == 'Linux' ]]; then
     git clone https://github.com/microsoft/vcpkg
     pushd vcpkg
     ./bootstrap-vcpkg.sh
-    export PATH="$(pwd):${PATH}"
     popd
   fi
+
+  export PATH="$(pwd)/vcpkg:${PATH}"
 
   if ! which tiled; then
     sudo curl -L https://github.com/mapeditor/tiled/releases/download/v1.4.3/Tiled-1.4.3-x86_64.AppImage -o /usr/local/bin/tiled
