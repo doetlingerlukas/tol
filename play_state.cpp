@@ -33,9 +33,9 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
 PlayState::PlayState(
   Map& map, Protagonist& player, QuestStack& quest_stack, std::shared_ptr<AssetCache> asset_cache_,
-  const sf::Vector2f& scale_, const sf::Vector2u& window_size):
+  const sf::Vector2f& scale_, const sf::Vector2u& window_size, Music& music):
   asset_cache(asset_cache_),
-  _map(map), _player(player), _quest_stack(quest_stack), scale(scale_) {
+  _map(map), _player(player), _quest_stack(quest_stack), _music(music), scale(scale_) {
   map_view.reset({ 0, (map.getSize().y - window_size.y) * scale_.y, static_cast<float>(window_size.x),
                    static_cast<float>(window_size.y) });
 
