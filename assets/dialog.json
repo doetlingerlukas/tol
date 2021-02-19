@@ -4,18 +4,46 @@
       "question": "Welcome to Jen's Loost & Found!",
       "response": [
         {
-          "question": "Hi, do also offer food?",
-          "response": [
-            {
-              "question": "Of course!",
-              "response": [
-                {
-                  "question": "Okay then, one baguette, please!",
-                  "response": 0
+          "question": "What is this place?",
+          "response": {
+            "question": "This is St. loostistan, a community of believers to worship the tree",
+            "response": [
+              {
+                "question": "A ... tree?",
+                "response": {
+                  "question": "yes the tree is the sole source of reason in this unreasonable world.",
+                  "response": [
+                    {
+                      "question": "I think i get your name. You are lost and haven't found yourself",
+                      "response": 2
+                    },
+                    {
+                      "question": "That is interesting. Maybe the tree can also save me.",
+                      "response": 0
+                    }
+                  ]
                 }
-              ]
-            }
-          ]
+              },
+              {
+                "question": "Nah I don't even want to know",
+                "response": 0
+              }
+            ]
+          }
+        },
+        {
+          "question": "Do you know why I am here?",
+          "response": {
+            "question": "The tree in its infinte wisdom must have sent you to test us",
+            "response": 0
+          }
+        },
+        {
+          "question" : "Can I have one of those baguettes?",
+          "response" : {
+            "question": "The baguette is powerfull, it must be used with care",
+            "response": 0
+          }
         }
       ]
     },
@@ -23,50 +51,54 @@
       "question": "Are you lost?",
       "response": [
         {
-          "question": "Yes.",
+          "question": "Yes, where am I?",
           "response": [
             {
-              "question": "I am Detlef de Loost.",
+              "question": "You are on a sacret island and you are not supposed to be here.",
               "response": [
                 {
-                  "question": "What a shitty name.",
-                  "response": [
-                    {
-                      "question": "You take that back!",
-                      "response": 2
-                    },
-                    {
-                      "question": "Don't be so rude.",
-                      "response": 0
-                    }
-                  ]
-                },
-                {
-                  "question": "Nice to meet you.",
-                  "response": 0
-                }
-              ]
-            },
-            {
-              "question": "You are lost, and I lost something.",
-              "response": [
-                {
-                  "question": "Well that's too bad.",
-                  "response": 0
-                },
-                {
-                  "question": "Where?",
-                  "response": [
-                    {
-                      "question": "Somewhere in these woods.",
-                      "response": [
-                        {
-                          "question": "I'll try and find it for you.",
-                          "response": 101
+                  "question": "Why is that?",
+                  "response": {
+                    "question": "You have not proven yourself to be worthy, to relinquish in the power.",
+                    "response": [
+                      {
+                        "question": "Can I do something to change that?",
+                        "response": {
+                          "question": "Find me my tools and I'll grant you entry to our community.",
+                          "response": [
+                            {
+                              "question": "Sure I'll help you.",
+                              "response": 101
+                            },
+                            {
+                              "question": "I dont want anything to do with you or your community.",
+                              "response": 0
+                            }
+                          ]
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "question": "Nevermind",
+                  "response": 0
+                },
+                {
+                  "question": "Are you joking or just lost?",
+                  "response": {
+                    "question": "I knew it you are the evil, you must be eradicated!",
+                    "response": [
+                      {
+                        "question": "You are mentally ill and must be stopped.",
+                        "response": 2
+                      },
+                      {
+                        "question": "Sure whatever floats your boat.",
+                        "response": 0
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -80,53 +112,33 @@
     },
     "Juan": [
       {
-        "question": "Are you lost?",
+        "question": "Step back!",
         "response": [
           {
-            "question": "What is happening?",
-            "response": "Exceptional things."
+            "question": "Why do you have a trident?",
+            "response": "To protect the tree from all the evil powers."
           },
           {
-            "question": "You think this is funny?",
-            "response": [
-              {
-                "question": "Yes",
-                "response": 2
-              },
-              {
-                "question": "No",
-                "response": 1
-              }
-            ]
+            "question": "Why?",
+            "response": {
+              "question": "I sense the tree's negative energy and it is because of you",
+              "response": [
+                {
+                  "question": "That will be a problem because I need to go past that tree.",
+                  "response": 2
+                },
+                {
+                  "question": "I think I feel the power too, the tree gives me hope",
+                  "response": 0
+                }
+              ]
+            }
           }
         ]
       },
       {
-        "question": "You, who do you think you are?",
-        "response": [
-          {
-            "question": "None of your business!",
-            "response": [
-              {
-                "question": "Yes I think it is.",
-                "response": 0
-              }
-            ]
-          },
-          {
-            "question": "Why you heff to be mad?",
-            "response": [
-              {
-                "question": "I am not mad, it's just a game!",
-                "response": 0
-              }
-            ]
-          },
-          {
-            "question": "Who are you?",
-            "response": "I am Juan, the wisdom of Oz."
-          }
-        ]
+        "question": "Who are you?",
+        "response": "I am Juan, the wisdom of Oz and protector of the tree."
       }
     ]
   }
