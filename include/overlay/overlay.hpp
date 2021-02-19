@@ -20,9 +20,11 @@ class Overlay: public sf::Drawable, public sf::Transformable {
   bool mouse_pressed;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
-    sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
+    sf::Vector2f target_size(
+      { std::min(static_cast<float>(target.getSize().x), 1000.f), static_cast<float>(target.getSize().y) });
     sf::FloatRect overlay_dims(
-      ((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.1f, target_size.x, target_size.y * 0.85f);
+      (static_cast<float>(target.getSize().x) - target_size.x) / 2, target_size.y * 0.1f, target_size.x,
+      target_size.y * 0.85f);
     sf::FloatRect stats_rect(overlay_dims.left, overlay_dims.top, overlay_dims.width * 0.29f, overlay_dims.height);
     sf::FloatRect quests_rect(
       stats_rect.left + overlay_dims.width * 0.3f, overlay_dims.top, overlay_dims.width * 0.7f, overlay_dims.height);
@@ -36,7 +38,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     header.setOutlineColor(sf::Color::Black);
     header.setOutlineThickness(4.f);
     header.setString("Stats & Quests");
-    header.setPosition({ ((float)target.getSize().x - header.getGlobalBounds().width) / 2, 0 });
+    header.setPosition({ (static_cast<float>(target.getSize().x) - header.getGlobalBounds().width) / 2, 0 });
     target.draw(header);
 
     sf::RectangleShape stats_box;

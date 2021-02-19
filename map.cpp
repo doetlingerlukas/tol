@@ -268,7 +268,8 @@ std::optional<sf::Vector2f> Map::getSpawn() {
     return std::nullopt;
   }
 
-  return std::optional(sf::Vector2f({ (float)spawn->getPosition().x, (float)spawn->getPosition().y }));
+  return std::optional(
+    sf::Vector2f({ static_cast<float>(spawn->getPosition().x), static_cast<float>(spawn->getPosition().y) }));
 }
 
 sf::Vector2f Map::getView(const float window_width, const float window_height) {
