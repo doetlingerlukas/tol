@@ -133,12 +133,12 @@
                 }
               ]
             }
+          },
+          {
+            "question": "Who are you?",
+            "response": "I am Juan, the wisdom of Oz and protector of the tree."
           }
         ]
-      },
-      {
-        "question": "Who are you?",
-        "response": "I am Juan, the wisdom of Oz and protector of the tree."
       }
     ]
   }

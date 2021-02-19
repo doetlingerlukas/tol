@@ -1,42 +1,22 @@
 {
   "characters": {
-    "npc1": {
-      "strength": 10,
-      "speed": 10,
-      "experience": 200,
-      "health": 100,
-      "attacks": [
-        {
-          "name": "scratch",
-          "damage": 5
-        },
-        {
-          "name": "holy birnbamm",
-          "damage": 12
-        },
-        {
-          "name": "use spider",
-          "damage": 32
-        }
-      ]
-    },
     "Detlef de Loost": {
       "strength": 12,
       "speed": 10,
-      "experience": 100,
+      "experience": 170,
       "health": 100,
       "attacks": [
+        {
+          "name": "spit",
+          "damage": 2
+        },
         {
           "name": "scratch",
           "damage": 5
         },
         {
-          "name": "holy birnbamm",
-          "damage": 12
-        },
-        {
-          "name": "use spider",
-          "damage": 32
+          "name": "non-believers justice",
+          "damage": 20
         }
       ]
     },
@@ -51,19 +31,19 @@
           "damage": 5
         },
         {
-          "name": "holy birnbamm",
-          "damage": 12
+          "name": "wisdom enhancer",
+          "damage": 17
         },
         {
-          "name": "use spider",
-          "damage": 32
+          "name": "Trident fury",
+          "damage": 24
         }
       ]
     },
     "Jen's Loost & Found": {
-      "strength": 0,
+      "strength": 11,
       "speed": 10,
-      "experience": 500,
+      "experience": 300,
       "health": 100,
       "attacks": [
         {
@@ -71,12 +51,12 @@
           "damage": 5
         },
         {
-          "name": "holy birnbamm",
-          "damage": 12
+          "name": "Wet baguette",
+          "damage": 14
         },
         {
-          "name": "use spider",
-          "damage": 32
+          "name": "French kindness",
+          "damage": 19
         }
       ]
     }
