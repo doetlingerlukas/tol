@@ -20,8 +20,8 @@ class Protagonist;
 
 class Inventory: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
-  int max_size;
-  std::vector<std::pair<int, Object>> elements;
+  size_t max_size;
+  std::vector<std::pair<int, Object>> _items;
 
   sf::Vector2f mouse_location;
   bool mouse_pressed;
@@ -29,24 +29,20 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
+  void select_next();
+
   public:
-  Inventory(int max_size_, std::shared_ptr<AssetCache> asset_cache_);
+  Inventory(size_t max_size_, std::shared_ptr<AssetCache> asset_cache_);
 
   [[nodiscard]] int size() const;
-
-  std::vector<std::pair<int, Object>>& getElements();
-
-  bool add(std::pair<int, Object> new_element);
-
+  [[nodiscard]] const std::vector<std::pair<int, Object>>& items() const;
+  bool add(std::pair<int, Object> item);
   std::pair<int, Object> remove(size_t index);
 
   void mouse(sf::Vector2f location, bool pressed);
 
   void drop_selected(Protagonist& player, TiledMap& map);
-
   std::optional<std::string> use_selected(Protagonist& player);
-
-  void select_next();
 };
 
 } // namespace tol

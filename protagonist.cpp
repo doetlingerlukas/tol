@@ -57,8 +57,8 @@ std::vector<Attack> Protagonist::attacks(const json& attack_json) const {
   return att;
 }
 
-std::vector<std::pair<int, Object>>& Protagonist::getInventoryElements() {
-  return inventory.getElements();
+const std::vector<std::pair<int, Object>>& Protagonist::getInventoryElements() const {
+  return inventory.items();
 }
 
 Inventory& Protagonist::getInventory() {

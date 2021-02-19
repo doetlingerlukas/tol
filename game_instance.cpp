@@ -84,9 +84,9 @@ void GameInstance::save(const PlayState& play_state, const Character& player, co
 
   auto& inventory_array = save["player"]["inventory"] = json::array();
 
-  const auto& inventory_elements = inventory.getElements();
+  const auto& inventory_items = inventory.items();
 
-  for(const auto& [id, obj]: inventory_elements) {
+  for (const auto& [id, obj]: inventory_items) {
     inventory_array.push_back(id);
   }
 

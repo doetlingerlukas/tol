@@ -71,7 +71,7 @@ class Protagonist: public Character {
     std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles,
     const sf::Vector2f& map_size, Info& info);
 
-  std::vector<std::pair<int, Object>>& getInventoryElements();
+  const std::vector<std::pair<int, Object>>& getInventoryElements() const;
 
   Inventory& getInventory();
 

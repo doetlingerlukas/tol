@@ -35,9 +35,9 @@ QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_
       return false;
     }));
   quests.push_back(Quest("Get a baguette.", "Find a baguette to stab your last opponent.", [](auto play_state) {
-    const auto& elements = play_state.getPlayer().getInventoryElements();
+    const auto& items = play_state.getPlayer().getInventoryElements();
     return std::any_of(
-      elements.cbegin(), elements.cend(), [](const auto& element) { return element.second.getName() == "baguette"; });
+      items.cbegin(), items.cend(), [](const auto& item) { return item.second.getName() == "baguette"; });
   }));
 }
 
