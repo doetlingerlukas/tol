@@ -47,7 +47,7 @@ class Nuklear {
   public:
   [[nodiscard]] struct nk_context* getCtx() const;
 
-  void renderMenu(GameInstance& game, PlayState& play_state) const;
+  void renderMenu(GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const;
 
   void renderDeath(GameInstance& game, PlayState& play_state) const;
 

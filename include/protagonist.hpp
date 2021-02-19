@@ -5,6 +5,8 @@
 #include <optional>
 
 #include <SFML/Audio.hpp>
+#include <nlohmann/json.hpp>
+#include <map>
 
 #include "attack.hpp"
 #include "character.hpp"
@@ -12,6 +14,8 @@
 #include "inventory.hpp"
 
 namespace tol {
+
+using json = nlohmann::json;
 
 class Protagonist: public Character {
   Inventory inventory;
@@ -52,7 +56,7 @@ class Protagonist: public Character {
       } }
   };
 
-  [[nodiscard]] std::vector<Attack> attacks() const;
+  std::vector<Attack> attacks(const json& attack_json) const;
 
   std::set<std::string> talked_to_npcs;
   std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);
@@ -60,7 +64,7 @@ class Protagonist: public Character {
   public:
   Protagonist(
     const fs::path& path, std::shared_ptr<AssetCache> asset_cache, std::shared_ptr<Stats> stats,
-    const std::string& name);
+    const json& attack_json, const std::string& name);
 
   std::vector<sf::RectangleShape> move(
     std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed,

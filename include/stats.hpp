@@ -1,10 +1,8 @@
 #pragma once
 
-#include <future>
 #include <iostream>
 #include <map>
-#include <mutex>
-#include <thread>
+#include <nlohmann/json.hpp>
 
 #include <nlohmann/json.hpp>
 
@@ -15,6 +13,7 @@ using json = nlohmann::json;
 template <typename T> class StatsProps {
   virtual void increase(T value) = 0;
   virtual T get() const = 0;
+  virtual void set(T stat) = 0;
   virtual std::ostream& print(std::ostream& print) const = 0;
 
   friend std::ostream& operator<<(std::ostream& stream, const StatsProps& stats) {
@@ -33,6 +32,8 @@ class Health: public StatsProps<size_t> {
   void increase(size_t value) override;
 
   [[nodiscard]] size_t get() const override;
+
+  void set(size_t stat) override;
 
   void decrease(size_t value);
 
@@ -53,6 +54,8 @@ class Strength: public StatsProps<size_t> {
 
   [[nodiscard]] size_t get() const override;
 
+  void set(size_t stat) override;
+
   virtual std::ostream& print(std::ostream& out) const override;
 };
 
@@ -65,6 +68,8 @@ class Speed: public StatsProps<size_t> {
   void increase(size_t value) override;
 
   [[nodiscard]] size_t get() const override;
+
+  void set(size_t stat) override;
 
   virtual std::ostream& print(std::ostream& out) const override;
 };
@@ -84,6 +89,9 @@ class Experience: public StatsProps<size_t> {
   [[nodiscard]] size_t get() const override;
 
   [[nodiscard]] virtual size_t getLevel() const;
+
+  void set(size_t stat) override;
+  void setAll(size_t xp, size_t lvl);
 
   virtual std::ostream& print(std::ostream& out) const override;
 };

@@ -126,6 +126,17 @@ sf::Vector2f PlayState::player_position() const {
   return getPlayer().getPosition();
 }
 
+void PlayState::set_inventory(const json& inventory_array) {
+  auto& inventory = getPlayer().getInventory();
+  auto& collectibles = getMap().getCollectibles();
+
+  for(const auto& id: inventory_array) {
+    auto item = collectibles.at(id.get<int>());
+    inventory.add(std::make_pair(id, item));
+    collectibles.erase(id.get<int>());
+  }
+}
+
 void PlayState::set_player_position(sf::Vector2f pos) {
   getPlayer().setPosition(pos);
 }

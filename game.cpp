@@ -172,9 +172,11 @@ Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-ruby.png"), asset_cache,
-    std::make_shared<Stats>(json({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } })),
-    "Ruby")) {
+    fs::path("tilesets/character-ruby.png"),
+    asset_cache,
+    std::make_shared<Stats>(instance.load_stats()),
+    instance.load_attacks(),
+    "Ruby")), mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 
@@ -217,6 +219,16 @@ void Game::run() {
 
   QuestStack quest_stack(info);
 
+  for(size_t quest_id: instance.load_quests()["completed"]) {
+    quest_stack.quests[quest_id].setCompleted();
+  }
+
+  const auto& active_quest = instance.load_quests()["active"];
+
+  if (!active_quest.is_null()) {
+    quest_stack.select(active_quest);
+  }
+
   PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());
   KeyInput key_input;
   tol::Music music(fs::path("assets/music"), settings.volume_level);
@@ -228,6 +240,9 @@ void Game::run() {
     std::chrono::seconds(10));
 
   Overlay overlay(asset_cache, player.getStats(), quest_stack);
+
+  instance.load_position(play_state);
+  play_state.set_inventory(instance.load_inventory());
 
   std::reference_wrapper<Inventory> inventory = player.getInventory();
 
@@ -275,7 +290,7 @@ void Game::run() {
         window.close();
         break;
       case GameState::MENU:
-        nuklear->renderMenu(instance, play_state);
+        nuklear->renderMenu(instance, play_state, player, inventory, quest_stack);
         break;
       case GameState::INVENTORY:
         window.draw(play_state);

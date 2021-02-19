@@ -3,7 +3,7 @@
 namespace tol {
 
 GameInstance::GameInstance(const fs::path& exec_dir):
-  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
+  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") { }
 
 void GameInstance::setState(GameState new_state) {
   state = new_state;
@@ -21,7 +21,36 @@ void GameInstance::setSettingsChanged(bool value) {
   settings_changed = value;
 }
 
-void GameInstance::save(const PlayState& play_state) const {
+json GameInstance::init() const {
+  auto save_file = saves_dir / "game.json";
+  std::ifstream ifs(save_file);
+
+  json save;
+
+  try {
+    save = json::parse(ifs);
+  } catch(std::exception& ex) {
+    save = json::object({
+      { "player", {
+        { "position", {
+          { "x", 543 },
+          { "y", 2845 }
+        } },
+        { "stats", player_default_stats },
+        { "attacks", player_default_attacks },
+        { "quests", {
+          { "completed", nullptr },
+          { "active", nullptr }
+        } },
+        { "inventory", nullptr }
+      }}
+    });
+  }
+
+  return save;
+}
+
+void GameInstance::save(const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const {
   if (!fs::exists(saves_dir)) {
     fs::create_directory(saves_dir);
   }
@@ -29,33 +58,87 @@ void GameInstance::save(const PlayState& play_state) const {
   json save;
 
   auto player_pos = play_state.player_position();
-  save["player"]["x"] = player_pos.x;
-  save["player"]["y"] = player_pos.y;
+  save["player"]["position"]["x"] = player_pos.x;
+  save["player"]["position"]["y"] = player_pos.y;
+
+  auto& stats = save["player"]["stats"];
+
+  const auto& player_stats = player.getStats();
+
+  stats["health"] = player_stats->health().get();
+  stats["speed"] = player_stats->speed().get();
+  stats["experience"] = player_stats->experience().get();
+  stats["level"] = player_stats->experience().getLevel();
+  stats["strength"] = player_stats->strength().get();
+
+  auto& attacks = save["player"]["attacks"] = json::array();
+
+  const auto& player_attacks = player.getAttacks();
+
+  for(const auto& attack: player_attacks) {
+    attacks.push_back(json::object({
+      {"name", attack.getName() },
+      {"damage", attack.getDamage() }
+    }));
+  }
+
+  auto& inventory_array = save["player"]["inventory"] = json::array();
+
+  const auto& inventory_elements = inventory.getElements();
+
+  for(const auto& [id, obj]: inventory_elements) {
+    inventory_array.push_back(id);
+  }
+
+  auto& quests_json = save["player"]["quests"];
+
+  auto& completed_quests = quests_json["completed"] = json::array();
+
+  for (size_t i = 0; i < quests.count(); i++) {
+    if(quests.completed(i)) {
+      completed_quests.push_back(i);
+    }
+  }
+
+  quests_json["active"] = quests.getSelected();
 
   std::ofstream ofs(saves_dir / "game.json", std::ofstream::out | std::ofstream::trunc);
   ofs << save.dump(2);
-  ofs.close();
 }
 
-void GameInstance::load(PlayState& play_state) {
-  auto save_file = saves_dir / "game.json";
-  json save;
+json GameInstance::load_attacks() const {
+  json save = init();
+  const auto& player = save["player"];
+  return get_or_else(player, "attacks", player_default_attacks);
+}
 
-  if (fs::exists(save_file)) {
-    std::ifstream ifs(save_file);
-    save = json::parse(ifs);
-  } else {
-    std::cout << "No save available at: " << save_file.string() << std::endl;
-    return;
-  }
+json GameInstance::load_stats() const {
+  json save = init();
+  const auto& player = save["player"];
+  return get_or_else(player, "stats", player_default_stats);
+}
 
-  auto& player_j = save["player"];
+void GameInstance::load_position(PlayState& play_state) {
+  json save = init();
+
+  auto& player_j = save["player"]["position"];
 
   auto player_pos = play_state.player_position();
+
   const float x = get_or_else<float>(player_j, "x", player_pos.x);
   const float y = get_or_else<float>(player_j, "y", player_pos.y);
 
   play_state.set_player_position(sf::Vector2f(x, y));
+}
+
+json GameInstance::load_inventory() const {
+  json save = init();
+  return get_or_else(save["player"], "inventory", json::array());
+}
+
+json GameInstance::load_quests() const {
+  json save = init();
+  return get_or_else(save["player"], "quests", json::object());
 }
 
 } // namespace tol
