@@ -39,6 +39,11 @@ const std::string& Object::getName() const {
 }
 
 std::optional<float> Object::zIndex() const {
+  auto prop = object.get().getProp("always_on_top");
+  if (prop && std::any_cast<const bool&>(prop->getValue())) {
+    return std::numeric_limits<float>::infinity();
+  }
+
   return getPosition().y + getTile().getTileSize().y;
 }
 

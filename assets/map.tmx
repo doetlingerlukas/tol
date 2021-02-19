@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="49" nextobjectid="315">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="50" nextobjectid="320">
  <editorsettings>
   <export target="map.json" format="json"/>
  </editorsettings>
@@ -2333,6 +2333,11 @@
   <object id="296" name="orange" type="collectible" gid="33813" x="111.586" y="2153.93" width="32" height="32"/>
   <object id="297" name="pear" type="collectible" gid="33814" x="397.103" y="2442.9" width="32" height="32"/>
   <object id="298" name="cherry" type="collectible" gid="33783" x="454.345" y="2377.38" width="32" height="32"/>
+  <object id="319" name="baguette" type="collectible" gid="43896" x="1548" y="1048" width="32" height="32">
+   <properties>
+    <property name="always_on_top" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="16" name="objects_top_1" width="100" height="100">
   <data encoding="csv">
@@ -3410,10 +3415,16 @@
     <property name="unlock_hint" value="Maybe I should gather some fruit before crossing this bridge."/>
    </properties>
   </object>
-  <object id="307" name="City Gate" type="collision" x="604" y="1582" width="104" height="14">
+  <object id="307" name="City Gate 1" type="collision" x="604" y="1582" width="104" height="14">
    <properties>
-    <property name="unlock_condition" value="city_gate"/>
+    <property name="unlock_condition" value="city_gate_1"/>
     <property name="unlock_hint" value="Maybe I should talk to someone before going into the city."/>
+   </properties>
+  </object>
+  <object id="315" name="City Gate 2" type="collision" x="1212" y="1518" width="104" height="14">
+   <properties>
+    <property name="unlock_condition" value="city_gate_2"/>
+    <property name="unlock_hint" value="I should explore the city a bit more before leaving."/>
    </properties>
   </object>
  </objectgroup>

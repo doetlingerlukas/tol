@@ -110,13 +110,23 @@ GameState PlayState::update(
   return state;
 }
 
-bool PlayState::check_unlock_condition(const std::string& condition_name) const {
+bool PlayState::check_unlock_condition(const std::string& condition_name, bool collided) const {
   if (condition_name == "bridge_gate") {
     return getQuestStack().completed(0);
   }
 
-  if (condition_name == "city_gate") {
-    return getQuestStack().completed(1);
+  if (condition_name == "city_gate_1") {
+    if (getQuestStack().completed(1)) {
+      if (collided && !getQuestStack().completed(2) && getQuestStack().getSelected() != 2) {
+        getQuestStack().select(2);
+      }
+
+      return true;
+    }
+  }
+
+  if (condition_name == "city_gate_2") {
+    return getQuestStack().completed(2);
   }
 
   return false;

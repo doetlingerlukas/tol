@@ -194,9 +194,11 @@ std::vector<sf::RectangleShape> Character::move(
   for (auto& collision: collisions) {
     auto shape = create_collision_shape(collision.bounds);
 
-    if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition)) {
+    auto collided = collision.bounds.intersects(next_bounds);
+
+    if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition, collided)) {
       shape.setOutlineColor(sf::Color::Green);
-    } else if (collision.bounds.intersects(next_bounds)) {
+    } else if (collided) {
       if (collision.unlock_hint) {
         info.display_info(*collision.unlock_hint, std::chrono::seconds(10));
       }

@@ -126,7 +126,7 @@ Inventory::Inventory(int max_size_, const std::shared_ptr<AssetCache> asset_cach
   return elements.size();
 }
 
-std::vector<std::pair<int, Object>> Inventory::getElements() const {
+std::vector<std::pair<int, Object>>& Inventory::getElements() {
   return elements;
 }
 

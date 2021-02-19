@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.3" name="victorian-food" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
  <image source="victorian-food.png" trans="000000" width="1024" height="1024"/>
+ <tile id="643">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="1" y="8" width="30" height="18"/>
+  </objectgroup>
+ </tile>
  <tile id="736">
   <properties>
    <property name="y" type="int" value="1"/>
