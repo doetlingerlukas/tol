@@ -23,27 +23,11 @@ class GameInstance {
 
   json init() const;
 
-  json player_default_attacks = json::array({
-      json::object({
-        {"name", "scratch" },
-        {"damage", 5 }
-      }),
-      json::object({
-        {"name", "kick" },
-        {"damage", 12 }
-      }),
-      json::object({
-        {"name", "use spider" },
-        {"damage", 16 }
-      })
-    });
+  json player_default_attacks = json::array({ json::object({ { "name", "scratch" }, { "damage", 5 } }),
+                                              json::object({ { "name", "kick" }, { "damage", 12 } }),
+                                              json::object({ { "name", "use spider" }, { "damage", 16 } }) });
 
-  json player_default_stats = json::object({
-    { "strength", 10 },
-    { "speed", 10 },
-    { "health", 100 },
-    { "level", 1 }
-  });
+  json player_default_stats = json::object({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } });
 
   public:
   explicit GameInstance(const fs::path& exec_dir);
@@ -56,7 +40,8 @@ class GameInstance {
 
   void setSettingsChanged(bool value);
 
-  void save(const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const;
+  void save(
+    const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const;
 
   void load_position(PlayState& play_state);
 

@@ -140,7 +140,7 @@ void PlayState::set_inventory(const json& inventory_array) {
   auto& inventory = getPlayer().getInventory();
   auto& collectibles = getMap().getCollectibles();
 
-  for(const auto& id: inventory_array) {
+  for (const auto& id: inventory_array) {
     auto item = collectibles.at(id.get<int>());
     inventory.add(std::make_pair(id, item));
     collectibles.erase(id.get<int>());

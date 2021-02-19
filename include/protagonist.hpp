@@ -5,8 +5,8 @@
 #include <optional>
 
 #include <SFML/Audio.hpp>
-#include <nlohmann/json.hpp>
 #include <map>
+#include <nlohmann/json.hpp>
 
 #include "attack.hpp"
 #include "character.hpp"

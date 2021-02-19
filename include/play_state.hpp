@@ -15,7 +15,6 @@
 #include "overlay/info.hpp"
 #include "quest.hpp"
 
-
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
 const float VIEW_MOVE_DECEL = VIEW_MOVE_ACCEL * 2;

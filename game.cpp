@@ -172,11 +172,9 @@ Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-ruby.png"),
-    asset_cache,
-    std::make_shared<Stats>(instance.load_stats()),
-    instance.load_attacks(),
-    "Ruby")), mouse_pressed(false) {
+    fs::path("tilesets/character-ruby.png"), asset_cache, std::make_shared<Stats>(instance.load_stats()),
+    instance.load_attacks(), "Ruby")),
+  mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 
@@ -219,7 +217,7 @@ void Game::run() {
 
   QuestStack quest_stack(info);
 
-  for(size_t quest_id: instance.load_quests()["completed"]) {
+  for (size_t quest_id: instance.load_quests()["completed"]) {
     quest_stack.quests[quest_id].setCompleted();
   }
 

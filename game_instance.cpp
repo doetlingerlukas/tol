@@ -3,7 +3,7 @@
 namespace tol {
 
 GameInstance::GameInstance(const fs::path& exec_dir):
-  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") { }
+  state(GameState::MENU), settings_changed(false), saves_dir(exec_dir / "saves") {}
 
 void GameInstance::setState(GameState new_state) {
   state = new_state;
@@ -29,28 +29,20 @@ json GameInstance::init() const {
 
   try {
     save = json::parse(ifs);
-  } catch(std::exception& ex) {
-    save = json::object({
-      { "player", {
-        { "position", {
-          { "x", 543 },
-          { "y", 2845 }
-        } },
-        { "stats", player_default_stats },
-        { "attacks", player_default_attacks },
-        { "quests", {
-          { "completed", nullptr },
-          { "active", nullptr }
-        } },
-        { "inventory", nullptr }
-      }}
-    });
+  } catch (std::exception& ex) {
+    save = json::object({ { "player",
+                            { { "position", { { "x", 543 }, { "y", 2845 } } },
+                              { "stats", player_default_stats },
+                              { "attacks", player_default_attacks },
+                              { "quests", { { "completed", nullptr }, { "active", nullptr } } },
+                              { "inventory", nullptr } } } });
   }
 
   return save;
 }
 
-void GameInstance::save(const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const {
+void GameInstance::save(
+  const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const {
   if (!fs::exists(saves_dir)) {
     fs::create_directory(saves_dir);
   }
@@ -75,11 +67,8 @@ void GameInstance::save(const PlayState& play_state, const Character& player, co
 
   const auto& player_attacks = player.getAttacks();
 
-  for(const auto& attack: player_attacks) {
-    attacks.push_back(json::object({
-      {"name", attack.getName() },
-      {"damage", attack.getDamage() }
-    }));
+  for (const auto& attack: player_attacks) {
+    attacks.push_back(json::object({ { "name", attack.getName() }, { "damage", attack.getDamage() } }));
   }
 
   auto& inventory_array = save["player"]["inventory"] = json::array();
@@ -95,7 +84,7 @@ void GameInstance::save(const PlayState& play_state, const Character& player, co
   auto& completed_quests = quests_json["completed"] = json::array();
 
   for (size_t i = 0; i < quests.count(); i++) {
-    if(quests.completed(i)) {
+    if (quests.completed(i)) {
       completed_quests.push_back(i);
     }
   }

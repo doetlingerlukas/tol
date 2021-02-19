@@ -85,7 +85,9 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
   pop_window_state();
 }
 
-void Nuklear::renderMenu(GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const {
+void Nuklear::renderMenu(
+  GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
+  const QuestStack& quests) const {
   push_window_state();
   const float button_height = 40;
   const int r = 0;
