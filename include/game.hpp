@@ -57,7 +57,8 @@ class Game {
   bool mouse_pressed;
 
   void handle_event(
-    sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay, Fight& fight);
+    sf::Event& event, KeyInput& key_input, PlayState& play_state, tol::Music& music, Inventory& inventory,
+    Overlay& overlay, Fight& fight);
 
   void handle_settings_update(tol::Music& music);
 

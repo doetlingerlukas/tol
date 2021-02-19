@@ -2,6 +2,7 @@
 #define TOL_INVENTORY_HPP
 
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -41,7 +42,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   void mouse(sf::Vector2f location, bool pressed);
   void drop_selected(Protagonist& player, Map& map);
-  std::optional<std::string> use_selected(Protagonist& player);
+  std::optional<std::string> use_selected(Protagonist& player, std::function<void(int)> callback);
 };
 
 } // namespace tol

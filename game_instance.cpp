@@ -35,10 +35,16 @@ json GameInstance::init() const {
                               { "stats", player_default_stats },
                               { "attacks", player_default_attacks },
                               { "quests", { { "completed", nullptr }, { "active", nullptr } } },
-                              { "inventory", nullptr } } } });
+                              { "inventory", nullptr },
+                              { "useditems", nullptr } } } });
   }
 
   return save;
+}
+
+void GameInstance::remove() {
+  auto save_file = saves_dir / "game.json";
+  fs::remove(save_file);
 }
 
 void GameInstance::save(
@@ -77,6 +83,11 @@ void GameInstance::save(
     inventory_array.push_back(id);
   }
 
+  auto& used_items = save["player"]["useditems"] = json::array();
+  for (const auto id: play_state.used_collectibles()) {
+    used_items.push_back(id);
+  }
+
   auto& quests_json = save["player"]["quests"];
 
   auto& completed_quests = quests_json["completed"] = json::array();
@@ -91,6 +102,24 @@ void GameInstance::save(
 
   std::ofstream ofs(saves_dir / "game.json", std::ofstream::out | std::ofstream::trunc);
   ofs << save.dump(2);
+}
+
+void GameInstance::load(QuestStack& quest_stack, PlayState& play_state) {
+  for (size_t quest_id: load_quests()) {
+    quest_stack.quests[quest_id].setCompleted();
+  }
+
+  const auto& active_quest = load_active_quest();
+
+  if (!active_quest.is_null()) {
+    quest_stack.select(active_quest);
+  }
+
+  load_position(play_state);
+  play_state.set_inventory(load_inventory());
+  play_state.set_stats(load_stats());
+  play_state.set_attacks(load_attacks());
+  play_state.set_used_collectibles(load_used_items());
 }
 
 json GameInstance::load_attacks() const {
@@ -124,9 +153,19 @@ json GameInstance::load_inventory() const {
   return get_or_else(save["player"], "inventory", json::array());
 }
 
+json GameInstance::load_used_items() const {
+  json save = init();
+  return get_or_else(save["player"], "useditems", json::array());
+}
+
 json GameInstance::load_quests() const {
   json save = init();
-  return get_or_else(save["player"], "quests", json::object());
+  return get_or_else(save["player"]["quests"], "completed", json::array());
+}
+
+json GameInstance::load_active_quest() const {
+  json save = init();
+  return get_or_else(save["player"]["quests"], "active", json::object());
 }
 
 } // namespace tol

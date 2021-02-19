@@ -51,7 +51,7 @@ class Nuklear {
 
   void render_menu(
     GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
-    const QuestStack& quests) const;
+    QuestStack& quests) const;
 
   void render_death(GameInstance& game, PlayState& play_state) const;
 

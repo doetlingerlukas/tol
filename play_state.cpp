@@ -137,10 +137,54 @@ void PlayState::set_inventory(const json& inventory_array) {
   auto& collectibles = map().collectibles();
 
   for (const auto& id: inventory_array) {
-    auto item = collectibles.at(id.get<int>());
-    inventory.add(std::make_pair(id, item));
+    auto key = id.get<int>();
+    try {
+      auto item = collectibles.at(key);
+      inventory.add(std::make_pair(id, item));
+      collectibles.erase(key);
+    } catch ([[maybe_unused]] std::exception& ex) {
+    }
+  }
+}
+
+void PlayState::set_stats(const json& stats_array) {
+  player().stats().experience().set(stats_array["experience"].get<int>());
+  player().stats().health().set(stats_array["health"].get<int>());
+  player().stats().speed().set(stats_array["speed"].get<int>());
+  player().stats().strength().set(stats_array["strength"].get<int>());
+}
+
+void PlayState::set_attacks(const json& attacks_array) {
+  player().clear_attacks();
+  for (const auto& attack: attacks_array) {
+    player().add_attack(Attack(attack["name"].get<std::string>(), attack["damage"].get<int>()));
+  }
+}
+
+std::set<int> PlayState::used_collectibles() const {
+  return used_collectible_ids;
+}
+
+void PlayState::add_used_collectibles(int id) {
+  used_collectible_ids.insert(id);
+}
+
+void PlayState::set_used_collectibles(const json& used_items) {
+  auto& collectibles = map().collectibles();
+  used_collectible_ids.clear();
+
+  for (const auto& id: used_items) {
+    used_collectible_ids.insert(id.get<int>());
     collectibles.erase(id.get<int>());
   }
+}
+
+bool PlayState::is_collectible_used(int id) const {
+  auto it = used_collectible_ids.find(id);
+  if (it != used_collectible_ids.end()) {
+    return true;
+  }
+  return false;
 }
 
 } // namespace tol
