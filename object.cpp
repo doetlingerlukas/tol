@@ -10,8 +10,8 @@ const std::map<std::string, std::string> Object::DESCRIPTIONS{
   { "pear", "Looks just like a regular fruit, but think twice before eating. Not everyone can handle the speed. +20 "
             "on walking speed" },
   { "cherry", "Probably edible." },
-  { "pistol", "Watch out! This kills people." },
-  { "tools", "I should probably bring these back to Detlef." },
+  { "pistol", "Watch out! This kills people. Use it to get a new attack." },
+  { "tools", "I should probably bring these back to Detlef. Just drop them in front of his feet." },
   { "baguette", "Perfect for stabbing someone." }
 };
 
