@@ -23,7 +23,7 @@ class Protagonist: public Character {
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
 
-  std::vector<Attack> attacks(const json& attack_json) const;
+  std::vector<Attack> load_attacks(const json& attack_json) const;
 
   std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);
 

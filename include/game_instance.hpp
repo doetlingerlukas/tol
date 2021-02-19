@@ -43,10 +43,9 @@ class GameInstance {
 
   void remove();
 
-  void save(
-    const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const;
+  void save(const PlayState& play_state) const;
 
-  void load(QuestStack& quest_stack, PlayState& play_state);
+  void load(PlayState& play_state);
 
   void load_position(PlayState& play_state);
 
