@@ -33,13 +33,9 @@ class Nuklear {
   sf::Vector2f scale;
   sf::RenderWindow* window;
   std::reference_wrapper<const Stats> _stats;
-  struct nk_context* ctx;
+  struct nk_context* _ctx;
 
-  struct nk_context* init(sf::RenderWindow* window) const {
-    struct nk_context* ctx;
-    ctx = nk_sfml_init(window);
-    return ctx;
-  }
+  static struct nk_context* init(sf::RenderWindow* window);
 
   void push_window_state() const;
   void pop_window_state() const;
@@ -49,21 +45,23 @@ class Nuklear {
   }
 
   public:
-  [[nodiscard]] struct nk_context* getCtx() const;
+  [[nodiscard]] inline struct nk_context* ctx() const {
+    return _ctx;
+  }
 
-  void renderMenu(
+  void render_menu(
     GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
     const QuestStack& quests) const;
 
-  void renderDeath(GameInstance& game, PlayState& play_state) const;
+  void render_death(GameInstance& game, PlayState& play_state) const;
 
-  void renderSettings(GameInstance& game, Settings& settings);
+  void render_settings(GameInstance& game, Settings& settings);
 
-  void renderHud();
+  void render_hud();
 
-  std::pair<json, DialogState> renderResponseDialog(const json& dialog, DialogState dialog_state, const json& init);
+  std::pair<json, DialogState> render_response_dialog(const json& dialog, DialogState dialog_state, const json& init);
 
-  std::pair<json, DialogState> renderDialog(const json& lines, DialogState dialog_state);
+  std::pair<json, DialogState> render_dialog(const json& lines, DialogState dialog_state);
 
   Nuklear(sf::Vector2u size_, const Stats& stats, std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window);
 

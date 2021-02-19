@@ -20,7 +20,7 @@ void PlayState::draw(sf::RenderTarget& target, sf::RenderStates state) const {
     fmt::format("Center Coords: {:.1f}, {:.1f}\nPlayer: {:.1f}, {:.1f}\n", center.x, center.y, position.x, position.y);
 
   sf::Text text;
-  text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
+  text.setFont(*asset_cache->load_font("fonts/Gaegu-Regular.ttf"));
   text.setCharacterSize(static_cast<unsigned int>(16 * scale.y));
   text.setFillColor(sf::Color::White);
   text.setOutlineColor(sf::Color::Black);
@@ -88,19 +88,19 @@ GameState PlayState::update(
   }
 
   for (auto& npc: map().getNpcs()) {
-    const auto dist = player().distanceTo(npc);
+    const auto dist = player().distance_to(npc);
     const auto tileDiagonal = std::sqrt(std::pow(map().getTileSize().x, 2) + std::pow(map().getTileSize().y, 2));
 
     if (dist < tileDiagonal) {
       npc.lookToward(player().getPosition());
-      npc.setEffectRect({ 480, 192, EFFECT_TILE_SIZE, EFFECT_TILE_SIZE });
+      npc.set_effect_rect({ 480, 192, EFFECT_TILE_SIZE, EFFECT_TILE_SIZE });
 
       if (key_input.e) {
         npc_dialog = npc.name();
         state = GameState::DIALOG;
       }
     } else {
-      npc.resetEffect();
+      npc.reset_effect();
     }
   }
 

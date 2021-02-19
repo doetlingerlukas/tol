@@ -26,18 +26,18 @@ class AssetCache {
   mutable std::map<std::string, const nk_font*> nk_fonts;
   mutable std::map<std::string, std::shared_ptr<const sf::Font>> fonts;
   mutable std::map<std::string, std::shared_ptr<const sf::Texture>> textures;
-  fs::path dir_;
+  fs::path _dir;
 
   public:
   explicit AssetCache(fs::path dir);
 
-  [[nodiscard]] std::shared_ptr<const std::vector<std::byte>> loadFile(const fs::path& path) const;
+  [[nodiscard]] std::shared_ptr<const std::vector<std::byte>> load_file(const fs::path& path) const;
 
-  [[nodiscard]] const nk_font* loadNkFont(const fs::path& path, float size) const;
+  [[nodiscard]] const nk_font* load_nk_font(const fs::path& path, float size) const;
 
-  [[nodiscard]] std::shared_ptr<const sf::Font> loadFont(const fs::path& path) const;
+  [[nodiscard]] std::shared_ptr<const sf::Font> load_font(const fs::path& path) const;
 
-  [[nodiscard]] std::shared_ptr<const sf::Texture> loadTexture(const fs::path& path) const;
+  [[nodiscard]] std::shared_ptr<const sf::Texture> load_texture(const fs::path& path) const;
 
   [[nodiscard]] const fs::path& dir() const;
 };

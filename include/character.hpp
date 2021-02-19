@@ -52,7 +52,7 @@ class Character: public sf::Drawable, public sf::Transformable {
   std::string _name;
   fs::path character_texture;
 
-  std::vector<Attack> attacks;
+  std::vector<Attack> _attacks;
 
   mutable CharacterDirection last_direction = DOWN;
 
@@ -63,7 +63,7 @@ class Character: public sf::Drawable, public sf::Transformable {
   public:
   Character(
     const fs::path& path, std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats,
-    const std::string& name, std::vector<Attack>&& attacks_);
+    const std::string& name, std::vector<Attack>&& attacks);
 
   inline const Stats& stats() const {
     return *_stats;
@@ -74,28 +74,27 @@ class Character: public sf::Drawable, public sf::Transformable {
   }
 
   const std::string& name() const;
-  std::vector<Attack> getAttacks() const;
-  void addAttack(Attack&& attack);
+  const std::vector<Attack>& attacks() const;
+  void add_attack(Attack&& attack);
 
   const sf::Texture& texture() const;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
-  sf::FloatRect getBoundingRect() const;
+  sf::FloatRect bounds() const;
 
-  sf::FloatRect getTextureBoundingRect() const;
+  sf::FloatRect texture_bounds() const;
 
   std::vector<sf::RectangleShape> move(
     std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed,
     std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info);
 
-  virtual std::optional<float> zIndex() const;
+  virtual std::optional<float> z_index() const;
 
-  float distanceTo(const Character& other);
+  float distance_to(const Character& other);
 
-  void setEffectRect(sf::IntRect effect);
-
-  void resetEffect();
+  void set_effect_rect(sf::IntRect effect);
+  void reset_effect();
 
   void lookToward(sf::Vector2f point);
 };

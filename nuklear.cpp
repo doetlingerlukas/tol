@@ -2,6 +2,12 @@
 
 namespace tol {
 
+struct nk_context* Nuklear::init(sf::RenderWindow* window) {
+  struct nk_context* ctx;
+  ctx = nk_sfml_init(window);
+  return ctx;
+}
+
 void Nuklear::push_window_state() const {
   window->pushGLStates();
 }
@@ -11,11 +17,9 @@ void Nuklear::pop_window_state() const {
   window->popGLStates();
 }
 
-struct nk_context* Nuklear::getCtx() const {
-  return ctx;
-}
+void Nuklear::render_death(GameInstance& game, PlayState& play_state) const {
+  auto ctx = this->ctx();
 
-void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
   push_window_state();
   const float button_height = 40;
   const int r = 0;
@@ -25,7 +29,7 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
 
   struct nk_color background = nk_rgba(r, g, b, a);
 
-  const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 24 * scale.y);
+  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 24 * scale.y);
   nk_style_set_font(ctx, &font->handle);
 
   struct nk_style& s = ctx->style;
@@ -85,9 +89,11 @@ void Nuklear::renderDeath(GameInstance& game, PlayState& play_state) const {
   pop_window_state();
 }
 
-void Nuklear::renderMenu(
+void Nuklear::render_menu(
   GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
   const QuestStack& quests) const {
+  auto ctx = this->ctx();
+
   push_window_state();
   const float button_height = 40;
   const int r = 0;
@@ -97,7 +103,7 @@ void Nuklear::renderMenu(
 
   struct nk_color background = nk_rgba(r, g, b, a);
 
-  const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
+  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 32 * scale.y);
   nk_style_set_font(ctx, &font->handle);
 
   struct nk_style& s = ctx->style;
@@ -169,7 +175,9 @@ void Nuklear::renderMenu(
   pop_window_state();
 }
 
-void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
+void Nuklear::render_settings(GameInstance& game, Settings& settings) {
+  auto ctx = this->ctx();
+
   push_window_state();
   auto video_mode = sf::VideoMode::getDesktopMode();
   const float setting_height = 40;
@@ -184,7 +192,7 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
 
   struct nk_style& s = ctx->style;
 
-  const auto* font = asset_cache->loadNkFont("fonts/Gaegu-Regular.ttf", 32 * scale.y);
+  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 32 * scale.y);
   nk_style_set_font(ctx, &font->handle);
 
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(0, 0, 0, 0)));
@@ -276,7 +284,9 @@ void Nuklear::renderSettings(GameInstance& game, Settings& settings) {
   pop_window_state();
 }
 
-void Nuklear::renderHud() {
+void Nuklear::render_hud() {
+  auto ctx = this->ctx();
+
   push_window_state();
   const float progressbar_height = 24;
   const float margin = 16;
@@ -316,7 +326,9 @@ void Nuklear::renderHud() {
 }
 
 std::pair<json, DialogState>
-Nuklear::renderResponseDialog(const json& dialog, DialogState dialog_state, const json& init) {
+Nuklear::render_response_dialog(const json& dialog, DialogState dialog_state, const json& init) {
+  auto ctx = this->ctx();
+
   push_window_state();
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
@@ -370,7 +382,9 @@ Nuklear::renderResponseDialog(const json& dialog, DialogState dialog_state, cons
   }
 }
 
-std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogState dialog_state) {
+std::pair<json, DialogState> Nuklear::render_dialog(const json& lines, DialogState dialog_state) {
+  auto ctx = this->ctx();
+
   push_window_state();
   struct nk_style& s = ctx->style;
   nk_style_push_style_item(ctx, &s.window.fixed_background, nk_style_item_color(nk_rgba(40, 40, 40, 240)));
@@ -426,7 +440,7 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
 Nuklear::Nuklear(
   sf::Vector2u size_, const Stats& stats, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window):
   asset_cache(asset_cache_),
-  size(size_), window(_window), _stats(stats), ctx(init(_window)) {}
+  size(size_), window(_window), _stats(stats), _ctx(Nuklear::init(_window)) {}
 
 void Nuklear::setSize(sf::Vector2u size) {
   this->size = size;

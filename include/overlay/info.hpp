@@ -34,7 +34,7 @@ class Info: public sf::Drawable, public sf::Transformable {
       auto max_line_width = info_box_size.x - 10;
 
       sf::Text text;
-      text.setFont(*asset_cache->loadFont("fonts/Gaegu-Regular.ttf"));
+      text.setFont(*asset_cache->load_font("fonts/Gaegu-Regular.ttf"));
       text.setFillColor(sf::Color::White);
       text.setPosition(text_start_pos);
 

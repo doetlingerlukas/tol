@@ -2,11 +2,11 @@
 
 namespace tol {
 
-AssetCache::AssetCache(fs::path dir): dir_(dir) {}
+AssetCache::AssetCache(fs::path dir): _dir(dir) {}
 
-std::shared_ptr<const std::vector<std::byte>> AssetCache::loadFile(const fs::path& path) const {
+std::shared_ptr<const std::vector<std::byte>> AssetCache::load_file(const fs::path& path) const {
   if (bytes.count(path.string()) == 0) {
-    const auto absolute_path = dir_ / path;
+    const auto absolute_path = _dir / path;
     std::cout << "Loading " << absolute_path << std::endl;
 
     std::ifstream file(absolute_path, std::ios::binary);
@@ -26,9 +26,9 @@ std::shared_ptr<const std::vector<std::byte>> AssetCache::loadFile(const fs::pat
   return bytes.at(path.string());
 }
 
-const nk_font* AssetCache::loadNkFont(const fs::path& path, float size) const {
+const nk_font* AssetCache::load_nk_font(const fs::path& path, float size) const {
   if (nk_fonts.count(path.string()) == 0) {
-    const auto& file = *loadFile(path);
+    const auto& file = *load_file(path);
 
     struct nk_font_atlas* atlas;
     nk_sfml_font_stash_begin(&atlas);
@@ -39,7 +39,7 @@ const nk_font* AssetCache::loadNkFont(const fs::path& path, float size) const {
     nk_fonts[path.string()] = font;
 
     if (font == nullptr) {
-      const auto absolute_path = dir_ / path;
+      const auto absolute_path = _dir / path;
       throw std::runtime_error("Failed to load font '" + absolute_path.string() + "'.");
     }
   }
@@ -47,12 +47,12 @@ const nk_font* AssetCache::loadNkFont(const fs::path& path, float size) const {
   return nk_fonts.at(path.string());
 }
 
-std::shared_ptr<const sf::Font> AssetCache::loadFont(const fs::path& path) const {
+std::shared_ptr<const sf::Font> AssetCache::load_font(const fs::path& path) const {
   if (fonts.count(path.string()) == 0) {
     auto font = std::make_shared<sf::Font>();
-    const auto& file = *loadFile(path);
+    const auto& file = *load_file(path);
     if (!font->loadFromMemory(file.data(), file.size())) {
-      const auto absolute_path = dir_ / path;
+      const auto absolute_path = _dir / path;
       throw std::runtime_error("Failed to load font '" + absolute_path.string() + "'.");
     }
 
@@ -62,12 +62,12 @@ std::shared_ptr<const sf::Font> AssetCache::loadFont(const fs::path& path) const
   return fonts.at(path.string());
 }
 
-std::shared_ptr<const sf::Texture> AssetCache::loadTexture(const fs::path& path) const {
+std::shared_ptr<const sf::Texture> AssetCache::load_texture(const fs::path& path) const {
   if (textures.count(path.string()) == 0) {
     auto texture = std::make_shared<sf::Texture>();
-    const auto& file = *loadFile(path);
+    const auto& file = *load_file(path);
     if (!texture->loadFromMemory(file.data(), file.size())) {
-      const auto absolute_path = dir_ / path;
+      const auto absolute_path = _dir / path;
       throw std::runtime_error("Failed to load texture '" + absolute_path.string() + "'.");
     }
 
@@ -79,7 +79,7 @@ std::shared_ptr<const sf::Texture> AssetCache::loadTexture(const fs::path& path)
 }
 
 const fs::path& AssetCache::dir() const {
-  return dir_;
+  return _dir;
 }
 
 } // namespace tol

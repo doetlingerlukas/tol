@@ -80,7 +80,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     player_health_percent.setCharacterSize(character_size);
     player_health_percent.setFillColor(sf::Color::White);
     player_health_percent.setString(fmt::format("{}", health));
-    player_health_percent.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+    player_health_percent.setFont(*asset_cache->load_font("fonts/Gaegu-Bold.ttf"));
 
     const auto health_text_pos = health_bar_size / 2 - character_size;
 
@@ -134,7 +134,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     enemy_health_percent.setCharacterSize(character_size);
     enemy_health_percent.setFillColor(sf::Color::White);
     enemy_health_percent.setString(fmt::format("{}", enemy_health));
-    enemy_health_percent.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+    enemy_health_percent.setFont(*asset_cache->load_font("fonts/Gaegu-Bold.ttf"));
 
     enemy_health_percent.setPosition(
       { resize_x - scale_pos(400 / 2 + health_bar_off, target.getSize().x, resize_x, -55.0f), 98.0f });
@@ -145,7 +145,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     enemy_name.setCharacterSize(40);
     enemy_name.setFillColor(sf::Color::White);
     enemy_name.setString(npc->name());
-    enemy_name.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+    enemy_name.setFont(*asset_cache->load_font("fonts/Gaegu-Bold.ttf"));
     enemy_name.setPosition(
       { resize_x - scale_pos(400.0f + health_bar_off, target.getSize().x, resize_x, 150.0f), 20.0f });
     target.draw(enemy_name);
@@ -156,7 +156,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     enemy_level.setCharacterSize(40);
     enemy_level.setFillColor(sf::Color::White);
     enemy_level.setString(enemy_level_text);
-    enemy_level.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+    enemy_level.setFont(*asset_cache->load_font("fonts/Gaegu-Bold.ttf"));
     const int enemy_text_size = enemy_level.getGlobalBounds().width;
     enemy_level.setPosition(
       { resize_x - scale_pos(enemy_text_size * 2, target.getSize().x, resize_x, -enemy_text_size), 20.0f });
@@ -167,7 +167,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
       attack_info.setFillColor(sf::Color::White);
       attack_info.setString(
         fmt::format("{} used \"{}\" for {} damage.", npc->name(), *last_enemy_attack, *last_enemy_damage));
-      attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+      attack_info.setFont(*asset_cache->load_font("fonts/Gaegu-Bold.ttf"));
       attack_info.setPosition(
         { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
       target.draw(attack_info);
@@ -179,7 +179,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
       attack_info.setFillColor(sf::Color::White);
       attack_info.setString(
         fmt::format("{} used \"{}\" for {} damage.", player.name(), *last_player_attack, *last_player_damage));
-      attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
+      attack_info.setFont(*asset_cache->load_font("fonts/Gaegu-Bold.ttf"));
       attack_info.setPosition(
         { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
       target.draw(attack_info);
@@ -226,7 +226,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
     std::srand(std::time(nullptr));
 
-    const auto& attacks = player.getAttacks();
+    const auto& attacks = player.attacks();
 
     for (const auto& attack: attacks) {
       initMenuItem(attack);
@@ -256,7 +256,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
   GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, TiledMap& map) {
     now = now_;
 
-    const auto& player_attacks = player.getAttacks();
+    const auto& player_attacks = player.attacks();
 
     if (player_attacks.size() != menu.count()) {
       initMenuItem(player_attacks[player_attacks.size() - 1]);
@@ -287,7 +287,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
           return GameState::DEAD;
         }
       } else if (now >= last_turn + std::chrono::milliseconds(3000) && !last_enemy_attack && !last_enemy_damage) {
-        const auto& attacks = npc->getAttacks();
+        const auto& attacks = npc->attacks();
         const auto& npc_stats = npc->stats();
         const auto npc_level = npc_stats.experience().level();
         const auto player_strength = player.stats().strength().get();

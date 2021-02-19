@@ -30,7 +30,7 @@ class Animation {
     }
   }
 
-  sf::IntRect getDrawingRect(std::chrono::milliseconds ms) const {
+  sf::IntRect drawing_rect(std::chrono::milliseconds ms) const {
     std::chrono::milliseconds current = ms % total_time;
 
     std::chrono::milliseconds now = std::chrono::milliseconds(0);

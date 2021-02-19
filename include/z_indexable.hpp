@@ -6,7 +6,7 @@ namespace tol {
 
 class ZIndexable {
   public:
-  [[nodiscard]] virtual std::optional<float> zIndex() const = 0;
+  [[nodiscard]] virtual std::optional<float> z_index() const = 0;
 };
 
 } // namespace tol

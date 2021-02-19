@@ -9,7 +9,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   sf::FloatRect detail(inventory_dims.left, inventory_dims.top, inventory_dims.width * 0.29f, inventory_dims.height);
   sf::FloatRect objects(
     detail.left + inventory_dims.width * 0.3f, inventory_dims.top, inventory_dims.width * 0.7f, inventory_dims.height);
-  const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
+  const auto font = *asset_cache->load_font("fonts/Gaegu-Regular.ttf");
 
   sf::Text header;
   header.setFont(font);
@@ -49,7 +49,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   for (auto [id, item]: _items) {
     item.setScale(scale);
 
-    auto rect = item.getBoundingRect();
+    auto rect = item.bounds();
     sf::Vector2f bounding_size({ rect.width * scale.x, rect.height * scale.y });
     sf::RectangleShape bounding_box(bounding_size);
     if (margin.x + w + bounding_size.x + margin.x > objects.width) {
@@ -93,7 +93,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
     display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
 
-    std::istringstream iss(Collectible::getCollectible(item.getName()).info());
+    std::istringstream iss(item.description());
     const std::vector<std::string> words(
       { std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
 
@@ -159,8 +159,8 @@ void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
     auto [id, collectible] = remove(*selected);
 
     auto new_position = player.getPosition();
-    new_position.x -= collectible.getBoundingRect().width / 2.f;
-    new_position.y -= collectible.getBoundingRect().height / 2.f;
+    new_position.x -= collectible.bounds().width / 2.f;
+    new_position.y -= collectible.bounds().height / 2.f;
     collectible.setPosition(new_position);
 
     map.getCollectibles().emplace(std::make_pair(id, collectible));

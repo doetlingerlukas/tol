@@ -12,12 +12,12 @@ Object::Object(tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCach
   object(object) {}
 
 bool Object::intersects(const sf::FloatRect& rect) const {
-  return rect.intersects({ getPosition().x, getPosition().y, static_cast<float>(getTile().getTileSize().y),
-                           static_cast<float>(getTile().getTileSize().y) });
+  return rect.intersects({ getPosition().x, getPosition().y, static_cast<float>(tile().getTileSize().y),
+                           static_cast<float>(tile().getTileSize().y) });
 }
 
 bool Object::collides_with(const sf::FloatRect& rect) const {
-  auto object_group = getTile().getObjectgroup();
+  auto object_group = tile().getObjectgroup();
   for (auto& obj: object_group.getObjects()) {
     sf::FloatRect object_rect = {
       static_cast<float>(getPosition().x + obj.getPosition().x),
@@ -34,17 +34,26 @@ bool Object::collides_with(const sf::FloatRect& rect) const {
   return false;
 }
 
-const std::string& Object::getName() const {
+const std::string& Object::name() const {
   return object.get().getName();
 }
 
-std::optional<float> Object::zIndex() const {
+const std::string& Object::description() const {
+  auto search = DESCRIPTIONS.find(name());
+  if (search != DESCRIPTIONS.end()) {
+    return search->second;
+  } else {
+    return UNDEFINED_DESCRIPTION;
+  }
+}
+
+std::optional<float> Object::z_index() const {
   auto prop = object.get().getProp("always_on_top");
   if (prop && std::any_cast<const bool&>(prop->getValue())) {
     return std::numeric_limits<float>::infinity();
   }
 
-  return getPosition().y + getTile().getTileSize().y;
+  return getPosition().y + tile().getTileSize().y;
 }
 
 bool Object::usable() const {

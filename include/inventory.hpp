@@ -10,7 +10,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "asset_cache.hpp"
-#include "collectibles.hpp"
 #include "object.hpp"
 
 namespace tol {

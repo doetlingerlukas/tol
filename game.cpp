@@ -213,7 +213,7 @@ void Game::run() {
   map.setScale(scale);
   player.setScale(scale);
 
-  map.setPlayer(&player);
+  map.set_player(&player);
 
   QuestStack quest_stack(info);
 
@@ -267,11 +267,11 @@ void Game::run() {
     now += std::chrono::milliseconds(millis);
 
     sf::Event event;
-    nk_input_begin(nuklear->getCtx());
+    nk_input_begin(nuklear->ctx());
     while (window.pollEvent(event)) {
       handle_event(event, key_input, music, inventory, overlay, fight);
     }
-    nk_input_end(nuklear->getCtx());
+    nk_input_end(nuklear->ctx());
 
     if (instance.isSettingsChanged()) {
       handle_settings_update(music);
@@ -288,7 +288,7 @@ void Game::run() {
         window.close();
         break;
       case GameState::MENU:
-        nuklear->renderMenu(instance, play_state, player, inventory, quest_stack);
+        nuklear->render_menu(instance, play_state, player, inventory, quest_stack);
         break;
       case GameState::INVENTORY:
         window.draw(play_state);
@@ -309,7 +309,7 @@ void Game::run() {
           window.draw(fight);
         break;
       case GameState::DEAD:
-        nuklear->renderDeath(instance, play_state);
+        nuklear->render_death(instance, play_state);
         break;
       case GameState::PLAY:
       case GameState::QUEST:
@@ -319,7 +319,7 @@ void Game::run() {
         info.update_time(std::chrono::milliseconds(millis));
         window.draw(info);
 
-        nuklear->renderHud();
+        nuklear->render_hud();
         break;
       case GameState::DIALOG:
         window.draw(play_state);
@@ -327,7 +327,6 @@ void Game::run() {
         if (last_npc_interaction) {
           auto [state, quest] = dialog.show(*last_npc_interaction);
           instance.setState(state);
-          player.talk_to(*last_npc_interaction);
 
           if (state == GameState::QUEST) {
             quest_stack.select(quest);
@@ -335,7 +334,7 @@ void Game::run() {
         }
         break;
       case GameState::SETTINGS:
-        nuklear->renderSettings(instance, settings);
+        nuklear->render_settings(instance, settings);
         break;
       default:
         break;

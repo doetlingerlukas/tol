@@ -26,7 +26,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     sf::FloatRect stats_rect(overlay_dims.left, overlay_dims.top, overlay_dims.width * 0.29f, overlay_dims.height);
     sf::FloatRect quests_rect(
       stats_rect.left + overlay_dims.width * 0.3f, overlay_dims.top, overlay_dims.width * 0.7f, overlay_dims.height);
-    const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
+    const auto font = *asset_cache->load_font("fonts/Gaegu-Regular.ttf");
 
     sf::Text header;
     header.setFont(font);

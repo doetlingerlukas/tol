@@ -26,18 +26,17 @@ QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_
 
       auto& npc = map.getNpc("Detlef de Loost");
 
-      auto pair = map.getCollectible("tools");
+      auto pair = map.collectible_by_name("tools");
       if (pair) {
         auto& [id, collectible] = *pair;
-        return collectible.collides_with(npc.getBoundingRect());
+        return collectible.collides_with(npc.bounds());
       }
 
       return false;
     }));
   quests.push_back(Quest("Get a baguette.", "Find a baguette to stab your last opponent.", [](auto play_state) {
     const auto& items = play_state.player().inventory().items();
-    return std::any_of(
-      items.cbegin(), items.cend(), [](const auto& item) { return item.second.getName() == "baguette"; });
+    return std::any_of(items.cbegin(), items.cend(), [](const auto& item) { return item.second.name() == "baguette"; });
   }));
 }
 

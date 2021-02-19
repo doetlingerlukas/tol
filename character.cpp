@@ -5,14 +5,14 @@ namespace tol {
 
 Character::Character(
   const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats,
-  const std::string& name, std::vector<Attack>&& attacks_):
+  const std::string& name, std::vector<Attack>&& attacks):
   asset_cache(asset_cache_),
-  _name(name), character_texture(path), attacks(attacks_), _stats(stats) {
-  sprite.setTexture(*asset_cache->loadTexture(path));
+  _name(name), character_texture(path), _attacks(attacks), _stats(stats) {
+  sprite.setTexture(*asset_cache->load_texture(path));
   sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
   sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
 
-  effect.setTexture(*asset_cache->loadTexture("tilesets/effects.png"));
+  effect.setTexture(*asset_cache->load_texture("tilesets/effects.png"));
   effect.setOrigin({ EFFECT_TILE_SIZE / 2.f, EFFECT_TILE_SIZE / 2.f });
 }
 
@@ -24,17 +24,17 @@ const sf::Texture& Character::texture() const {
   return *sprite.getTexture();
 }
 
-std::vector<Attack> Character::getAttacks() const {
-  return attacks;
+const std::vector<Attack>& Character::attacks() const {
+  return _attacks;
 }
 
-void Character::addAttack(Attack&& attack) {
-  attacks.push_back(attack);
+void Character::add_attack(Attack&& attack) {
+  _attacks.emplace_back(attack);
 }
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   if (animation) {
-    sprite.setTextureRect(animation->getDrawingRect(now));
+    sprite.setTextureRect(animation->drawing_rect(now));
   } else {
     sprite.setTextureRect({ 0 * TILE_SIZE, last_direction * TILE_SIZE, TILE_SIZE, TILE_SIZE });
   }
@@ -52,7 +52,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   shadow.setOrigin({ shadow.getRadius(), shadow.getRadius() });
   shadow.setScale({ scale.x, scale.y / shadow_ratio });
 
-  auto bounding_box_rect = getBoundingRect();
+  auto bounding_box_rect = bounds();
   sf::RectangleShape bounding_box;
   bounding_box.setSize({ bounding_box_rect.width, bounding_box_rect.height });
   bounding_box.setOutlineThickness(0.5f);
@@ -61,7 +61,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   bounding_box.setPosition({ bounding_box_rect.left * scale.x, bounding_box_rect.top * scale.y });
   bounding_box.setScale(scale);
 
-  auto texture_bounding_box_rect = getTextureBoundingRect();
+  auto texture_bounding_box_rect = texture_bounds();
   sf::RectangleShape texture_bounding_box;
   texture_bounding_box.setSize({ texture_bounding_box_rect.width, texture_bounding_box_rect.height });
   texture_bounding_box.setOutlineThickness(0.5f);
@@ -84,7 +84,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   }
 }
 
-sf::FloatRect Character::getBoundingRect() const {
+sf::FloatRect Character::bounds() const {
   const auto& position = getPosition();
   const auto width = 16.f;
   const auto height = 8.f;
@@ -97,7 +97,7 @@ sf::FloatRect Character::getBoundingRect() const {
   };
 }
 
-sf::FloatRect Character::getTextureBoundingRect() const {
+sf::FloatRect Character::texture_bounds() const {
   const auto& position = getPosition();
   const auto& origin = sprite.getOrigin();
   const auto& texture_rect = sprite.getTextureRect();
@@ -155,7 +155,7 @@ std::vector<sf::RectangleShape> Character::move(
     this->last_collision = now;
   };
 
-  const auto player_bounds = getBoundingRect();
+  const auto player_bounds = bounds();
 
   auto next_bounds = player_bounds;
   next_bounds.left += velocity.x;
@@ -289,23 +289,23 @@ std::vector<sf::RectangleShape> Character::move(
   return shapes;
 }
 
-std::optional<float> Character::zIndex() const {
-  const auto& texture_bounding_rect = getTextureBoundingRect();
+std::optional<float> Character::z_index() const {
+  const auto& texture_bounding_rect = texture_bounds();
   return texture_bounding_rect.top + texture_bounding_rect.height;
 }
 
-float Character::distanceTo(const Character& other) {
+float Character::distance_to(const Character& other) {
   const auto a = getPosition();
   const auto b = other.getPosition();
 
   return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 }
 
-void Character::setEffectRect(sf::IntRect effect) {
+void Character::set_effect_rect(sf::IntRect effect) {
   current_effect = effect;
 }
 
-void Character::resetEffect() {
+void Character::reset_effect() {
   current_effect = std::nullopt;
 }
 

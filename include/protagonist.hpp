@@ -51,14 +51,13 @@ class Protagonist: public Character {
       } },
     { "pistol",
       [&]() {
-        addAttack(Attack("pistol", 20));
+        add_attack(Attack("pistol", 20));
         return "Pistol available for fight.";
       } }
   };
 
   std::vector<Attack> attacks(const json& attack_json) const;
 
-  std::set<std::string> talked_to_npcs;
   std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);
 
   public:
@@ -73,10 +72,6 @@ class Protagonist: public Character {
 
   const Inventory& inventory() const;
   Inventory& inventory();
-
-  bool talked_to(const std::string& npc_name);
-
-  void talk_to(const std::string& npc_name);
 
   void drop_item();
   std::optional<std::string> use_item(std::pair<int, Object> item);

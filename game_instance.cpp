@@ -63,7 +63,7 @@ void GameInstance::save(
 
   auto& attacks = save["player"]["attacks"] = json::array();
 
-  const auto& player_attacks = player.getAttacks();
+  const auto& player_attacks = player.attacks();
 
   for (const auto& attack: player_attacks) {
     attacks.push_back(json::object({ { "name", attack.getName() }, { "damage", attack.getDamage() } }));
