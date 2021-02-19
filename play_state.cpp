@@ -36,7 +36,8 @@ PlayState::PlayState(
   const sf::Vector2f& scale_, const sf::Vector2u& window_size):
   asset_cache(asset_cache_),
   _map(map), _player(player), _quest_stack(quest_stack), scale(scale_) {
-  map_view.reset({ 0, (map.getSize().y - window_size.y) * scale_.y, (float)window_size.x, (float)window_size.y });
+  map_view.reset({ 0, (map.getSize().y - window_size.y) * scale_.y, static_cast<float>(window_size.x),
+                   static_cast<float>(window_size.y) });
 
   const auto spawn = map.getSpawn();
   if (spawn) {

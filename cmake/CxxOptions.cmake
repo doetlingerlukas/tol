@@ -4,8 +4,8 @@ set(CMAKE_CXX_EXTENSIONS False)
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
-    message(FATAL_ERROR "GCC 10 or higher is required")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0")
+    message(FATAL_ERROR "GCC 9 or higher is required")
   endif()
 endif()
 

@@ -20,7 +20,7 @@ class Info: public sf::Drawable, public sf::Transformable {
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override {
     if (display_time.count() > 0) {
-      sf::Vector2f target_size({ (float)target.getSize().x, (float)target.getSize().y });
+      sf::Vector2f target_size({ static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y) });
       sf::Vector2f info_box_size({ target_size.x * 0.35f, 0 });
       sf::Vector2f info_box_pos({ target_size.x - info_box_size.x - 5, 5 });
 

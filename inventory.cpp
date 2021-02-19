@@ -3,9 +3,11 @@
 namespace tol {
 
 void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
-  sf::Vector2f target_size({ std::min((float)target.getSize().x, 1000.f), (float)target.getSize().y });
+  sf::Vector2f target_size(
+    { std::min(static_cast<float>(target.getSize().x), 1000.f), static_cast<float>(target.getSize().y) });
   sf::FloatRect inventory_dims(
-    ((float)target.getSize().x - target_size.x) / 2, target_size.y * 0.1f, target_size.x, target_size.y * 0.85f);
+    (static_cast<float>(target.getSize().x) - target_size.x) / 2, target_size.y * 0.1f, target_size.x,
+    target_size.y * 0.85f);
   sf::FloatRect detail(inventory_dims.left, inventory_dims.top, inventory_dims.width * 0.29f, inventory_dims.height);
   sf::FloatRect objects(
     detail.left + inventory_dims.width * 0.3f, inventory_dims.top, inventory_dims.width * 0.7f, inventory_dims.height);
@@ -19,7 +21,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   header.setOutlineColor(sf::Color::Black);
   header.setOutlineThickness(4.f);
   header.setString("Inventory");
-  header.setPosition({ ((float)target.getSize().x - header.getGlobalBounds().width) / 2, 0 });
+  header.setPosition({ (static_cast<float>(target.getSize().x) - header.getGlobalBounds().width) / 2.f, 0 });
   target.draw(header);
 
   sf::RectangleShape detail_box;
@@ -126,7 +128,7 @@ Inventory::Inventory(size_t max_size_, const std::shared_ptr<AssetCache> asset_c
   return _items.empty();
 }
 
-[[nodiscard]] int Inventory::size() const {
+[[nodiscard]] size_t Inventory::size() const {
   return _items.size();
 }
 
