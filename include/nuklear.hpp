@@ -51,8 +51,7 @@ class Nuklear {
     return _ctx;
   }
 
-  void render_menu(
-    Game& game, PlayState& play_state, const Character& player, const Inventory& inventory, QuestStack& quests) const;
+  void render_menu(Game& game, PlayState& play_state) const;
 
   void render_death(Game& game, PlayState& play_state) const;
 

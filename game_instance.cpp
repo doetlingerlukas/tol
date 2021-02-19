@@ -47,15 +47,16 @@ void GameInstance::remove() {
   fs::remove(save_file);
 }
 
-void GameInstance::save(
-  const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const {
+void GameInstance::save(const PlayState& play_state) const {
   if (!fs::exists(saves_dir)) {
     fs::create_directory(saves_dir);
   }
 
   json save;
 
-  auto player_pos = play_state.player().getPosition();
+  const auto& player = play_state.player();
+
+  auto player_pos = player.getPosition();
   save["player"]["position"]["x"] = player_pos.x;
   save["player"]["position"]["y"] = player_pos.y;
 
@@ -77,7 +78,7 @@ void GameInstance::save(
 
   auto& inventory_array = save["player"]["inventory"] = json::array();
 
-  const auto& inventory_items = inventory.items();
+  const auto& inventory_items = player.inventory().items();
 
   for (const auto& [id, obj]: inventory_items) {
     inventory_array.push_back(id);
@@ -92,6 +93,7 @@ void GameInstance::save(
 
   auto& completed_quests = quests_json["completed"] = json::array();
 
+  const auto& quests = play_state.quest_stack();
   for (size_t i = 0; i < quests.count(); i++) {
     if (quests.completed(i)) {
       completed_quests.push_back(i);
@@ -104,7 +106,9 @@ void GameInstance::save(
   ofs << save.dump(2);
 }
 
-void GameInstance::load(QuestStack& quest_stack, PlayState& play_state) {
+void GameInstance::load(PlayState& play_state) {
+  auto& quest_stack = play_state.quest_stack();
+
   for (size_t quest_id: load_quests()) {
     quest_stack.quests[quest_id].setCompleted();
   }

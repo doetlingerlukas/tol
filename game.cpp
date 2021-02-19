@@ -208,7 +208,7 @@ void Game::run() {
   Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
   std::reference_wrapper<Inventory> inventory = player.inventory();
 
-  instance().load(quest_stack, play_state);
+  instance().load(play_state);
 
   KeyInput key_input;
 
@@ -312,7 +312,7 @@ void Game::run() {
         }
         break;
       case GameState::MENU:
-        nuklear->render_menu(*this, play_state, player, inventory, quest_stack);
+        nuklear->render_menu(*this, play_state);
         break;
       case GameState::SETTINGS:
         nuklear->render_settings(*this, settings);

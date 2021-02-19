@@ -89,8 +89,7 @@ void Nuklear::render_death(Game& game, PlayState& play_state) const {
   pop_window_state();
 }
 
-void Nuklear::render_menu(
-  Game& game, PlayState& play_state, const Character& player, const Inventory& inventory, QuestStack& quests) const {
+void Nuklear::render_menu(Game& game, PlayState& play_state) const {
   auto ctx = this->ctx();
 
   push_window_state();
@@ -144,7 +143,7 @@ void Nuklear::render_menu(
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "SAVE")) {
-      game.instance().save(play_state, player, inventory, quests);
+      game.instance().save(play_state);
       game.set_state(GameState::PLAY);
     }
 
@@ -152,7 +151,7 @@ void Nuklear::render_menu(
 
     if (nk_button_label(ctx, "NEW GAME")) {
       game.instance().remove();
-      game.instance().load(quests, play_state);
+      game.instance().load(play_state);
       game.set_state(GameState::PLAY);
     }
 
