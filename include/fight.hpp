@@ -15,8 +15,8 @@ namespace tol {
 enum class Turn { PLAYER, ENEMY };
 
 class Fight: public sf::Drawable, public sf::Transformable {
-  const Character& player;
-  const Character* npc = nullptr;
+  Character& player;
+  Character* npc = nullptr;
   Turn fight_turn = Turn::PLAYER;
 
   std::shared_ptr<AssetCache> asset_cache;
@@ -48,7 +48,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     const int resize_x = scale_ultra(target.getSize().x, target.getSize().y);
 
     sf::Sprite player_sprite;
-    player_sprite.setTexture(*asset_cache->loadTexture(player.getCharacterTexture()));
+    player_sprite.setTexture(player.texture());
     player_sprite.setTextureRect(sf::IntRect{ TILE_SIZE, TILE_SIZE * 3, TILE_SIZE, TILE_SIZE });
     player_sprite.setPosition(
       { target.getSize().x - resize_x + scale_pos(100.0f, target.getSize().x, resize_x, -200.0f),
@@ -56,7 +56,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     player_sprite.setScale({ scale_factor, scale_factor });
     target.draw(player_sprite);
 
-    auto health = player.getStats()->health().get();
+    auto health = player.stats().health().get();
 
     const float health_bar_off = 170.0f;
     const float health_bar_size = 440.0f;
@@ -91,9 +91,9 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     sf::Sprite enemy;
 
-    const auto enemy_health = npc->getStats()->health().get();
+    const auto enemy_health = npc->stats().health().get();
 
-    enemy.setTexture(*asset_cache->loadTexture(npc->getCharacterTexture()));
+    enemy.setTexture(npc->texture());
     enemy.setTextureRect(sf::IntRect{ TILE_SIZE, TILE_SIZE * 5, TILE_SIZE, TILE_SIZE });
     enemy.setPosition({ resize_x - scale_pos(400.0f, target.getSize().x, resize_x, 0.0f), 100.0f });
     enemy.setScale({ scale_factor, scale_factor });
@@ -144,13 +144,13 @@ class Fight: public sf::Drawable, public sf::Transformable {
     sf::Text enemy_name;
     enemy_name.setCharacterSize(40);
     enemy_name.setFillColor(sf::Color::White);
-    enemy_name.setString(npc->getName());
+    enemy_name.setString(npc->name());
     enemy_name.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
     enemy_name.setPosition(
       { resize_x - scale_pos(400.0f + health_bar_off, target.getSize().x, resize_x, 150.0f), 20.0f });
     target.draw(enemy_name);
 
-    const auto enemy_level_text = fmt::format("Level: {}", npc->getStats()->experience().getLevel());
+    const auto enemy_level_text = fmt::format("Level: {}", npc->stats().experience().level());
 
     sf::Text enemy_level;
     enemy_level.setCharacterSize(40);
@@ -166,7 +166,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
       attack_info.setCharacterSize(70);
       attack_info.setFillColor(sf::Color::White);
       attack_info.setString(
-        fmt::format("{} used \"{}\" for {} damage.", npc->getName(), *last_enemy_attack, *last_enemy_damage));
+        fmt::format("{} used \"{}\" for {} damage.", npc->name(), *last_enemy_attack, *last_enemy_damage));
       attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
       attack_info.setPosition(
         { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
@@ -178,7 +178,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
       attack_info.setCharacterSize(70);
       attack_info.setFillColor(sf::Color::White);
       attack_info.setString(
-        fmt::format("{} used \"{}\" for {} damage.", player.getName(), *last_player_attack, *last_player_damage));
+        fmt::format("{} used \"{}\" for {} damage.", player.name(), *last_player_attack, *last_player_damage));
       attack_info.setFont(*asset_cache->loadFont("fonts/Gaegu-Bold.ttf"));
       attack_info.setPosition(
         { target.getSize().x / 2.0f - attack_info.getGlobalBounds().width / 2.0f, target.getSize().y / 2.0f - 35.0f });
@@ -206,12 +206,12 @@ class Fight: public sf::Drawable, public sf::Transformable {
   void initMenuItem(const Attack& attack) {
     menu.add_item(attack.getName(), [attack, this](int idx) mutable {
       auto damage = attack.getDamage();
-      const auto player_level = player.getStats()->experience().getLevel();
-      const auto& npc_stats = npc->getStats();
-      const auto npc_strength = npc_stats->strength().get();
+      const auto player_level = player.stats().experience().level();
+      auto& npc_stats = npc->stats();
+      const auto npc_strength = npc_stats.strength().get();
 
       auto final_damage = calcDamage(player_level, damage, npc_strength);
-      npc_stats->health().decrease(final_damage);
+      npc_stats.health().decrease(final_damage);
       fight_turn = Turn::ENEMY;
       last_turn = this->now;
       last_enemy_attack = std::nullopt;
@@ -222,7 +222,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
   }
 
   public:
-  Fight(const std::shared_ptr<AssetCache> asset_cache_, const Character& player_):
+  Fight(const std::shared_ptr<AssetCache> asset_cache_, Character& player_):
     player(player_), asset_cache(asset_cache_), menu(Menu(asset_cache, 52, { 340, 370 })) {
     std::srand(std::time(nullptr));
 
@@ -253,7 +253,7 @@ class Fight: public sf::Drawable, public sf::Transformable {
     }
   }
 
-  GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, const TiledMap& map) {
+  GameState with(std::chrono::milliseconds now_, const std::optional<std::string>& npc_interact, TiledMap& map) {
     now = now_;
 
     const auto& player_attacks = player.getAttacks();
@@ -262,16 +262,15 @@ class Fight: public sf::Drawable, public sf::Transformable {
       initMenuItem(player_attacks[player_attacks.size() - 1]);
     }
 
-    if (npc != nullptr && npc->getStats()->health().get() == 0) {
+    if (npc != nullptr && npc->stats().health().get() == 0) {
       resetFight();
       return GameState::PLAY;
     }
 
     if (npc_interact && npc == nullptr) {
       const auto& characters = map.getCharacters();
-      const auto& res = std::find_if(characters.cbegin(), characters.cend(), [&npc_interact](const auto& c) {
-        return c->getName() == *npc_interact;
-      });
+      const auto& res = std::find_if(
+        characters.cbegin(), characters.cend(), [&npc_interact](const auto& c) { return c->name() == *npc_interact; });
 
       if (res != std::end(characters))
         npc = *res;
@@ -283,15 +282,15 @@ class Fight: public sf::Drawable, public sf::Transformable {
       if (now >= last_turn + std::chrono::milliseconds(5000)) {
         fight_turn = Turn::PLAYER;
 
-        if (player.getStats()->health().get() == 0) {
+        if (player.stats().health().get() == 0) {
           resetFight();
           return GameState::DEAD;
         }
       } else if (now >= last_turn + std::chrono::milliseconds(3000) && !last_enemy_attack && !last_enemy_damage) {
         const auto& attacks = npc->getAttacks();
-        const auto& npc_stats = npc->getStats();
-        const auto npc_level = npc_stats->experience().getLevel();
-        const auto player_strength = player.getStats()->strength().get();
+        const auto& npc_stats = npc->stats();
+        const auto npc_level = npc_stats.experience().level();
+        const auto player_strength = player.stats().strength().get();
 
         int rnd = std::rand() / ((RAND_MAX + 1u) / attacks.size());
         const auto& enemy_attack = attacks[rnd];
@@ -302,7 +301,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
         last_player_attack = std::nullopt;
         last_player_damage = std::nullopt;
 
-        player.getStats()->health().decrease(*last_enemy_damage);
+        auto& health = player.stats().health();
+        health.decrease(*last_enemy_damage);
       }
     }
 

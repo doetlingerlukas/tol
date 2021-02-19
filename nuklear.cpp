@@ -290,7 +290,7 @@ void Nuklear::renderHud() {
           size.x * 0.6f, size.y - (progressbar_height + margin) * scale.y, size.x * 0.4f,
           (progressbar_height + margin) * scale.y),
         NK_WINDOW_BACKGROUND)) {
-    nk_size currentHealth = stats->health().get();
+    nk_size currentHealth = stats().health().get();
 
     nk_layout_row_static(ctx, progressbar_height * scale.y, size.x * 0.4f - margin * static_cast<float>(scale.x), 1);
 
@@ -424,10 +424,9 @@ std::pair<json, DialogState> Nuklear::renderDialog(const json& lines, DialogStat
 }
 
 Nuklear::Nuklear(
-  sf::Vector2u size_, const std::shared_ptr<Stats> stats_, const std::shared_ptr<AssetCache> asset_cache_,
-  sf::RenderWindow* _window):
+  sf::Vector2u size_, const Stats& stats, const std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window):
   asset_cache(asset_cache_),
-  size(size_), window(_window), stats(stats_), ctx(init(_window)) {}
+  size(size_), window(_window), _stats(stats), ctx(init(_window)) {}
 
 void Nuklear::setSize(sf::Vector2u size) {
   this->size = size;

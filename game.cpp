@@ -237,7 +237,7 @@ void Game::run() {
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
 
-  Overlay overlay(asset_cache, player.getStats(), quest_stack);
+  Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
 
   instance.load_position(play_state);
   play_state.set_inventory(instance.load_inventory());
@@ -248,7 +248,7 @@ void Game::run() {
   std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
   const std::shared_ptr<Nuklear> nuklear =
-    std::make_shared<Nuklear>(window.getSize(), player.getStats(), asset_cache, &window);
+    std::make_shared<Nuklear>(window.getSize(), player.stats(), asset_cache, &window);
   auto dialog = Dialog(nuklear);
 
   nuklear->setScale(scale);

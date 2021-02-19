@@ -32,7 +32,7 @@ class Nuklear {
   sf::Vector2u size;
   sf::Vector2f scale;
   sf::RenderWindow* window;
-  const std::shared_ptr<Stats> stats;
+  std::reference_wrapper<const Stats> _stats;
   struct nk_context* ctx;
 
   struct nk_context* init(sf::RenderWindow* window) const {
@@ -43,6 +43,10 @@ class Nuklear {
 
   void push_window_state() const;
   void pop_window_state() const;
+
+  [[nodiscard]] inline const Stats& stats() const {
+    return _stats;
+  }
 
   public:
   [[nodiscard]] struct nk_context* getCtx() const;
@@ -61,9 +65,7 @@ class Nuklear {
 
   std::pair<json, DialogState> renderDialog(const json& lines, DialogState dialog_state);
 
-  Nuklear(
-    sf::Vector2u size_, std::shared_ptr<Stats> stats_, std::shared_ptr<AssetCache> asset_cache_,
-    sf::RenderWindow* _window);
+  Nuklear(sf::Vector2u size_, const Stats& stats, std::shared_ptr<AssetCache> asset_cache_, sf::RenderWindow* _window);
 
   void setSize(sf::Vector2u size);
 

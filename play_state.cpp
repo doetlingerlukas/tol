@@ -96,7 +96,7 @@ GameState PlayState::update(
       npc.setEffectRect({ 480, 192, EFFECT_TILE_SIZE, EFFECT_TILE_SIZE });
 
       if (key_input.e) {
-        npc_dialog = npc.getName();
+        npc_dialog = npc.name();
         state = GameState::DIALOG;
       }
     } else {

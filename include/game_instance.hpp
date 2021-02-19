@@ -27,7 +27,8 @@ class GameInstance {
                                               json::object({ { "name", "kick" }, { "damage", 12 } }),
                                               json::object({ { "name", "use spider" }, { "damage", 16 } }) });
 
-  json player_default_stats = json::object({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "level", 1 } });
+  json player_default_stats =
+    json::object({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "experience", 0 } });
 
   public:
   explicit GameInstance(const fs::path& exec_dir);

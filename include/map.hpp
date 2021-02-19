@@ -43,7 +43,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   Protagonist* player;
   std::vector<Npc> npcs;
-  std::vector<const Character*> characters;
+  std::vector<Character*> characters;
   std::chrono::milliseconds now;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
@@ -91,7 +91,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   void setPlayer(Protagonist* player);
 
-  void addCharacter(const Character* character);
+  void addCharacter(Character* character);
 
   std::map<int, Object>& getCollectibles();
   std::optional<std::pair<int, Object>> getCollectible(const std::string& name);
@@ -102,7 +102,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   void setScale(sf::Vector2f factors);
 
-  std::vector<const Character*> getCharacters() const;
+  std::vector<Character*> getCharacters();
 
   std::vector<Npc>& getNpcs();
   const Npc& getNpc(const std::string& name);

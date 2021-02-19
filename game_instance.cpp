@@ -55,13 +55,11 @@ void GameInstance::save(
 
   auto& stats = save["player"]["stats"];
 
-  const auto& player_stats = player.getStats();
-
-  stats["health"] = player_stats->health().get();
-  stats["speed"] = player_stats->speed().get();
-  stats["experience"] = player_stats->experience().get();
-  stats["level"] = player_stats->experience().getLevel();
-  stats["strength"] = player_stats->strength().get();
+  const auto& player_stats = player.stats();
+  stats["health"] = player_stats.health().get();
+  stats["speed"] = player_stats.speed().get();
+  stats["experience"] = player_stats.experience().get();
+  stats["strength"] = player_stats.strength().get();
 
   auto& attacks = save["player"]["attacks"] = json::array();
 

@@ -4,10 +4,10 @@
 namespace tol {
 
 Character::Character(
-  const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats_,
-  const std::string& name_, std::vector<Attack>&& attacks_):
+  const fs::path& path, const std::shared_ptr<AssetCache> asset_cache_, const std::shared_ptr<Stats> stats,
+  const std::string& name, std::vector<Attack>&& attacks_):
   asset_cache(asset_cache_),
-  name(name_), character_texture(path), attacks(attacks_), stats(stats_) {
+  _name(name), character_texture(path), attacks(attacks_), _stats(stats) {
   sprite.setTexture(*asset_cache->loadTexture(path));
   sprite.setTextureRect({ 0, 0, TILE_SIZE, TILE_SIZE });
   sprite.setOrigin({ TILE_SIZE / 2.f, TILE_SIZE - 6.f });
@@ -16,12 +16,12 @@ Character::Character(
   effect.setOrigin({ EFFECT_TILE_SIZE / 2.f, EFFECT_TILE_SIZE / 2.f });
 }
 
-std::string Character::getName() const {
-  return name;
+const std::string& Character::name() const {
+  return _name;
 }
 
-fs::path Character::getCharacterTexture() const {
-  return character_texture;
+const sf::Texture& Character::texture() const {
+  return *sprite.getTexture();
 }
 
 std::vector<Attack> Character::getAttacks() const {
@@ -30,10 +30,6 @@ std::vector<Attack> Character::getAttacks() const {
 
 void Character::addAttack(Attack&& attack) {
   attacks.push_back(attack);
-}
-
-std::shared_ptr<Stats> Character::getStats() const {
-  return stats;
 }
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates state) const {
@@ -117,7 +113,7 @@ sf::FloatRect Character::getTextureBoundingRect() const {
 std::vector<sf::RectangleShape> Character::move(
   std::optional<CharacterDirection> x_direction, std::optional<CharacterDirection> y_direction, float speed,
   std::chrono::milliseconds now, PlayState& play_state, const sf::Vector2f& map_size, Info& info) {
-  const auto speed_adjusted = speed * (stats->speed().get() / 10.0f);
+  const auto speed_adjusted = speed * (stats().speed().get() / 10.0f);
 
   sf::Vector2f velocity = { 0.f, 0.f };
 
@@ -155,11 +151,6 @@ std::vector<sf::RectangleShape> Character::move(
         }
       }
     }
-
-    const auto td = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_collision);
-
-    if (td.count() > 250)
-      stats->health().decrease(10);
 
     this->last_collision = now;
   };

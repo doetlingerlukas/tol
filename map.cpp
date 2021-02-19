@@ -103,7 +103,7 @@ void TiledMap::drawTileLayer(
   }
 }
 
-std::vector<const Character*> TiledMap::getCharacters() const {
+std::vector<Character*> TiledMap::getCharacters() {
   return characters;
 }
 
@@ -213,7 +213,7 @@ TiledMap::TiledMap(const fs::path& map_path, const std::shared_ptr<AssetCache> a
     }
   }
 
-  for (const auto& npc: npcs) {
+  for (auto& npc: npcs) {
     characters.push_back(&npc);
   }
 
@@ -302,7 +302,7 @@ void TiledMap::setPlayer(Protagonist* player) {
   addCharacter(player);
 }
 
-void TiledMap::addCharacter(const Character* character) {
+void TiledMap::addCharacter(Character* character) {
   characters.push_back(character);
 }
 
@@ -420,7 +420,7 @@ std::vector<Npc>& TiledMap::getNpcs() {
 }
 
 const Npc& TiledMap::getNpc(const std::string& name) {
-  auto found = std::find_if(npcs.cbegin(), npcs.cend(), [&name](const auto& npc) { return npc.getName() == name; });
+  auto found = std::find_if(npcs.cbegin(), npcs.cend(), [&name](const auto& npc) { return npc.name() == name; });
 
   if (found == npcs.cend()) {
     throw std::runtime_error(fmt::format("No NPC with name '{}' found.", name));

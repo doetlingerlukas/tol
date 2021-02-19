@@ -26,28 +26,28 @@ class Protagonist: public Character {
   std::map<std::string, std::function<std::optional<std::string>()>> collectible_effects{
     { "lemon",
       [&]() {
-        stats->health().increase(30);
-        return stats->get();
+        stats().health().increase(30);
+        return stats().get();
       } },
     { "strawberry",
       [&]() {
-        stats->experience().increase(400);
-        return stats->get();
+        stats().experience().increase(400);
+        return stats().get();
       } },
     { "orange",
       [&]() {
-        stats->strength().increase(1);
-        return stats->get();
+        stats().strength().increase(1);
+        return stats().get();
       } },
     { "melon",
       [&]() {
-        stats->health().increase(50);
-        return stats->get();
+        stats().health().increase(50);
+        return stats().get();
       } },
     { "pear",
       [&]() {
-        stats->speed().increase(20);
-        return stats->get();
+        stats().speed().increase(20);
+        return stats().get();
       } },
     { "pistol",
       [&]() {
