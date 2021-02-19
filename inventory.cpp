@@ -87,7 +87,10 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
     sf::Vector2f info_pos({ detail.left + margin.x / 2, detail.top + margin.y / 2 });
     auto max_line_width = detail.width - margin.x;
 
-    display_text("<C> use item", { info_pos.x, detail.top + detail.height - 4 * margin.y });
+    if (element.usable()) {
+      display_text("<C> use item", { info_pos.x, detail.top + detail.height - 4 * margin.y });
+    }
+
     display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
 
     std::istringstream iss(Collectible::getCollectible(element.getName()).info());
@@ -165,9 +168,11 @@ void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
 
 std::optional<std::string> Inventory::use_selected(Protagonist& player) {
   if (selected) {
-    const auto message = player.use_item(remove(*selected));
-    select_next();
-    return message;
+    if (elements[*selected].second.usable()) {
+      const auto message = player.use_item(remove(*selected));
+      select_next();
+      return message;
+    }
   }
 
   return std::nullopt;

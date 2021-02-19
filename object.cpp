@@ -42,13 +42,13 @@ std::optional<float> Object::zIndex() const {
   return getPosition().y + getTile().getTileSize().y;
 }
 
-bool Object::usable() {
+bool Object::usable() const {
   auto prop = object.get().getProp("usable");
   if (prop) {
     return std::any_cast<const bool&>(prop->getValue());
   }
 
-  return false;
+  return true;
 }
 
 } // namespace tol

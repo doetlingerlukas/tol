@@ -12,16 +12,16 @@ void Quest::check_condition(PlayState& play_state, Info& info) {
 
   if (condition(play_state)) {
     completed_ = true;
-    info.display_info(fmt::format("Completed Quest: {}", title()), std::chrono::seconds(5));
+    info.display_info(fmt::format("Completed Quest: {}", title()), std::chrono::seconds(10));
   }
 }
 
 QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_) {
-  quests.push_back(Quest("Gather resources!", "You are hungly. Find something to eat.", [](auto play_state) {
+  quests.push_back(Quest("Gather resources!", "You are hungry. Find something to eat.", [](auto play_state) {
     return !play_state.getPlayer().getInventoryElements().empty();
   }));
   quests.push_back(
-    Quest("Find the lost item.", "<NPC> has lost something in the woods. Find it for him", [](auto play_state) {
+    Quest("Find the lost item.", "Detlef has lost something in the woods. Find it for him.", [](auto play_state) {
       auto& map = play_state.getMap();
 
       auto& npc = map.getNpc("Detlef de Loost");
@@ -29,7 +29,7 @@ QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_
       auto pair = map.getCollectible("tools");
       if (pair) {
         auto& [id, collectible] = *pair;
-        collectible.collides_with(npc.getBoundingRect());
+        return collectible.collides_with(npc.getBoundingRect());
       }
 
       return false;

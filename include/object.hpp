@@ -5,7 +5,7 @@
 namespace tol {
 
 class Object: public Tile {
-  std::reference_wrapper<tson::Object> object;
+  mutable std::reference_wrapper<tson::Object> object;
 
   public:
   Object(tson::Object& object, tson::Tile& tile, std::shared_ptr<AssetCache> asset_cache);
@@ -18,7 +18,7 @@ class Object: public Tile {
 
   virtual std::optional<float> zIndex() const override;
 
-  bool usable();
+  bool usable() const;
 };
 
 } // namespace tol

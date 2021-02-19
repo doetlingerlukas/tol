@@ -861,7 +861,7 @@
   <object id="311" name="pistol" type="collectible" gid="44279" x="38" y="2292" width="32" height="32"/>
   <object id="314" name="tools" type="collectible" gid="34227" x="362.907" y="1562.66" width="32" height="32">
    <properties>
-    <property name="usable" type="object" value="0"/>
+    <property name="usable" type="bool" value="false"/>
    </properties>
   </object>
  </objectgroup>
