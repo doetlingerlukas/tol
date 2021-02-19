@@ -7,7 +7,8 @@
 namespace tol {
 
 void Game::handle_event(
-  sf::Event& event, KeyInput& key_input, tol::Music& music, Inventory& inventory, Overlay& overlay, Fight& fight) {
+  sf::Event& event, KeyInput& key_input, PlayState& play_state, tol::Music& music, Inventory& inventory,
+  Overlay& overlay, Fight& fight) {
   const auto state = instance.getState();
 
   switch (event.type) {
@@ -129,7 +130,8 @@ void Game::handle_event(
           break;
         case sf::Keyboard::C:
           if (state == GameState::INVENTORY && event.type == sf::Event::KeyReleased) {
-            const auto message = inventory.use_selected(player);
+            const auto callback = [&play_state](int id) { play_state.add_used_collectibles(id); };
+            const auto message = inventory.use_selected(player, callback);
             if (message) {
               info.display_info(*message, std::chrono::seconds(5));
             }
@@ -257,7 +259,7 @@ void Game::run() {
     sf::Event event;
     nk_input_begin(nuklear->ctx());
     while (window.pollEvent(event)) {
-      handle_event(event, key_input, music, inventory, overlay, fight);
+      handle_event(event, key_input, play_state, music, inventory, overlay, fight);
     }
     nk_input_end(nuklear->ctx());
 

@@ -53,6 +53,7 @@ class GameInstance {
   json load_attacks() const;
   json load_stats() const;
   json load_inventory() const;
+  json load_used_items() const;
   json load_quests() const;
   json load_active_quest() const;
 };

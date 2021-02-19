@@ -2,6 +2,7 @@
 #define TOL_PLAY_STATE_HPP
 
 #include <optional>
+#include <set>
 
 #include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
@@ -35,6 +36,7 @@ class PlayState: public sf::Drawable {
   std::reference_wrapper<Map> _map;
   std::reference_wrapper<Protagonist> _player;
   std::reference_wrapper<QuestStack> _quest_stack;
+  std::set<int> used_collectible_ids;
 
   sf::Vector2f scale;
   sf::Vector2f direction = { 0.0f, 0.0f };
@@ -78,6 +80,11 @@ class PlayState: public sf::Drawable {
   void set_stats(const json& stats_array);
 
   void set_attacks(const json& attacks_array);
+
+  std::set<int> used_collectibles() const;
+  void add_used_collectibles(int id);
+  void set_used_collectibles(const json& attacks_array);
+  bool is_collectible_used(int id) const;
 
   [[nodiscard]] bool check_unlock_condition(const std::string& condition_name, bool collided);
 };

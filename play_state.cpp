@@ -161,4 +161,30 @@ void PlayState::set_attacks(const json& attacks_array) {
   }
 }
 
+std::set<int> PlayState::used_collectibles() const {
+  return used_collectible_ids;
+}
+
+void PlayState::add_used_collectibles(int id) {
+  used_collectible_ids.insert(id);
+}
+
+void PlayState::set_used_collectibles(const json& used_items) {
+  auto& collectibles = map().collectibles();
+  used_collectible_ids.clear();
+
+  for (const auto& id: used_items) {
+    used_collectible_ids.insert(id.get<int>());
+    collectibles.erase(id.get<int>());
+  }
+}
+
+bool PlayState::is_collectible_used(int id) const {
+  auto it = used_collectible_ids.find(id);
+  if (it != used_collectible_ids.end()) {
+    return true;
+  }
+  return false;
+}
+
 } // namespace tol

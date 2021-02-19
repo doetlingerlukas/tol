@@ -170,10 +170,13 @@ void Inventory::drop_selected(Protagonist& player, Map& map) {
   }
 }
 
-std::optional<std::string> Inventory::use_selected(Protagonist& player) {
+std::optional<std::string> Inventory::use_selected(Protagonist& player, std::function<void(int)> callback) {
   if (selected) {
     if (_items[*selected].second.usable()) {
-      const auto message = player.use_item(remove(*selected));
+      auto pair = remove(*selected);
+      const auto& add_to_used = callback;
+      add_to_used(pair.first);
+      const auto message = player.use_item(pair);
       select_next();
       return message;
     }
