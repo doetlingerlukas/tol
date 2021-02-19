@@ -258,13 +258,8 @@ class Fight: public sf::Drawable, public sf::Transformable {
 
     const auto& player_attacks = player.getAttacks();
 
-    if (player_attacks.size() > menu.count()) {
+    if (player_attacks.size() != menu.count()) {
       initMenuItem(player_attacks[player_attacks.size() - 1]);
-    }
-
-    if (player.getStats()->health().get() == 0) {
-      resetFight();
-      return GameState::DEAD;
     }
 
     if (npc != nullptr && npc->getStats()->health().get() == 0) {
@@ -285,8 +280,14 @@ class Fight: public sf::Drawable, public sf::Transformable {
     assert(npc != nullptr);
 
     if (fight_turn == Turn::ENEMY) {
-      if (now >= last_turn + std::chrono::milliseconds(3000)) {
+      if (now >= last_turn + std::chrono::milliseconds(5000)) {
         fight_turn = Turn::PLAYER;
+
+        if (player.getStats()->health().get() == 0) {
+          resetFight();
+          return GameState::DEAD;
+        }
+      } else if (now >= last_turn + std::chrono::milliseconds(3000) && !last_enemy_attack && !last_enemy_damage) {
         const auto& attacks = npc->getAttacks();
         const auto& npc_stats = npc->getStats();
         const auto npc_level = npc_stats->experience().getLevel();
