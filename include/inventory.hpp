@@ -25,7 +25,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   sf::Vector2f mouse_location;
   bool mouse_pressed;
-  mutable std::optional<int> selected;
+  mutable std::optional<size_t> selected;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
 
@@ -35,7 +35,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
   Inventory(size_t max_size_, std::shared_ptr<AssetCache> asset_cache_);
 
   [[nodiscard]] bool empty() const;
-  [[nodiscard]] int size() const;
+  [[nodiscard]] size_t size() const;
   [[nodiscard]] const std::vector<std::pair<int, Object>>& items() const;
   bool add(std::pair<int, Object> item);
   std::pair<int, Object> remove(size_t index);

@@ -126,7 +126,7 @@ Inventory::Inventory(size_t max_size_, const std::shared_ptr<AssetCache> asset_c
   return _items.empty();
 }
 
-[[nodiscard]] int Inventory::size() const {
+[[nodiscard]] size_t Inventory::size() const {
   return _items.size();
 }
 
