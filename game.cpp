@@ -283,7 +283,7 @@ void Game::run() {
             window.draw(overlay);
             break;
           case GameState::FIGHT:
-            instance().set_state(fight.with(now, last_npc_interaction, map));
+            instance().set_state(fight.with(now, last_npc_interaction, map, info));
 
             if (instance().state() == GameState::FIGHT)
               window.draw(fight);
