@@ -56,7 +56,7 @@ class QuestStack {
 
   void check(PlayState& play_state);
 
-  bool completed(size_t index) const;
+  [[nodiscard]] bool completed(size_t index) const;
 
   [[nodiscard]] size_t count() const;
 };

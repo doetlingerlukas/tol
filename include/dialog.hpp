@@ -36,7 +36,7 @@ class Dialog {
     }
 
     if (dialog_progress.is_array()) {
-      auto [progress, state] = ui->renderDialog(dialog_progress, dialog_state);
+      auto [progress, state] = ui->render_dialog(dialog_progress, dialog_state);
       dialog_progress = progress;
       dialog_state = state;
       return std::make_pair(GameState::DIALOG, 0);
@@ -46,10 +46,10 @@ class Dialog {
       std::pair<json, DialogState> pair;
 
       if (dialog_progress[stateAsString(!dialog_state)].is_string()) {
-        pair = ui->renderResponseDialog(dialog_progress, !dialog_state, init_npc_dialog);
+        pair = ui->render_response_dialog(dialog_progress, !dialog_state, init_npc_dialog);
         pair = make_pair(dialog_progress, !pair.second);
       } else {
-        pair = ui->renderDialog(dialog_progress[stateAsString(!dialog_state)], dialog_state);
+        pair = ui->render_dialog(dialog_progress[stateAsString(!dialog_state)], dialog_state);
       }
 
       auto [progress, state] = pair;
@@ -59,7 +59,7 @@ class Dialog {
     }
 
     if (dialog_progress.is_string()) {
-      auto [progress, state] = ui->renderResponseDialog(dialog_progress, dialog_state, init_npc_dialog);
+      auto [progress, state] = ui->render_response_dialog(dialog_progress, dialog_state, init_npc_dialog);
       dialog_progress = progress;
       dialog_state = state;
       return std::make_pair(GameState::DIALOG, 0);

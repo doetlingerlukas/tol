@@ -172,11 +172,9 @@ Game::Game(fs::path dir_, Settings& settings_):
   dir(dir_), settings(settings_), instance(GameInstance(dir_)),
   asset_cache(std::make_shared<AssetCache>(dir_ / "assets")), info(asset_cache), map("map.json", asset_cache),
   player(Protagonist(
-    fs::path("tilesets/character-ruby.png"),
-    asset_cache,
-    std::make_shared<Stats>(instance.load_stats()),
-    instance.load_attacks(),
-    "Ruby")), mouse_pressed(false) {
+    fs::path("tilesets/character-ruby.png"), asset_cache, std::make_shared<Stats>(instance.load_stats()),
+    instance.load_attacks(), "Ruby")),
+  mouse_pressed(false) {
   scale = { 2.0, 2.0 };
   resolution_scale = { 1.0, 1.0 };
 
@@ -215,11 +213,11 @@ void Game::run() {
   map.setScale(scale);
   player.setScale(scale);
 
-  map.setPlayer(&player);
+  map.set_player(&player);
 
   QuestStack quest_stack(info);
 
-  for(size_t quest_id: instance.load_quests()["completed"]) {
+  for (size_t quest_id: instance.load_quests()["completed"]) {
     quest_stack.quests[quest_id].setCompleted();
   }
 
@@ -239,18 +237,18 @@ void Game::run() {
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
 
-  Overlay overlay(asset_cache, player.getStats(), quest_stack);
+  Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
 
   instance.load_position(play_state);
   play_state.set_inventory(instance.load_inventory());
 
-  std::reference_wrapper<Inventory> inventory = player.getInventory();
+  std::reference_wrapper<Inventory> inventory = player.inventory();
 
   sf::Clock clock;
   std::chrono::milliseconds now = std::chrono::milliseconds(0);
 
   const std::shared_ptr<Nuklear> nuklear =
-    std::make_shared<Nuklear>(window.getSize(), player.getStats(), asset_cache, &window);
+    std::make_shared<Nuklear>(window.getSize(), player.stats(), asset_cache, &window);
   auto dialog = Dialog(nuklear);
 
   nuklear->setScale(scale);
@@ -269,11 +267,11 @@ void Game::run() {
     now += std::chrono::milliseconds(millis);
 
     sf::Event event;
-    nk_input_begin(nuklear->getCtx());
+    nk_input_begin(nuklear->ctx());
     while (window.pollEvent(event)) {
       handle_event(event, key_input, music, inventory, overlay, fight);
     }
-    nk_input_end(nuklear->getCtx());
+    nk_input_end(nuklear->ctx());
 
     if (instance.isSettingsChanged()) {
       handle_settings_update(music);
@@ -290,7 +288,7 @@ void Game::run() {
         window.close();
         break;
       case GameState::MENU:
-        nuklear->renderMenu(instance, play_state, player, inventory, quest_stack);
+        nuklear->render_menu(instance, play_state, player, inventory, quest_stack);
         break;
       case GameState::INVENTORY:
         window.draw(play_state);
@@ -311,7 +309,7 @@ void Game::run() {
           window.draw(fight);
         break;
       case GameState::DEAD:
-        nuklear->renderDeath(instance, play_state);
+        nuklear->render_death(instance, play_state);
         break;
       case GameState::PLAY:
       case GameState::QUEST:
@@ -321,7 +319,7 @@ void Game::run() {
         info.update_time(std::chrono::milliseconds(millis));
         window.draw(info);
 
-        nuklear->renderHud();
+        nuklear->render_hud();
         break;
       case GameState::DIALOG:
         window.draw(play_state);
@@ -329,7 +327,6 @@ void Game::run() {
         if (last_npc_interaction) {
           auto [state, quest] = dialog.show(*last_npc_interaction);
           instance.setState(state);
-          player.talk_to(*last_npc_interaction);
 
           if (state == GameState::QUEST) {
             quest_stack.select(quest);
@@ -337,7 +334,7 @@ void Game::run() {
         }
         break;
       case GameState::SETTINGS:
-        nuklear->renderSettings(instance, settings);
+        nuklear->render_settings(instance, settings);
         break;
       default:
         break;

@@ -13,8 +13,8 @@ namespace tol {
 
 class Overlay: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
-  std::shared_ptr<Stats> stats;
-  std::reference_wrapper<QuestStack> quest_stack;
+  std::reference_wrapper<const Stats> _stats;
+  std::reference_wrapper<QuestStack> _quest_stack;
 
   sf::Vector2f mouse_location;
   bool mouse_pressed;
@@ -26,7 +26,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     sf::FloatRect stats_rect(overlay_dims.left, overlay_dims.top, overlay_dims.width * 0.29f, overlay_dims.height);
     sf::FloatRect quests_rect(
       stats_rect.left + overlay_dims.width * 0.3f, overlay_dims.top, overlay_dims.width * 0.7f, overlay_dims.height);
-    const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
+    const auto font = *asset_cache->load_font("fonts/Gaegu-Regular.ttf");
 
     sf::Text header;
     header.setFont(font);
@@ -68,7 +68,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
       sf::Text name;
       name.setFont(font);
       name.setStyle(sf::Text::Style::Bold);
-      if (getQuestStack().getSelected() == index) {
+      if (quest_stack().getSelected() == index) {
         name.setFillColor(sf::Color::Green);
       } else {
         name.setFillColor(sf::Color::White);
@@ -79,13 +79,13 @@ class Overlay: public sf::Drawable, public sf::Transformable {
 
       auto bounds = name.getGlobalBounds();
       if (bounds.contains(mouse_location)) {
-        getQuestStack().select(index);
+        quest_stack().select(index);
       }
 
       height_offset += name.getCharacterSize();
       sf::Text text;
       text.setFont(font);
-      if (getQuestStack().getSelected() == index) {
+      if (quest_stack().getSelected() == index) {
         text.setFillColor(sf::Color::Green);
       } else {
         text.setFillColor(sf::Color::White);
@@ -111,7 +111,7 @@ class Overlay: public sf::Drawable, public sf::Transformable {
     };
 
     auto i = 0;
-    for (auto& quest: getQuestStack().quests) {
+    for (auto& quest: quest_stack().quests) {
       if (!quest.completed())
         display_text(quest.title(), quest.description(), i);
       i++;
@@ -135,23 +135,25 @@ class Overlay: public sf::Drawable, public sf::Transformable {
       return oss.str();
     };
 
-    auto exp = ostreamable_to_string(stats->experience());
+    auto exp = ostreamable_to_string(stats().experience());
     draw_stats_text(exp.substr(0, exp.find(", ")));
     exp.erase(0, exp.find(", ") + 2);
     draw_stats_text(exp);
-    draw_stats_text(ostreamable_to_string(stats->strength()));
-    draw_stats_text(ostreamable_to_string(stats->speed()));
-    draw_stats_text(ostreamable_to_string(stats->health()));
+    draw_stats_text(ostreamable_to_string(stats().strength()));
+    draw_stats_text(ostreamable_to_string(stats().speed()));
+    draw_stats_text(ostreamable_to_string(stats().health()));
+  }
+
+  inline const Stats& stats() const {
+    return _stats;
   }
 
   public:
-  explicit Overlay(
-    const std::shared_ptr<AssetCache> asset_cache_, std::shared_ptr<Stats> stats_, QuestStack& quest_stack_):
-    asset_cache(asset_cache_),
-    stats(stats_), quest_stack(quest_stack_), mouse_pressed(false) {}
+  explicit Overlay(const std::shared_ptr<AssetCache> asset_cache_, const Stats& stats, QuestStack& quest_stack):
+    asset_cache(asset_cache_), _stats(stats), _quest_stack(quest_stack), mouse_pressed(false) {}
 
-  inline QuestStack& getQuestStack() const {
-    return quest_stack;
+  inline QuestStack& quest_stack() const {
+    return _quest_stack;
   }
 
   void mouse(sf::Vector2f location, bool pressed) {

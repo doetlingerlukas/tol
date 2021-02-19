@@ -43,14 +43,14 @@ if(${LINUX})
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL)
   target_link_libraries(tol PRIVATE OpenGL::GL)
-
-  find_package(OpenAL CONFIG REQUIRED)
-  target_link_libraries(tol PRIVATE OpenAL::OpenAL)
 endif()
 
 if(WIN32)
   target_link_libraries(tol PRIVATE opengl32)
 endif()
+
+find_package(OpenAL CONFIG REQUIRED)
+target_link_libraries(tol PRIVATE OpenAL::OpenAL)
 
 find_path(NUKLEAR_INCLUDE_DIRS "nuklear.h")
 target_include_directories(tol PRIVATE ${NUKLEAR_INCLUDE_DIRS})

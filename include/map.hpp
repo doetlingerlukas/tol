@@ -43,7 +43,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   Protagonist* player;
   std::vector<Npc> npcs;
-  std::vector<const Character*> characters;
+  std::vector<Character*> characters;
   std::chrono::milliseconds now;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
@@ -89,12 +89,12 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   sf::Vector2f getView(float window_width, float window_height);
 
-  void setPlayer(Protagonist* player);
+  void set_player(Protagonist* player);
 
-  void addCharacter(const Character* character);
+  void addCharacter(Character* character);
 
   std::map<int, Object>& getCollectibles();
-  std::optional<std::pair<int, Object>> getCollectible(const std::string& name);
+  std::optional<std::pair<int, Object>> collectible_by_name(const std::string& name);
 
   std::vector<Collision> collisions_around(const sf::FloatRect& player) const;
 
@@ -102,12 +102,12 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   void setScale(sf::Vector2f factors);
 
-  std::vector<const Character*> getCharacters() const;
+  std::vector<Character*> getCharacters();
 
   std::vector<Npc>& getNpcs();
   const Npc& getNpc(const std::string& name);
 
-  void setPlayer(Character* player);
+  void set_player(Character* player);
 
   std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
 };

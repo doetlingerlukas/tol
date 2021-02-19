@@ -24,76 +24,60 @@ template <typename T> class StatsProps {
 class Health: public StatsProps<size_t> {
   private:
   size_t health = 100;
-  std::function<void()> callback = nullptr;
-
-  public:
-  void subscribe(std::function<void()> func);
-
-  void increase(size_t value) override;
-
-  [[nodiscard]] size_t get() const override;
-
-  void set(size_t stat) override;
-
-  void decrease(size_t value);
-
-  Health(const Health& h) = delete;
-
-  explicit Health(size_t health_);
 
   virtual std::ostream& print(std::ostream& out) const override;
+
+  public:
+  explicit Health(size_t health_);
+
+  [[nodiscard]] size_t get() const override;
+  void set(size_t stat) override;
+  void increase(size_t value) override;
+  void decrease(size_t value);
 };
 
 class Strength: public StatsProps<size_t> {
   size_t strength = 10;
 
+  virtual std::ostream& print(std::ostream& out) const override;
+
   public:
   explicit Strength(size_t strength_);
 
-  void increase(size_t value) override;
-
   [[nodiscard]] size_t get() const override;
-
   void set(size_t stat) override;
-
-  virtual std::ostream& print(std::ostream& out) const override;
+  void increase(size_t value) override;
 };
 
 class Speed: public StatsProps<size_t> {
   size_t speed = 10;
 
+  virtual std::ostream& print(std::ostream& out) const override;
+
   public:
   explicit Speed(size_t speed_);
 
-  void increase(size_t value) override;
-
   [[nodiscard]] size_t get() const override;
-
   void set(size_t stat) override;
-
-  virtual std::ostream& print(std::ostream& out) const override;
+  void increase(size_t value) override;
 };
 
 class Experience: public StatsProps<size_t> {
-  size_t experience = 0;
-  size_t level = 1;
+  size_t xp = 0;
 
   std::map<size_t, size_t> xp_bracket{ { 0, 1 },    { 100, 2 },  { 280, 3 },  { 500, 4 },  { 870, 5 },
                                        { 1300, 6 }, { 2000, 7 }, { 3000, 8 }, { 4500, 9 }, { 6600, 10 } };
 
-  public:
-  explicit Experience(size_t lvl);
+  virtual std::ostream& print(std::ostream& out) const override;
 
-  void increase(size_t value) override;
+  public:
+  explicit Experience(size_t xp_);
 
   [[nodiscard]] size_t get() const override;
-
-  [[nodiscard]] virtual size_t getLevel() const;
-
   void set(size_t stat) override;
-  void setAll(size_t xp, size_t lvl);
+  void increase(size_t value) override;
 
-  virtual std::ostream& print(std::ostream& out) const override;
+  [[nodiscard]] virtual size_t level() const;
 };
 
 class Stats {
@@ -106,15 +90,35 @@ class Stats {
   public:
   explicit Stats(const json& stats);
 
-  Health& health();
+  [[nodiscard]] inline const Health& health() const {
+    return _health;
+  }
+  [[nodiscard]] inline Health& health() {
+    return _health;
+  }
 
-  Strength& strength();
+  [[nodiscard]] inline const Strength& strength() const {
+    return _strength;
+  }
+  [[nodiscard]] inline Strength& strength() {
+    return _strength;
+  }
 
-  Speed& speed();
+  [[nodiscard]] inline const Speed& speed() const {
+    return _speed;
+  }
+  [[nodiscard]] inline Speed& speed() {
+    return _speed;
+  }
 
-  Experience& experience();
+  [[nodiscard]] inline const Experience& experience() const {
+    return _experience;
+  }
+  [[nodiscard]] inline Experience& experience() {
+    return _experience;
+  }
 
-  std::string get();
+  [[nodiscard]] std::string get() const;
 };
 
 } // namespace tol

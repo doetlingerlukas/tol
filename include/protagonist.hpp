@@ -5,8 +5,8 @@
 #include <optional>
 
 #include <SFML/Audio.hpp>
-#include <nlohmann/json.hpp>
 #include <map>
+#include <nlohmann/json.hpp>
 
 #include "attack.hpp"
 #include "character.hpp"
@@ -18,7 +18,7 @@ namespace tol {
 using json = nlohmann::json;
 
 class Protagonist: public Character {
-  Inventory inventory;
+  Inventory _inventory;
 
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
@@ -26,39 +26,38 @@ class Protagonist: public Character {
   std::map<std::string, std::function<std::optional<std::string>()>> collectible_effects{
     { "lemon",
       [&]() {
-        stats->health().increase(30);
-        return stats->get();
+        stats().health().increase(30);
+        return stats().get();
       } },
     { "strawberry",
       [&]() {
-        stats->experience().increase(400);
-        return stats->get();
+        stats().experience().increase(400);
+        return stats().get();
       } },
     { "orange",
       [&]() {
-        stats->strength().increase(1);
-        return stats->get();
+        stats().strength().increase(1);
+        return stats().get();
       } },
     { "melon",
       [&]() {
-        stats->health().increase(50);
-        return stats->get();
+        stats().health().increase(50);
+        return stats().get();
       } },
     { "pear",
       [&]() {
-        stats->speed().increase(20);
-        return stats->get();
+        stats().speed().increase(20);
+        return stats().get();
       } },
     { "pistol",
       [&]() {
-        addAttack(Attack("pistol", 20));
+        add_attack(Attack("pistol", 20));
         return "Pistol available for fight.";
       } }
   };
 
   std::vector<Attack> attacks(const json& attack_json) const;
 
-  std::set<std::string> talked_to_npcs;
   std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);
 
   public:
@@ -71,13 +70,8 @@ class Protagonist: public Character {
     std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles,
     const sf::Vector2f& map_size, Info& info);
 
-  std::vector<std::pair<int, Object>>& getInventoryElements();
-
-  Inventory& getInventory();
-
-  bool talked_to(const std::string& npc_name);
-
-  void talk_to(const std::string& npc_name);
+  const Inventory& inventory() const;
+  Inventory& inventory();
 
   void drop_item();
   std::optional<std::string> use_item(std::pair<int, Object> item);

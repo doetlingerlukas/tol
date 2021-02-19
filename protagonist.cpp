@@ -8,8 +8,8 @@ Protagonist::Protagonist(
   const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats,
   const json& attack_json, const std::string& name):
   Character(path, asset_cache, stats, name, attacks(attack_json)),
-  inventory(Inventory(32, asset_cache)) {
-  const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
+  _inventory(Inventory(32, asset_cache)) {
+  const auto file = asset_cache->load_file(fs::path("music/item-pick-up.ogg"));
 
   if (pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
     pick_up_sound.setBuffer(pick_up_sound_buffer);
@@ -25,14 +25,14 @@ std::vector<sf::RectangleShape> Protagonist::move(
   const auto shapes = Character::move(x_direction, y_direction, speed, now, play_state, map_size, info);
 
   if (now >= pick_up_allowed_after) {
-    const auto bounds = getBoundingRect();
+    const auto bounds_ = bounds();
     for (auto it = collectibles.cbegin(); it != collectibles.cend();) {
       auto& [id, collectible] = *it;
 
-      if (collectible.collides_with(bounds)) {
-        if (inventory.add(*it)) {
+      if (collectible.collides_with(bounds_)) {
+        if (_inventory.add(*it)) {
           pick_up_sound.play();
-          info.display_info(fmt::format("Item collected: {}", collectible.getName()), std::chrono::seconds(5));
+          info.display_info(fmt::format("Item collected: {}", collectible.name()), std::chrono::seconds(5));
           it = collectibles.erase(it);
           continue;
         } else {
@@ -57,20 +57,12 @@ std::vector<Attack> Protagonist::attacks(const json& attack_json) const {
   return att;
 }
 
-std::vector<std::pair<int, Object>>& Protagonist::getInventoryElements() {
-  return inventory.getElements();
+const Inventory& Protagonist::inventory() const {
+  return _inventory;
 }
 
-Inventory& Protagonist::getInventory() {
-  return inventory;
-}
-
-bool Protagonist::talked_to(const std::string& npc_name) {
-  return talked_to_npcs.count(npc_name) > 0;
-}
-
-void Protagonist::talk_to(const std::string& npc_name) {
-  talked_to_npcs.insert(npc_name);
+Inventory& Protagonist::inventory() {
+  return _inventory;
 }
 
 void Protagonist::drop_item() {
@@ -79,8 +71,8 @@ void Protagonist::drop_item() {
 
 std::optional<std::string> Protagonist::use_item(std::pair<int, Object> item) {
   auto [id, collectible] = item;
-  std::cout << "Item used: " << collectible.getName() << std::endl;
-  const auto& found = collectible_effects.find(collectible.getName());
+  std::cout << "Item used: " << collectible.name() << std::endl;
+  const auto& found = collectible_effects.find(collectible.name());
   if (found != collectible_effects.end()) {
     const auto& callback = found->second;
     return callback();

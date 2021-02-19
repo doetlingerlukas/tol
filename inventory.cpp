@@ -9,7 +9,7 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   sf::FloatRect detail(inventory_dims.left, inventory_dims.top, inventory_dims.width * 0.29f, inventory_dims.height);
   sf::FloatRect objects(
     detail.left + inventory_dims.width * 0.3f, inventory_dims.top, inventory_dims.width * 0.7f, inventory_dims.height);
-  const auto font = *asset_cache->loadFont("fonts/Gaegu-Regular.ttf");
+  const auto font = *asset_cache->load_font("fonts/Gaegu-Regular.ttf");
 
   sf::Text header;
   header.setFont(font);
@@ -46,10 +46,10 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   // Offsets for placement.
   auto h = 0;
   auto w = 0;
-  for (auto [id, element]: elements) {
-    element.setScale(scale);
+  for (auto [id, item]: _items) {
+    item.setScale(scale);
 
-    auto rect = element.getBoundingRect();
+    auto rect = item.bounds();
     sf::Vector2f bounding_size({ rect.width * scale.x, rect.height * scale.y });
     sf::RectangleShape bounding_box(bounding_size);
     if (margin.x + w + bounding_size.x + margin.x > objects.width) {
@@ -65,8 +65,8 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
     bounding_box.setOutlineThickness(2.f);
     target.draw(bounding_box);
 
-    element.setPosition({ (objects.left + margin.x + w) / scale.x, (objects.top + margin.y + h) / scale.y });
-    target.draw(element);
+    item.setPosition({ (objects.left + margin.x + w) / scale.x, (objects.top + margin.y + h) / scale.y });
+    target.draw(item);
 
     w += margin.x + bounding_size.x;
     i++;
@@ -81,19 +81,19 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
     target.draw(text);
   };
 
-  if (elements.size() > 0 && selected) {
-    auto& [id, element] = elements.at(*selected);
+  if (_items.size() > 0 && selected) {
+    const auto& [id, item] = _items.at(*selected);
 
     sf::Vector2f info_pos({ detail.left + margin.x / 2, detail.top + margin.y / 2 });
     auto max_line_width = detail.width - margin.x;
 
-    if (element.usable()) {
+    if (item.usable()) {
       display_text("<C> use item", { info_pos.x, detail.top + detail.height - 4 * margin.y });
     }
 
     display_text("<X> drop item", { info_pos.x, detail.top + detail.height - 2 * margin.y });
 
-    std::istringstream iss(Collectible::getCollectible(element.getName()).info());
+    std::istringstream iss(item.description());
     const std::vector<std::string> words(
       { std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} });
 
@@ -119,20 +119,24 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
   }
 }
 
-Inventory::Inventory(int max_size_, const std::shared_ptr<AssetCache> asset_cache_):
+Inventory::Inventory(size_t max_size_, const std::shared_ptr<AssetCache> asset_cache_):
   asset_cache(asset_cache_), max_size(max_size_), mouse_pressed(false) {}
 
+[[nodiscard]] bool Inventory::empty() const {
+  return _items.empty();
+}
+
 [[nodiscard]] int Inventory::size() const {
-  return elements.size();
+  return _items.size();
 }
 
-std::vector<std::pair<int, Object>>& Inventory::getElements() {
-  return elements;
+[[nodiscard]] const std::vector<std::pair<int, Object>>& Inventory::items() const {
+  return _items;
 }
 
-bool Inventory::add(std::pair<int, Object> new_element) {
+bool Inventory::add(std::pair<int, Object> item) {
   if (size() < max_size) {
-    elements.push_back(new_element);
+    _items.push_back(item);
     return true;
   }
 
@@ -140,9 +144,9 @@ bool Inventory::add(std::pair<int, Object> new_element) {
 }
 
 std::pair<int, Object> Inventory::remove(size_t index) {
-  auto element = elements[index];
-  elements.erase(elements.cbegin() + index);
-  return element;
+  auto item = _items[index];
+  _items.erase(_items.cbegin() + index);
+  return item;
 }
 
 void Inventory::mouse(sf::Vector2f location, bool pressed) {
@@ -155,8 +159,8 @@ void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
     auto [id, collectible] = remove(*selected);
 
     auto new_position = player.getPosition();
-    new_position.x -= collectible.getBoundingRect().width / 2.f;
-    new_position.y -= collectible.getBoundingRect().height / 2.f;
+    new_position.x -= collectible.bounds().width / 2.f;
+    new_position.y -= collectible.bounds().height / 2.f;
     collectible.setPosition(new_position);
 
     map.getCollectibles().emplace(std::make_pair(id, collectible));
@@ -168,7 +172,7 @@ void Inventory::drop_selected(Protagonist& player, TiledMap& map) {
 
 std::optional<std::string> Inventory::use_selected(Protagonist& player) {
   if (selected) {
-    if (elements[*selected].second.usable()) {
+    if (_items[*selected].second.usable()) {
       const auto message = player.use_item(remove(*selected));
       select_next();
       return message;

@@ -15,7 +15,8 @@ if [[ "${uname}" == 'Darwin' ]]; then
 elif [[ "${uname}" == 'Linux' ]]; then
   sudo apt-get update
   sudo apt-get install -y build-essential tar curl cmake zip unzip gcc ruby ninja-build \
-    libx11-dev libxrandr-dev libxi-dev libudev-dev libgl1-mesa-dev clang-format clang-tidy
+    libx11-dev libxrandr-dev libxi-dev libudev-dev libgl1-mesa-dev \
+    clang-format clang-tidy
 
   git clone https://github.com/microsoft/vcpkg
   pushd vcpkg
@@ -38,3 +39,4 @@ vcpkg install nlohmann-json
 vcpkg install nuklear
 vcpkg install sfml
 vcpkg install spdlog
+vcpkg install openal-soft

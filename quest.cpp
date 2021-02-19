@@ -18,26 +18,25 @@ void Quest::check_condition(PlayState& play_state, Info& info) {
 
 QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_) {
   quests.push_back(Quest("Gather resources!", "You are hungry. Find something to eat.", [](auto play_state) {
-    return !play_state.getPlayer().getInventoryElements().empty();
+    return !play_state.player().inventory().empty();
   }));
   quests.push_back(
     Quest("Find the lost item.", "Detlef has lost something in the woods. Find it for him.", [](auto play_state) {
-      auto& map = play_state.getMap();
+      auto& map = play_state.map();
 
       auto& npc = map.getNpc("Detlef de Loost");
 
-      auto pair = map.getCollectible("tools");
+      auto pair = map.collectible_by_name("tools");
       if (pair) {
         auto& [id, collectible] = *pair;
-        return collectible.collides_with(npc.getBoundingRect());
+        return collectible.collides_with(npc.bounds());
       }
 
       return false;
     }));
   quests.push_back(Quest("Get a baguette.", "Find a baguette to stab your last opponent.", [](auto play_state) {
-    const auto& elements = play_state.getPlayer().getInventoryElements();
-    return std::any_of(
-      elements.cbegin(), elements.cend(), [](const auto& element) { return element.second.getName() == "baguette"; });
+    const auto& items = play_state.player().inventory().items();
+    return std::any_of(items.cbegin(), items.cend(), [](const auto& item) { return item.second.name() == "baguette"; });
   }));
 }
 
