@@ -263,13 +263,13 @@ class Fight: public sf::Drawable, public sf::Transformable {
     }
 
     if (npc != nullptr && npc->stats().health().get() == 0) {
-      player.stats().experience().increase(100 * npc->stats().experience().level());
-      const int xp = 100 * npc->stats().experience().level();
+      player.stats().experience().increase(70 * npc->stats().experience().level());
+      const int xp = 70 * npc->stats().experience().level();
 
       if(npc->name() != "Juan") {
-        info.display_info(fmt::format("You beat in a fight {} and gained {} xp", npc->name(), xp), std::chrono::seconds(5));
+        info.display_info(fmt::format("You beat {} in a fight and gained {} xp.", npc->name(), xp), std::chrono::seconds(8));
       } else {
-        info.display_info(fmt::format("I turns out the tree is not special at all and you are still lost."), std::chrono::seconds(5));
+        info.display_info(fmt::format("I turns out the tree is not special at all and you are still lost."), std::chrono::seconds(12));
       }
 
       resetFight();

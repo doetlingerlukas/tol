@@ -115,14 +115,14 @@
           {
             "question": "Why?",
             "response": {
-              "question": "I sense the tree's negative energy and it is because of you",
+              "question": "I sense the tree's negative energy and it is because of you.",
               "response": [
                 {
                   "question": "That will be a problem because I need to go past that tree.",
                   "response": 2
                 },
                 {
-                  "question": "I think I feel the power too, the tree gives me hope",
+                  "question": "I think I feel the power too, the tree gives me hope.",
                   "response": 0
                 }
               ]
