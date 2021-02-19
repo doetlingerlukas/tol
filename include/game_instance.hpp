@@ -41,6 +41,8 @@ class GameInstance {
 
   void setSettingsChanged(bool value);
 
+  void remove();
+
   void save(
     const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const;
 

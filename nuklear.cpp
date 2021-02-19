@@ -126,7 +126,7 @@ void Nuklear::render_menu(
         ctx, "menu", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
     static const std::array<float, 3> ratio{ 0.3f, 0.4f, 0.3f };
 
-    nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
+    nk_layout_row_static(ctx, (size.y - (button_height * 6.f + spacing * 7.f) * scale.y) / 2.f, 0, 1);
     nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio.data());
 
     nk_spacing(ctx, 1);
@@ -146,6 +146,14 @@ void Nuklear::render_menu(
 
     if (nk_button_label(ctx, "SAVE")) {
       game.save(play_state, player, inventory, quests);
+      game.setState(GameState::PLAY);
+    }
+
+    nk_spacing(ctx, 1);
+
+    if (nk_button_label(ctx, "NEW GAME")) {
+      game.remove();
+      game.load(quests, play_state);
       game.setState(GameState::PLAY);
     }
 

@@ -41,6 +41,11 @@ json GameInstance::init() const {
   return save;
 }
 
+void GameInstance::remove() {
+  auto save_file = saves_dir / "game.json";
+  fs::remove(save_file);
+}
+
 void GameInstance::save(
   const PlayState& play_state, const Character& player, const Inventory& inventory, const QuestStack& quests) const {
   if (!fs::exists(saves_dir)) {
