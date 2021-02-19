@@ -29,7 +29,7 @@ json GameInstance::init() const {
 
   try {
     save = json::parse(ifs);
-  } catch (std::exception& ex) {
+  } catch ([[maybe_unused]] std::exception& ex) {
     save = json::object({ { "player",
                             { { "position", { { "x", 543 }, { "y", 2845 } } },
                               { "stats", player_default_stats },
