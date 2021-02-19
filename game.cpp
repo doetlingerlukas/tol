@@ -215,20 +215,16 @@ void Game::run() {
 
   map.set_player(&player);
 
-  tol::Music music(fs::path("assets/music"), settings.volume_level);
-  music.play_background(default_music);
+  Music music(fs::path("assets/music"), settings.volume_level);
 
   QuestStack quest_stack(info);
-  PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());
+  PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize(), music);
   Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
   std::reference_wrapper<Inventory> inventory = player.inventory();
 
   instance.load(quest_stack, play_state);
 
   KeyInput key_input;
-
-  tol::Music music(fs::path("assets/music"), settings.volume_level);
-  music.play_background();
 
   info.display_info(
     "Welcome to a very loost island with some very loost "
@@ -247,6 +243,8 @@ void Game::run() {
   std::optional<std::string> last_npc_interaction;
 
   Fight fight(asset_cache, player);
+
+  music.play_default();
 
   while (window.isOpen()) {
     const auto millis = clock.getElapsedTime().asMilliseconds();
