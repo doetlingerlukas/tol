@@ -28,6 +28,10 @@ const std::vector<Attack>& Character::attacks() const {
   return _attacks;
 }
 
+void Character::clear_attacks() {
+  _attacks.clear();
+}
+
 void Character::add_attack(Attack&& attack) {
   _attacks.emplace_back(attack);
 }

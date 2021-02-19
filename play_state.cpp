@@ -137,9 +137,27 @@ void PlayState::set_inventory(const json& inventory_array) {
   auto& collectibles = map().collectibles();
 
   for (const auto& id: inventory_array) {
-    auto item = collectibles.at(id.get<int>());
-    inventory.add(std::make_pair(id, item));
-    collectibles.erase(id.get<int>());
+    auto key = id.get<int>();
+    try {
+      auto item = collectibles.at(key);
+      inventory.add(std::make_pair(id, item));
+      collectibles.erase(key);
+    } catch ([[maybe_unused]] std::exception& ex) {
+    }
+  }
+}
+
+void PlayState::set_stats(const json& stats_array) {
+  player().stats().experience().set(stats_array["experience"].get<int>());
+  player().stats().health().set(stats_array["health"].get<int>());
+  player().stats().speed().set(stats_array["speed"].get<int>());
+  player().stats().strength().set(stats_array["strength"].get<int>());
+}
+
+void PlayState::set_attacks(const json& attacks_array) {
+  player().clear_attacks();
+  for (const auto& attack: attacks_array) {
+    player().add_attack(Attack(attack["name"].get<std::string>(), attack["damage"].get<int>()));
   }
 }
 

@@ -106,6 +106,8 @@ void GameInstance::load(QuestStack& quest_stack, PlayState& play_state) {
 
   load_position(play_state);
   play_state.set_inventory(load_inventory());
+  play_state.set_stats(load_stats());
+  play_state.set_attacks(load_attacks());
 }
 
 json GameInstance::load_attacks() const {

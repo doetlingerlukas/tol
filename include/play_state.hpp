@@ -14,6 +14,7 @@
 #include "optional"
 #include "overlay/info.hpp"
 #include "quest.hpp"
+#include "settings.hpp"
 
 const float VIEW_MOVE_SPEED = 40.f;
 const float VIEW_MOVE_ACCEL = 20.f;
@@ -73,6 +74,10 @@ class PlayState: public sf::Drawable {
     std::optional<std::string>& npc_dialog, Info& info);
 
   void set_inventory(const json& inventory_array);
+
+  void set_stats(const json& stats_array);
+
+  void set_attacks(const json& attacks_array);
 
   [[nodiscard]] bool check_unlock_condition(const std::string& condition_name, bool collided);
 };
