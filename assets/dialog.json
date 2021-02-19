@@ -33,17 +33,11 @@
         },
         {
           "question": "Do you know why I am here?",
-          "response": {
-            "question": "The tree in its infinte wisdom must have sent you to test us",
-            "response": 0
-          }
+          "response": "The tree in its infinte wisdom must have sent you to test us"
         },
         {
           "question" : "Can I have one of those baguettes?",
-          "response" : {
-            "question": "The baguette is powerfull, it must be used with care",
-            "response": 0
-          }
+          "response" : "The baguette is powerfull, it must be used with care"
         }
       ]
     },
