@@ -30,11 +30,11 @@ struct Collision {
   std::optional<std::reference_wrapper<const std::string>> unlock_hint;
 };
 
-class TiledMap: public sf::Drawable, public sf::Transformable {
+class Map: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
 
   std::unique_ptr<tson::Map> map;
-  std::map<int, Object> collectibles;
+  std::map<int, Object> _collectibles;
 
   size_t from_x;
   size_t to_x;
@@ -43,7 +43,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   Protagonist* player;
   std::vector<Npc> npcs;
-  std::vector<Character*> characters;
+  std::vector<Character*> _characters;
   std::chrono::milliseconds now;
 
   void draw(sf::RenderTarget& target, sf::RenderStates state) const override;
@@ -73,7 +73,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   sf::Vector2f getSize() const;
 
-  TiledMap(const fs::path& map_path, std::shared_ptr<AssetCache> asset_cache_);
+  Map(const fs::path& map_path, std::shared_ptr<AssetCache> asset_cache_);
 
   sf::Vector2i mapCoordsToTile(const sf::Vector2f& coords);
 
@@ -91,9 +91,9 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   void set_player(Protagonist* player);
 
-  void addCharacter(Character* character);
+  void add_character(Character* character);
 
-  std::map<int, Object>& getCollectibles();
+  std::map<int, Object>& collectibles();
   std::optional<std::pair<int, Object>> collectible_by_name(const std::string& name);
 
   std::vector<Collision> collisions_around(const sf::FloatRect& player) const;
@@ -102,7 +102,7 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
   void setScale(sf::Vector2f factors);
 
-  std::vector<Character*> getCharacters();
+  std::vector<Character*> characters();
 
   std::vector<Npc>& getNpcs();
   const Npc& getNpc(const std::string& name);
@@ -114,9 +114,9 @@ class TiledMap: public sf::Drawable, public sf::Transformable {
 
 } // namespace tol
 #ifndef TOL_PROTAGONIST_HPP
-#include <protagonist.hpp>
+#include "protagonist.hpp"
 #endif
 
 #ifndef TOL_PLAY_STATE_HPP
-#include <play_state.hpp>
+#include "play_state.hpp"
 #endif

@@ -2,7 +2,7 @@
 
 namespace tol {
 
-void Settings::loadSettings() {
+void Settings::load_settings() {
   json settings;
 
   if (fs::exists(settings_path)) {
@@ -40,7 +40,7 @@ void Settings::loadSettings() {
 }
 
 Settings::Settings(const fs::path exec_path): settings_path(fs::canonical(exec_path).parent_path() / "settings.json") {
-  loadSettings();
+  load_settings();
 }
 
 std::pair<int, int> Settings::resolution() const {

@@ -23,39 +23,6 @@ class Protagonist: public Character {
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
 
-  std::map<std::string, std::function<std::optional<std::string>()>> collectible_effects{
-    { "lemon",
-      [&]() {
-        stats().health().increase(30);
-        return stats().get();
-      } },
-    { "strawberry",
-      [&]() {
-        stats().experience().increase(400);
-        return stats().get();
-      } },
-    { "orange",
-      [&]() {
-        stats().strength().increase(1);
-        return stats().get();
-      } },
-    { "melon",
-      [&]() {
-        stats().health().increase(50);
-        return stats().get();
-      } },
-    { "pear",
-      [&]() {
-        stats().speed().increase(20);
-        return stats().get();
-      } },
-    { "pistol",
-      [&]() {
-        add_attack(Attack("pistol", 20));
-        return "Pistol available for fight.";
-      } }
-  };
-
   std::vector<Attack> attacks(const json& attack_json) const;
 
   std::chrono::milliseconds pick_up_allowed_after = std::chrono::milliseconds(0);

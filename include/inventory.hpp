@@ -10,12 +10,12 @@
 #include <SFML/Graphics.hpp>
 
 #include "asset_cache.hpp"
-#include "object.hpp"
 
 namespace tol {
 
-class TiledMap;
+class Map;
 class Protagonist;
+class Object;
 
 class Inventory: public sf::Drawable, public sf::Transformable {
   std::shared_ptr<AssetCache> asset_cache;
@@ -40,15 +40,19 @@ class Inventory: public sf::Drawable, public sf::Transformable {
   std::pair<int, Object> remove(size_t index);
 
   void mouse(sf::Vector2f location, bool pressed);
-  void drop_selected(Protagonist& player, TiledMap& map);
+  void drop_selected(Protagonist& player, Map& map);
   std::optional<std::string> use_selected(Protagonist& player);
 };
 
 } // namespace tol
 #ifndef TOL_MAP_HPP
-#include <map.hpp>
+#include "map.hpp"
 #endif
 
 #ifndef TOL_PROTAGONIST_HPP
-#include <protagonist.hpp>
+#include "protagonist.hpp"
+#endif
+
+#ifndef TOL_OBJECT_HPP
+#include "object.hpp"
 #endif

@@ -32,7 +32,7 @@ class Settings {
   bool vsync_enabled;
   fs::path settings_path;
 
-  void loadSettings();
+  void load_settings();
 
   public:
   float volume_level;
