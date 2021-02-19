@@ -62,6 +62,7 @@ class PlayState: public sf::Drawable {
   [[nodiscard]] sf::Vector2f player_position() const;
 
   void set_player_position(sf::Vector2f pos);
+  void set_inventory(const json& inventory_array);
 
   [[nodiscard]] bool check_unlock_condition(const std::string& condition_name) const;
 };

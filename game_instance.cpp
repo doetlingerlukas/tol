@@ -82,7 +82,7 @@ json GameInstance::load_attacks() const {
       }),
       json::object({
         {"name", "use spider" },
-        {"damage", 32 }
+        {"damage", 16 }
       })
     }));
 }
@@ -113,6 +113,14 @@ void GameInstance::load_position(PlayState& play_state) {
   const float y = get_or_else(player_j, "y", player_pos.y);
 
   play_state.set_player_position(sf::Vector2f(x, y));
+}
+
+json GameInstance::load_inventory() const {
+  auto save_file = saves_dir / "game.json";
+  std::ifstream ifs(save_file);
+  json save = json::parse(ifs);
+
+  return get_or_else(save["player"], "inventory", json::array());
 }
 
 } // namespace tol

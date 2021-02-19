@@ -232,6 +232,7 @@ void Game::run() {
   Overlay overlay(asset_cache, player.getStats(), quest_stack);
 
   instance.load_position(play_state);
+  play_state.set_inventory(instance.load_inventory());
 
   std::reference_wrapper<Inventory> inventory = player.getInventory();
 
