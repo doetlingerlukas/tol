@@ -103,14 +103,13 @@ class Map: public sf::Drawable, public sf::Transformable {
 
   void setScale(sf::Vector2f factors);
 
-  std::vector<Character*> characters();
+  const std::vector<Character*>& characters() const;
+  std::vector<Character*>& characters();
 
   std::vector<Npc>& getNpcs();
   const Npc& getNpc(const std::string& name);
 
   void set_player(Character* player);
-
-  std::vector<sf::RectangleShape> collisionTiles(const Character& player) const;
 };
 
 } // namespace tol

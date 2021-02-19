@@ -52,3 +52,4 @@ rake run
 | Talk to Character | <kbd>E</kbd>, Mouse                                                       |
 | Show Inventory    | <kbd>I</kbd>                                                              |
 | Show Quests       | <kbd>⇥</kbd> (Tab)                                                        |
+| Debug Mode        | <kbd>H</kbd>                                                              |

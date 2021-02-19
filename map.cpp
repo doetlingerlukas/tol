@@ -103,7 +103,11 @@ void Map::drawTileLayer(
   }
 }
 
-std::vector<Character*> Map::characters() {
+const std::vector<Character*>& Map::characters() const {
+  return _characters;
+}
+
+std::vector<Character*>& Map::characters() {
   return _characters;
 }
 

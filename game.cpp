@@ -89,6 +89,12 @@ void Game::handle_event(
         case sf::Keyboard::E:
           key_input.e = event.type == sf::Event::KeyPressed;
           break;
+        case sf::Keyboard::H:
+          if (event.type == sf::Event::KeyPressed) {
+            play_state.set_debug(!play_state.debug());
+          }
+
+          break;
         case sf::Keyboard::I:
           if (event.type == sf::Event::KeyReleased) {
             if (instance().state() == GameState::INVENTORY) {
