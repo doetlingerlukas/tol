@@ -217,11 +217,11 @@ void Game::run() {
 
   QuestStack quest_stack(info);
 
-  for (size_t quest_id: instance.load_quests()["completed"]) {
+  for (size_t quest_id: instance.load_quests()) {
     quest_stack.quests[quest_id].setCompleted();
   }
 
-  const auto& active_quest = instance.load_quests()["active"];
+  const auto& active_quest = instance.load_active_quest();
 
   if (!active_quest.is_null()) {
     quest_stack.select(active_quest);

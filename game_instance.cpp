@@ -126,7 +126,12 @@ json GameInstance::load_inventory() const {
 
 json GameInstance::load_quests() const {
   json save = init();
-  return get_or_else(save["player"], "quests", json::object());
+  return get_or_else(save["player"]["quests"], "completed", json::array());
+}
+
+json GameInstance::load_active_quest() const {
+  json save = init();
+  return get_or_else(save["player"]["quests"], "active", json::object());
 }
 
 } // namespace tol

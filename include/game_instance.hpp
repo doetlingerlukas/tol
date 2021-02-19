@@ -50,6 +50,7 @@ class GameInstance {
   json load_stats() const;
   json load_inventory() const;
   json load_quests() const;
+  json load_active_quest() const;
 };
 
 } // namespace tol
