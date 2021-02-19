@@ -14,7 +14,7 @@ class MenuItem: public sf::Drawable {
 
   std::shared_ptr<AssetCache> asset_cache;
 
-  std::function<void(int)> callback_;
+  std::function<void(int)> _callback;
 
   sf::Text text;
 
@@ -29,7 +29,7 @@ class MenuItem: public sf::Drawable {
     std::string title, std::function<void(int)> callback, const std::shared_ptr<AssetCache> asset_cache_,
     const sf::Vector2i& location, int character_scalar_):
     character_scalar(character_scalar_),
-    title(title), asset_cache(asset_cache_), callback_(callback), menu_location(location) {
+    title(title), asset_cache(asset_cache_), _callback(callback), menu_location(location) {
     text.setString(title);
   }
 
@@ -60,7 +60,7 @@ class MenuItem: public sf::Drawable {
   }
 
   inline void callback(int idx) const {
-    callback_(idx);
+    _callback(idx);
   }
 
   [[nodiscard]] inline sf::FloatRect global_bounds() const {
