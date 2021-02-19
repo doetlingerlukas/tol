@@ -124,6 +124,8 @@ void GameInstance::load(PlayState& play_state) {
   play_state.set_stats(load_stats());
   play_state.set_attacks(load_attacks());
   play_state.set_used_collectibles(load_used_items());
+
+  set_state(GameState::PLAY);
 }
 
 json GameInstance::load_attacks() const {

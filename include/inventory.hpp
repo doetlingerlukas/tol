@@ -34,6 +34,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
   public:
   Inventory(size_t max_size_, std::shared_ptr<AssetCache> asset_cache_);
 
+  void clear();
   [[nodiscard]] bool empty() const;
   [[nodiscard]] size_t size() const;
   [[nodiscard]] const std::vector<std::pair<int, Object>>& items() const;

@@ -65,11 +65,13 @@ class Map: public sf::Drawable, public sf::Transformable {
     std::vector<std::variant<Tile, Character, Object>>& deferred_tiles) const;
 
   void createTileData(tson::Layer& layer);
-  void gatherCollectibles(tson::Layer& layer);
+  void gather_collectibles(tson::Layer& layer);
 
   sf::FloatRect window_rect;
 
   public:
+  void gather_collectibles();
+
   sf::Vector2i getTileSize() const;
 
   sf::Vector2f getSize() const;

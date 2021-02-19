@@ -64,8 +64,16 @@ void Nuklear::render_death(Game& game, PlayState& play_state) const {
 
     nk_spacing(ctx, 1);
 
+    if (nk_button_label(ctx, "NEW GAME")) {
+      game.instance().remove();
+      game.instance().load(play_state);
+      game.set_state(GameState::PLAY);
+    }
+
+    nk_spacing(ctx, 1);
+
     if (nk_button_label(ctx, "LOAD")) {
-      game.instance().load_position(play_state);
+      game.instance().load(play_state);
       game.set_state(GameState::PLAY);
     }
 
@@ -136,7 +144,7 @@ void Nuklear::render_menu(Game& game, PlayState& play_state) const {
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.instance().load_position(play_state);
+      game.instance().load(play_state);
       game.set_state(GameState::PLAY);
     }
 

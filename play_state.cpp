@@ -163,6 +163,10 @@ void PlayState::set_inventory(const json& inventory_array) {
   auto& inventory = player().inventory();
   auto& collectibles = map().collectibles();
 
+  collectibles.clear();
+  map().gather_collectibles();
+  inventory.clear();
+
   for (const auto& id: inventory_array) {
     auto key = id.get<int>();
     try {

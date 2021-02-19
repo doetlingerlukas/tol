@@ -155,10 +155,10 @@ void Map::createTileData(tson::Layer& layer) {
   }
 }
 
-void Map::gatherCollectibles(tson::Layer& layer) {
+void Map::gather_collectibles(tson::Layer& layer) {
   if (layer.getType() == tson::LayerType::Group) {
     for (auto& nested: layer.getLayers()) {
-      gatherCollectibles(nested);
+      gather_collectibles(nested);
     }
   } else if (layer.getType() == tson::LayerType::ObjectGroup) {
     for (auto& obj: layer.getObjects()) {
@@ -170,6 +170,12 @@ void Map::gatherCollectibles(tson::Layer& layer) {
           std::make_tuple(std::ref(obj), std::ref(*tileset->getTile(obj.getGid())), asset_cache));
       }
     }
+  }
+}
+
+void Map::gather_collectibles() {
+  for (auto& layer: map->getLayers()) {
+    gather_collectibles(layer);
   }
 }
 
@@ -196,9 +202,9 @@ Map::Map(const fs::path& map_path, const std::shared_ptr<AssetCache> asset_cache
     if (layer.getType() == tson::LayerType::Group) {
       createTileData(layer);
     }
-
-    gatherCollectibles(layer);
   }
+
+  gather_collectibles();
 
   for (const auto& tileset: map->getTilesets()) {
     (void)asset_cache->load_texture(tileset.getImagePath());

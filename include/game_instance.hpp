@@ -30,6 +30,8 @@ class GameInstance {
   json player_default_stats =
     json::object({ { "strength", 10 }, { "speed", 10 }, { "health", 100 }, { "experience", 0 } });
 
+  void load_position(PlayState& play_state);
+
   public:
   explicit GameInstance(const fs::path& exec_dir);
 
@@ -46,8 +48,6 @@ class GameInstance {
   void save(const PlayState& play_state) const;
 
   void load(PlayState& play_state);
-
-  void load_position(PlayState& play_state);
 
   json load_attacks() const;
   json load_stats() const;
