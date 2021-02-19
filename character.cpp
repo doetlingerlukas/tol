@@ -186,13 +186,14 @@ std::vector<sf::RectangleShape> Character::move(
     return shape;
   };
 
+  auto in_city = false;
   for (auto& collision: collisions) {
     auto shape = create_collision_shape(collision.bounds);
 
     auto collided = collision.bounds.intersects(next_bounds);
 
     if (collision.city && collided) {
-      play_state.getMusic().play_city();
+      in_city = true;
     }
 
     if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition, collided)) {
@@ -243,6 +244,12 @@ std::vector<sf::RectangleShape> Character::move(
     }
 
     shapes.emplace_back(std::move(shape));
+  }
+
+  if (in_city) {
+    play_state.getMusic().play_city();
+  } else {
+    play_state.getMusic().play_default();
   }
 
   // Restrict movement outside the map
