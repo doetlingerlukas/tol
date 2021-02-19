@@ -191,7 +191,9 @@ std::vector<sf::RectangleShape> Character::move(
 
     auto collided = collision.bounds.intersects(next_bounds);
 
-    if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition, collided)) {
+    if (collision.city && collided) {
+      play_state.getMusic().play_city();
+    } else if (collision.unlock_condition && play_state.check_unlock_condition(*collision.unlock_condition, collided)) {
       shape.setOutlineColor(sf::Color::Green);
     } else if (collided) {
       if (collision.unlock_hint) {

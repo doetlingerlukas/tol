@@ -378,6 +378,11 @@ std::vector<Collision> Map::collisions_around(const sf::FloatRect& bounds) const
               }
             }
 
+            const auto is_city = obj.getProp("city");
+            if (is_city) {
+              collision.city = std::any_cast<bool>(is_city->getValue());
+            }
+
             collisions.emplace_back(std::move(collision));
           }
         }

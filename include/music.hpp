@@ -16,6 +16,8 @@ class Music {
 
   std::filesystem::path dir;
   float volume;
+  bool entered_city = false;
+  bool is_default = false;
 
   static void load_audio_file(sf::Music& music, const std::string& path) {
     if (!music.openFromFile(path)) {
@@ -31,17 +33,25 @@ class Music {
   }
 
   void play_default() {
-    city_background.stop();
+    if (!is_default) {
+      city_background.stop();
 
-    default_background.play();
-    default_background.setLoop(true);
+      default_background.play();
+      default_background.setLoop(true);
+    }
+    entered_city = false;
+    is_default = true;
   }
 
   void play_city() {
-    default_background.stop();
+    if (!entered_city) {
+      default_background.stop();
 
-    city_background.play();
-    city_background.setLoop(true);
+      city_background.play();
+      city_background.setLoop(true);
+    }
+    entered_city = true;
+    is_default = false;
   }
 
   void set_volume(float volume_) {
