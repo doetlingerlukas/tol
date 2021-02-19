@@ -18,7 +18,7 @@ namespace tol {
 using json = nlohmann::json;
 
 class Protagonist: public Character {
-  Inventory inventory;
+  Inventory _inventory;
 
   sf::SoundBuffer pick_up_sound_buffer;
   sf::Sound pick_up_sound;
@@ -71,9 +71,8 @@ class Protagonist: public Character {
     std::chrono::milliseconds now, PlayState& play_state, std::map<int, Object>& collectibles,
     const sf::Vector2f& map_size, Info& info);
 
-  const std::vector<std::pair<int, Object>>& getInventoryElements() const;
-
-  Inventory& getInventory();
+  const Inventory& inventory() const;
+  Inventory& inventory();
 
   bool talked_to(const std::string& npc_name);
 

@@ -8,7 +8,7 @@ Protagonist::Protagonist(
   const fs::path& path, const std::shared_ptr<AssetCache> asset_cache, const std::shared_ptr<Stats> stats,
   const json& attack_json, const std::string& name):
   Character(path, asset_cache, stats, name, attacks(attack_json)),
-  inventory(Inventory(32, asset_cache)) {
+  _inventory(Inventory(32, asset_cache)) {
   const auto file = asset_cache->loadFile(fs::path("music/item-pick-up.ogg"));
 
   if (pick_up_sound_buffer.loadFromMemory(file->data(), file->size())) {
@@ -30,7 +30,7 @@ std::vector<sf::RectangleShape> Protagonist::move(
       auto& [id, collectible] = *it;
 
       if (collectible.collides_with(bounds)) {
-        if (inventory.add(*it)) {
+        if (_inventory.add(*it)) {
           pick_up_sound.play();
           info.display_info(fmt::format("Item collected: {}", collectible.getName()), std::chrono::seconds(5));
           it = collectibles.erase(it);
@@ -57,12 +57,12 @@ std::vector<Attack> Protagonist::attacks(const json& attack_json) const {
   return att;
 }
 
-const std::vector<std::pair<int, Object>>& Protagonist::getInventoryElements() const {
-  return inventory.items();
+const Inventory& Protagonist::inventory() const {
+  return _inventory;
 }
 
-Inventory& Protagonist::getInventory() {
-  return inventory;
+Inventory& Protagonist::inventory() {
+  return _inventory;
 }
 
 bool Protagonist::talked_to(const std::string& npc_name) {

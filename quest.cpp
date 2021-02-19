@@ -18,7 +18,7 @@ void Quest::check_condition(PlayState& play_state, Info& info) {
 
 QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_) {
   quests.push_back(Quest("Gather resources!", "You are hungry. Find something to eat.", [](auto play_state) {
-    return !play_state.getPlayer().getInventoryElements().empty();
+    return !play_state.getPlayer().inventory().empty();
   }));
   quests.push_back(
     Quest("Find the lost item.", "Detlef has lost something in the woods. Find it for him.", [](auto play_state) {
@@ -35,7 +35,7 @@ QuestStack::QuestStack(Info& info_): selected(std::make_optional(0)), info(info_
       return false;
     }));
   quests.push_back(Quest("Get a baguette.", "Find a baguette to stab your last opponent.", [](auto play_state) {
-    const auto& items = play_state.getPlayer().getInventoryElements();
+    const auto& items = play_state.getPlayer().inventory().items();
     return std::any_of(
       items.cbegin(), items.cend(), [](const auto& item) { return item.second.getName() == "baguette"; });
   }));

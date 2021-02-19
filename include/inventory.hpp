@@ -34,13 +34,13 @@ class Inventory: public sf::Drawable, public sf::Transformable {
   public:
   Inventory(size_t max_size_, std::shared_ptr<AssetCache> asset_cache_);
 
+  [[nodiscard]] bool empty() const;
   [[nodiscard]] int size() const;
   [[nodiscard]] const std::vector<std::pair<int, Object>>& items() const;
   bool add(std::pair<int, Object> item);
   std::pair<int, Object> remove(size_t index);
 
   void mouse(sf::Vector2f location, bool pressed);
-
   void drop_selected(Protagonist& player, TiledMap& map);
   std::optional<std::string> use_selected(Protagonist& player);
 };

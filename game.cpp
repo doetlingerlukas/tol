@@ -242,7 +242,7 @@ void Game::run() {
   instance.load_position(play_state);
   play_state.set_inventory(instance.load_inventory());
 
-  std::reference_wrapper<Inventory> inventory = player.getInventory();
+  std::reference_wrapper<Inventory> inventory = player.inventory();
 
   sf::Clock clock;
   std::chrono::milliseconds now = std::chrono::milliseconds(0);

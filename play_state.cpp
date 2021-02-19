@@ -137,7 +137,7 @@ sf::Vector2f PlayState::player_position() const {
 }
 
 void PlayState::set_inventory(const json& inventory_array) {
-  auto& inventory = getPlayer().getInventory();
+  auto& inventory = getPlayer().inventory();
   auto& collectibles = getMap().getCollectibles();
 
   for (const auto& id: inventory_array) {
