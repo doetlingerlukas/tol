@@ -216,19 +216,14 @@ void Game::run() {
   map.set_player(&player);
 
   QuestStack quest_stack(info);
-
-  for (size_t quest_id: instance.load_quests()) {
-    quest_stack.quests[quest_id].setCompleted();
-  }
-
-  const auto& active_quest = instance.load_active_quest();
-
-  if (!active_quest.is_null()) {
-    quest_stack.select(active_quest);
-  }
-
   PlayState play_state(map, player, quest_stack, asset_cache, scale, window.getSize());
+  Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
+  std::reference_wrapper<Inventory> inventory = player.inventory();
+
+  instance.load(quest_stack, play_state);
+
   KeyInput key_input;
+
   tol::Music music(fs::path("assets/music"), settings.volume_level);
   music.play_background();
 
@@ -236,13 +231,6 @@ void Game::run() {
     "Welcome to a very loost island with some very loost "
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
-
-  Overlay overlay(asset_cache, std::cref(player.stats()), quest_stack);
-
-  instance.load_position(play_state);
-  play_state.set_inventory(instance.load_inventory());
-
-  std::reference_wrapper<Inventory> inventory = player.inventory();
 
   sf::Clock clock;
   std::chrono::milliseconds now = std::chrono::milliseconds(0);

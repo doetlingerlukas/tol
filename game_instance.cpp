@@ -93,6 +93,21 @@ void GameInstance::save(
   ofs << save.dump(2);
 }
 
+void GameInstance::load(QuestStack& quest_stack, PlayState& play_state) {
+  for (size_t quest_id: load_quests()) {
+    quest_stack.quests[quest_id].setCompleted();
+  }
+
+  const auto& active_quest = load_active_quest();
+
+  if (!active_quest.is_null()) {
+    quest_stack.select(active_quest);
+  }
+
+  load_position(play_state);
+  play_state.set_inventory(load_inventory());
+}
+
 json GameInstance::load_attacks() const {
   json save = init();
   const auto& player = save["player"];

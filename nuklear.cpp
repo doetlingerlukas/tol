@@ -91,7 +91,7 @@ void Nuklear::render_death(GameInstance& game, PlayState& play_state) const {
 
 void Nuklear::render_menu(
   GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
-  const QuestStack& quests) const {
+  QuestStack& quests) const {
   auto ctx = this->ctx();
 
   push_window_state();
@@ -138,7 +138,7 @@ void Nuklear::render_menu(
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.load_position(play_state);
+      game.load(quests, play_state);
       game.setState(GameState::PLAY);
     }
 
