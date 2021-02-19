@@ -223,7 +223,7 @@ void Game::run() {
     "people, who are doing very loost things!",
     std::chrono::seconds(10));
 
-  instance().load_position(play_state);
+  instance().load(play_state);
   play_state.set_inventory(instance().load_inventory());
 
   sf::Clock clock;

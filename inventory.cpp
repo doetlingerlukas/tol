@@ -124,6 +124,10 @@ void Inventory::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 Inventory::Inventory(size_t max_size_, const std::shared_ptr<AssetCache> asset_cache_):
   asset_cache(asset_cache_), max_size(max_size_), mouse_pressed(false) {}
 
+void Inventory::clear() {
+  _items.clear();
+}
+
 [[nodiscard]] bool Inventory::empty() const {
   return _items.empty();
 }

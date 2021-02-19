@@ -29,7 +29,7 @@ void Nuklear::render_death(Game& game, PlayState& play_state) const {
 
   struct nk_color background = nk_rgba(r, g, b, a);
 
-  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 24 * scale.y);
+  const auto* font = asset_cache->load_nk_font("fonts/Gaegu-Regular.ttf", 32 * scale.y);
   nk_style_set_font(ctx, &font->handle);
 
   struct nk_style& s = ctx->style;
@@ -64,8 +64,16 @@ void Nuklear::render_death(Game& game, PlayState& play_state) const {
 
     nk_spacing(ctx, 1);
 
+    if (nk_button_label(ctx, "NEW GAME")) {
+      game.instance().remove();
+      game.instance().load(play_state);
+      game.set_state(GameState::PLAY);
+    }
+
+    nk_spacing(ctx, 1);
+
     if (nk_button_label(ctx, "LOAD")) {
-      game.instance().load_position(play_state);
+      game.instance().load(play_state);
       game.set_state(GameState::PLAY);
     }
 
@@ -136,7 +144,7 @@ void Nuklear::render_menu(Game& game, PlayState& play_state) const {
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.instance().load_position(play_state);
+      game.instance().load(play_state);
       game.set_state(GameState::PLAY);
     }
 
