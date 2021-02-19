@@ -82,11 +82,19 @@ void TiledMap::drawTileLayer(
       tile.setScale(getScale());
       tile.update(now);
 
-      if (tile.zIndex() && std::any_of(character_rects.begin(), character_rects.end(), [x, y](const auto& r) {
-            const auto& [from, to] = r;
-            return static_cast<int>(x) >= from.x && static_cast<int>(x) <= to.x && static_cast<int>(y) >= from.y &&
-                   static_cast<int>(y) <= to.y;
-          })) {
+      if (
+        tile.zIndex() && (std::any_of(
+                            character_rects.begin(), character_rects.end(),
+                            [x, y](const auto& r) {
+                              const auto& [from, to] = r;
+                              return static_cast<int>(x) >= from.x && static_cast<int>(x) <= to.x &&
+                                     static_cast<int>(y) >= from.y && static_cast<int>(y) <= to.y;
+                            }) ||
+                          std::any_of(collectibles.cbegin(), collectibles.cend(), [&tile](const auto& collectible) {
+                            const auto& [id, object] = collectible;
+
+                            return object.intersects(tile.getBoundingRect());
+                          }))) {
         deferred_tiles.emplace_back(std::move(tile));
       } else {
         target.draw(tile);
@@ -119,13 +127,7 @@ void TiledMap::drawObjectLayer(
           object.setScale(getScale());
           object.update(now);
 
-          if (std::any_of(characters.begin(), characters.end(), [&object](const auto& c) {
-                return object.intersects(c->getTextureBoundingRect());
-              })) {
-            deferred_tiles.emplace_back(std::move(object));
-          } else {
-            target.draw(object);
-          }
+          deferred_tiles.emplace_back(std::move(object));
         }
 
         break;

@@ -34,7 +34,7 @@ class Inventory: public sf::Drawable, public sf::Transformable {
 
   [[nodiscard]] int size() const;
 
-  std::vector<std::pair<int, Object>> getElements() const;
+  std::vector<std::pair<int, Object>>& getElements();
 
   bool add(std::pair<int, Object> new_element);
 

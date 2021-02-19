@@ -19,7 +19,8 @@ class Collectible {
               "on walking speed" },
     { "cherry", "Probably edible." },
     { "pistol", "Watch out! This kills people." },
-    { "tools", "I should probably bring these back to Detlef." }
+    { "tools", "I should probably bring these back to Detlef." },
+    { "baguette", "Perfect for stabbing someone." }
   };
 
   public:
