@@ -17,7 +17,7 @@ void Nuklear::pop_window_state() const {
   window->popGLStates();
 }
 
-void Nuklear::render_death(GameInstance& game, PlayState& play_state) const {
+void Nuklear::render_death(Game& game, PlayState& play_state) const {
   auto ctx = this->ctx();
 
   push_window_state();
@@ -65,14 +65,14 @@ void Nuklear::render_death(GameInstance& game, PlayState& play_state) const {
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.load_position(play_state);
-      game.setState(GameState::PLAY);
+      game.instance().load_position(play_state);
+      game.set_state(GameState::PLAY);
     }
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "EXIT")) {
-      game.setState(GameState::QUIT);
+      game.set_state(GameState::QUIT);
     }
   }
 
@@ -90,8 +90,7 @@ void Nuklear::render_death(GameInstance& game, PlayState& play_state) const {
 }
 
 void Nuklear::render_menu(
-  GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
-  QuestStack& quests) const {
+  Game& game, PlayState& play_state, const Character& player, const Inventory& inventory, QuestStack& quests) const {
   auto ctx = this->ctx();
 
   push_window_state();
@@ -126,47 +125,47 @@ void Nuklear::render_menu(
         ctx, "menu", nk_rect(0, 0, static_cast<float>(size.x), static_cast<float>(size.y)), NK_WINDOW_BACKGROUND)) {
     static const std::array<float, 3> ratio{ 0.3f, 0.4f, 0.3f };
 
-    nk_layout_row_static(ctx, (size.y - (button_height * 6.f + spacing * 7.f) * scale.y) / 2.f, 0, 1);
+    nk_layout_row_static(ctx, (size.y - (button_height * 5.f + spacing * 6.f) * scale.y) / 2.f, 0, 1);
     nk_layout_row(ctx, NK_DYNAMIC, button_height * scale.y, 2, ratio.data());
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "CONTINUE")) {
-      game.setState(GameState::PLAY);
+      game.set_state(GameState::PLAY);
     }
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "LOAD")) {
-      game.load(quests, play_state);
-      game.setState(GameState::PLAY);
+      game.instance().load_position(play_state);
+      game.set_state(GameState::PLAY);
     }
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "SAVE")) {
-      game.save(play_state, player, inventory, quests);
-      game.setState(GameState::PLAY);
+      game.instance().save(play_state, player, inventory, quests);
+      game.set_state(GameState::PLAY);
     }
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "NEW GAME")) {
-      game.remove();
-      game.load(quests, play_state);
-      game.setState(GameState::PLAY);
+      game.instance().remove();
+      game.instance().load(quests, play_state);
+      game.set_state(GameState::PLAY);
     }
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "SETTINGS")) {
-      game.setState(GameState::SETTINGS);
+      game.set_state(GameState::SETTINGS);
     }
 
     nk_spacing(ctx, 1);
 
     if (nk_button_label(ctx, "EXIT")) {
-      game.setState(GameState::QUIT);
+      game.set_state(GameState::QUIT);
     }
   }
 
@@ -183,7 +182,7 @@ void Nuklear::render_menu(
   pop_window_state();
 }
 
-void Nuklear::render_settings(GameInstance& game, Settings& settings) {
+void Nuklear::render_settings(Game& game, Settings& settings) {
   auto ctx = this->ctx();
 
   push_window_state();
@@ -221,8 +220,8 @@ void Nuklear::render_settings(GameInstance& game, Settings& settings) {
 
     if (nk_button_label(ctx, "SAVE")) {
       settings.serialize();
-      game.setSettingsChanged(true);
-      game.setState(GameState::MENU);
+      game.instance().set_settings_changed(true);
+      game.set_state(GameState::MENU);
     }
     nk_spacing(ctx, 1);
 

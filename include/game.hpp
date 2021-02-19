@@ -1,4 +1,5 @@
 #pragma once
+#define TOL_GAME_HPP
 
 #include <string>
 
@@ -42,7 +43,8 @@ class Game {
   fs::path dir;
   Settings& settings;
 
-  GameInstance instance;
+  GameState _state = GameState::MENU;
+  GameInstance _instance;
 
   sf::Vector2f scale;
   sf::Vector2f resolution_scale;
@@ -64,6 +66,17 @@ class Game {
 
   public:
   Game(fs::path dir_, Settings& settings_);
+
+  inline void set_state(GameState state) {
+    _state = state;
+  }
+
+  [[nodiscard]] inline const GameInstance& instance() const {
+    return _instance;
+  }
+  inline GameInstance& instance() {
+    return _instance;
+  }
 
   void run();
 };

@@ -27,6 +27,8 @@ namespace tol {
 
 using json = nlohmann::json;
 
+class Game;
+
 class Nuklear {
   std::shared_ptr<AssetCache> asset_cache;
   sf::Vector2u size;
@@ -50,12 +52,11 @@ class Nuklear {
   }
 
   void render_menu(
-    GameInstance& game, PlayState& play_state, const Character& player, const Inventory& inventory,
-    QuestStack& quests) const;
+    Game& game, PlayState& play_state, const Character& player, const Inventory& inventory, QuestStack& quests) const;
 
-  void render_death(GameInstance& game, PlayState& play_state) const;
+  void render_death(Game& game, PlayState& play_state) const;
 
-  void render_settings(GameInstance& game, Settings& settings);
+  void render_settings(Game& game, Settings& settings);
 
   void render_hud();
 
@@ -71,3 +72,7 @@ class Nuklear {
 };
 
 } // namespace tol
+
+#ifndef TOL_GAME_HPP
+#include "game.hpp"
+#endif
