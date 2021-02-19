@@ -13,11 +13,11 @@ void Settings::load_settings() {
   auto& settings_field = settings["settings"];
   auto& resolution = settings_field["resolution"];
 
-  const int width = get_or_else(resolution, "width", 1200);
+  const int width = get_or_else(resolution, "width", 1920);
   resolution["width"] = width;
   resolution_width = width;
 
-  const int height = get_or_else(resolution, "height", 800);
+  const int height = get_or_else(resolution, "height", 1080);
   resolution["height"] = height;
   resolution_height = height;
 
